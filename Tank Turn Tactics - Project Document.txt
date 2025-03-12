@@ -1,0 +1,123 @@
+Tank Turn Tactics - Project Document
+
+Project Overview
+
+### Game Name: Tank Tactics
+
+Objective: Survive to the end and be among the top three players.
+Target Audience: Strategy game enthusiasts, casual gamers, and multiplayer turn-based game fans.
+
+## 2. Game Mechanics & Rules
+
+### Game Board:
+
+- Board size will be 20 x 20 (but make it so we can change it after playtesting)
+- Max Players will be 17 and minimum will be 10
+- Shrinks by 1 length and 1 breadth when a player dies (player in the shrink zone dies)
+- spawn players randomly in the grid except no two tanks can spawn at a distance of less than 2  and no tanks spawn at the last 2 edges
+
+### Player Assets:
+- Action Point: 0 at start and increases at a fixed interval(decided by user at the start of the game.)
+- Range: 1(1 as defined as the range of touching sqaure) at start and can be increase by using 3 Action point.
+- Haert: 3 at start, cant be more than 3.
+
+### Player Actions:
+
+- Move to an adjacent, unoccupied square (Costs 1 Action Point - AP)
+- Shoot a player within range (Costs 1 AP, removes 1 heart from target)
+- Add a heart (Costs 3 AP)
+- Upgrade shooting range (Costs 3 AP, increases range by 1 square)
+- Trade AP or hearts with another player within range
+
+### Health & Action Points (AP) System:
+
+- All players start with 3 hearts and 0 AP.
+- Players gain 1 AP every X hours (X to be determined).
+- Players keep their current AP secret from others.
+- If a player's health reaches 0 hearts, they die.
+- A dead player's AP is transferred to their killer.
+- Dead players remain on the board and can be revived.
+
+### Elimination & Revivals:
+
+- Players with 0 hearts are considered dead.
+- Dead players can receive a heart from a living player to be revived.
+- Revived players return with 1 heart and 0 AP.
+
+### Jury & Haunting Mechanic:
+
+- Dead players form a jury.
+- Every X(Xto be decided by user) times, the jury votes to haunt one living player or give AP to one player.
+- The haunted player does not receive an AP for one time period.
+
+### Winning Conditions:
+
+- The game ends when a clear 1st, 2nd, and 3rd place is determined.
+- When 4 players remain, they must agree on their rankings or continue playing till last man standing.
+
+## 3. Game Flow & Turn System
+
+- Action occurs whenever someone locks in their action
+- Players can take actions at any time as long as they have AP.
+- Information like player location and health is visible, but AP and Range is secret.
+- Every X time , a heart spawns randomly on the grid. The first player to reach it gains 1 heart.
+
+## 4. Multiplayer & Server Details
+
+- Maximum Players per Match: (To be decided)(17 tentative)
+- Player Data Handling: User accounts, match history, and statistics should be stored .
+- Turn Processing: Actions are logged and updated in real-time.
+- Player can create or join a game: any user can crate a room and invite using code or let random join. player can also join any actively open room
+
+## 5. User Interface (UI) & User Experience (UX)
+
+- Grid-based map showing player positions.
+- Action Menu for choosing moves, attacking, or upgrading.
+- Status Display for player health, range, and interactions.
+- Trade System to exchange AP or health with nearby players.
+- Chat or Communication Feature for alliances and betrayals.
+- Chat feature is super important a global chat and one to one message to any other player.
+- Previous Moves like chess.com previous moves can be viewed by player
+
+### Trial user experience
+- Open website
+- Join or create a room 
+- when appropriate number of player join admin can start the game
+- everyone spawns on board and the game is on 
+- chat with people and take action whenever
+- on screen is board , action menu , chat panel (WhatsApp type)
+
+## 6. Technology Stack
+
+Frontend:
+- React with Vite : Fast development server and bundling.
+- TailwindCSS/shadecn UI: Rapid UI development.
+- JS: Improved code maintainability and early error catching.
+- State Management: Use Context API or libraries like Redux Toolkit/Recoil if needed. use useMemo to calculate and cache result.
+
+Backend:
+- Express.js with Node.js
+- Js
+- Redis:Due to low latency and powerful caching system
+- Validation & Security:  Joi for validation and Helmet for securing HTTP headers.
+- Logging & Monitoring: Winston or Morgan for logging.
+
+Containerization & Deployment:
+- Docker: Containerize both frontend and backend applications.
+- Kubernetes: Orchestrate Docker containers for scalability and resilience.
+  - Set up a CI/CD pipeline (e.g., with GitHub Actions) for automated builds and deployments.
+  - An Ingress Controller (e.g., NGINX) for routing and SSL termination.
+- Monitoring & Logging:  Prometheus, Grafana, and ELK/EFK stacks.
+
+## 7. Development Timeline & Milestones
+
+| Milestone | Task                               | 
+| --------- | ---------------------------------- | 
+| Phase 1   | Basic game logic & movement system | 
+| Phase 2   | UI/UX implementation               | 
+| Phase 3   | Multiplayer & server integration   | 
+| Phase 4   | Beta testing & refinements         | 
+| Phase 5   | Official launch                    | 
+
+
+
