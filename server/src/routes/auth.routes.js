@@ -15,4 +15,5 @@ router.post('/logout', authController.logout);
 router.get('/me', authController.getCurrentUser);
 router.put('/password', validate(userSchemas.updateProfile), authController.updatePassword);
 
+
 export default router; 

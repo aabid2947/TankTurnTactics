@@ -83,14 +83,7 @@ if (process.env.NODE_ENV === 'production') {
   console.debug = (...args) => logger.debug.call(logger, ...args);
 }
 
-// Connect to MongoDB
-try {
-  await connectDB();
-  logger.info('MongoDB connected successfully');
-} catch (error) {
-  logger.error(`MongoDB connection error: ${error.message}`);
-  process.exit(1);
-}
+
 
 // Middleware
 app.use(cors());

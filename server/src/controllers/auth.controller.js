@@ -1,9 +1,11 @@
 import authRedisService from '../services/auth-redis.service.js';
-import logger from '../utils/logger.js';
+import loggerObj from '../utils/logger.js';
 
 /**
  * Authentication controller
  */
+
+const {logger} = loggerObj;
 class AuthController {
   /**
    * Register a new user

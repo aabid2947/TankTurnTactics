@@ -1,10 +1,11 @@
 import userRedisService from '../services/user-redis.service.js';
 import gameRedisService from '../services/game-redis.service.js';
-import logger from '../utils/logger.js';
+import loggerObj from '../utils/logger.js';
 
 /**
  * User controller
  */
+const { logger } = loggerObj;
 class UserController {
   /**
    * Get user profile

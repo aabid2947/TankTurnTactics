@@ -1,5 +1,4 @@
 import { createClient } from 'redis';
-
 /**
  * Redis client for caching and game data storage using Upstash Redis Cloud
  */

@@ -24,6 +24,6 @@ router.post('/:id/upgrade', validate(gameSchemas.upgrade), gameController.upgrad
 router.post('/:id/trade', validate(gameSchemas.trade), gameController.tradeActionPoints);
 
 // Game history route
-router.get('/:id/history', gameController.getGameHistory);
+// router.get('/:id/history', gameController.getGameHistory);
 
 export default router; 

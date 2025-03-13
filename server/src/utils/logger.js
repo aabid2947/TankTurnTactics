@@ -68,12 +68,13 @@ const transports = [
 ];
 
 // Create the logger
-const logger = winston.createLogger({
+ const logger = winston.createLogger({
   level: level(),
   levels,
   transports,
   exitOnError: false,
 });
+
 
 // Create a stream object for Morgan
 const stream = {
@@ -82,4 +83,4 @@ const stream = {
   },
 };
 
-export { logger, stream }; 
+export default  { logger, stream }; 

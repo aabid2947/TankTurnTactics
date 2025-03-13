@@ -1,1 +1,32 @@
-{"level":"error","message":"MongoDB connection error: connect ECONNREFUSED ::1:27017, connect ECONNREFUSED 127.0.0.1:27017","service":"tank-turn-tactics","timestamp":"2025-03-11T10:19:48.053Z"}
+{"level":"info","message":"Connected to Upstash Redis Cloud","service":"tank-turn-tactics","timestamp":"2025-03-13T07:09:30.187Z"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"tank-turn-tactics","timestamp":"2025-03-13T07:09:30.217Z"}
+{"level":"info","message":"Connected to Upstash Redis Cloud","service":"tank-turn-tactics","timestamp":"2025-03-13T07:46:39.790Z"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"tank-turn-tactics","timestamp":"2025-03-13T07:46:39.800Z"}
+{"level":"error","message":"Validation error on body: [{\"field\":\"password\",\"message\":\"Password must include at least one uppercase letter, one lowercase letter, one number, and one special character\"}]","timestamp":"2025-03-13 13:29:01:291"}
+{"level":"error","message":"Validation error on body: [{\"field\":\"password\",\"message\":\"Password must include at least one uppercase letter, one lowercase letter, one number, and one special character\"}]","timestamp":"2025-03-13 13:29:17:2917"}
+{"level":"error","message":"Validation error on body: [{\"field\":\"password\",\"message\":\"Password must include at least one uppercase letter, one lowercase letter, one number, and one special character\"}]","timestamp":"2025-03-13 13:29:20:2920"}
+{"level":"error","message":"Validation error on body: [{\"field\":\"password\",\"message\":\"Password must include at least one uppercase letter, one lowercase letter, one number, and one special character\"}]","timestamp":"2025-03-13 13:29:32:2932"}
+{"level":"debug","message":"Validation successful for body with value: {\"username\":\"Aabid\",\"email\":\"aabid@gmail.com\",\"password\":\"#Thor7860\",\"confirmPassword\":\"#Thor7860\"}","timestamp":"2025-03-13 13:29:56:2956"}
+{"level":"error","message":"Unhandled Rejection: logger.error is not a function","service":"tank-turn-tactics","timestamp":"2025-03-13T07:59:59.077Z"}
+{"level":"error","message":"TypeError: logger.error is not a function\n    at register (file:///C:/Users/aabid/Downloads/TankTurnTactics/TankTurnTactics/server/src/controllers/auth.controller.js:37:14)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)","service":"tank-turn-tactics","timestamp":"2025-03-13T07:59:59.079Z"}
+{"level":"info","message":"Connected to Upstash Redis Cloud","service":"tank-turn-tactics","timestamp":"2025-03-13T08:02:56.939Z"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"tank-turn-tactics","timestamp":"2025-03-13T08:02:56.946Z"}
+{"level":"debug","message":"Validation successful for body with value: {\"username\":\"Aabid\",\"email\":\"aabid@gmail.com\",\"password\":\"#Thor7860\",\"confirmPassword\":\"#Thor7860\"}","timestamp":"2025-03-13 13:32:58:3258"}
+{"level":"error","message":"Unhandled Rejection: logger.error is not a function","service":"tank-turn-tactics","timestamp":"2025-03-13T08:02:59.177Z"}
+{"level":"error","message":"TypeError: logger.error is not a function\n    at register (file:///C:/Users/aabid/Downloads/TankTurnTactics/TankTurnTactics/server/src/controllers/auth.controller.js:37:14)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)","service":"tank-turn-tactics","timestamp":"2025-03-13T08:02:59.178Z"}
+{"level":"info","message":"Connected to Upstash Redis Cloud","service":"tank-turn-tactics","timestamp":"2025-03-13T08:03:39.729Z"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"tank-turn-tactics","timestamp":"2025-03-13T08:03:39.738Z"}
+{"level":"info","message":"Connected to Upstash Redis Cloud","service":"tank-turn-tactics","timestamp":"2025-03-13T08:03:56.420Z"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"tank-turn-tactics","timestamp":"2025-03-13T08:03:56.431Z"}
+{"level":"debug","message":"Validation successful for body with value: {\"username\":\"Aabid\",\"email\":\"aabid@gmail.com\",\"password\":\"#Thor7860\",\"confirmPassword\":\"#Thor7860\"}","timestamp":"2025-03-13 13:34:02:342"}
+{"email":"aabid@gmail.com","level":"error","message":"Registration error: Email already in use","timestamp":"2025-03-13 13:34:02:342"}
+{"level":"debug","message":"Validation successful for body with value: {\"username\":\"Aabid\",\"email\":\"aabidhussain@gmail.com\",\"password\":\"#Thor7860\",\"confirmPassword\":\"#Thor7860\"}","timestamp":"2025-03-13 13:34:24:3424"}
+{"email":"aabidhussain@gmail.com","level":"error","message":"Registration error: Username already in use","timestamp":"2025-03-13 13:34:25:3425"}
+{"level":"debug","message":"Validation successful for body with value: {\"username\":\"Aabid321\",\"email\":\"aabidhussain@gmail.com\",\"password\":\"#Thor7860\",\"confirmPassword\":\"#Thor7860\"}","timestamp":"2025-03-13 13:34:33:3433"}
+{"email":"aabidhussain@gmail.com","level":"info","message":"User registered: Aabid321","timestamp":"2025-03-13 13:34:36:3436"}
+{"level":"debug","message":"Validation successful for body with value: {\"username\":\"Aabid321\",\"email\":\"aabidhussain@gmail.com\",\"password\":\"#Thor7860\",\"confirmPassword\":\"#Thor7860\"}","timestamp":"2025-03-13 13:38:17:3817"}
+{"email":"aabidhussain@gmail.com","level":"info","message":"User registered: Aabid321","timestamp":"2025-03-13 13:38:20:3820"}
+{"level":"info","message":"Connected to Upstash Redis Cloud","service":"tank-turn-tactics","timestamp":"2025-03-13T08:13:39.515Z"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"tank-turn-tactics","timestamp":"2025-03-13T08:13:39.522Z"}
+{"level":"debug","message":"Validation successful for body with value: {\"username\":\"Aabid\",\"email\":\"aabid@gmail.com\",\"password\":\"#Thor7860\",\"confirmPassword\":\"#Thor7860\"}","timestamp":"2025-03-13 13:53:27:5327"}
+{"email":"aabid@gmail.com","level":"info","message":"User registered: Aabid","timestamp":"2025-03-13 13:53:30:5330"}
