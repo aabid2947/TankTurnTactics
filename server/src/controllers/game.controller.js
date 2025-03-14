@@ -8,6 +8,9 @@ import loggerObj from '../utils/logger.js';
 
 const {logger} = loggerObj;
 class GameController {
+  constructor() {
+    this.createGame = this.createGame.bind(this);
+  }
   /**
    * Create a new game
    * @param {Object} req - Express request object
@@ -17,7 +20,7 @@ class GameController {
     try {
       const { name, maxPlayers, boardSize = 20 } = req.body;
       const userId = req.user.id;
-      
+     
       const game = await gameRedisService.createGame({
         name,
         maxPlayers: parseInt(maxPlayers) || 4,

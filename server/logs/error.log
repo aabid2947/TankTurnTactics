@@ -8,3 +8,12 @@
 {"level":"error","message":"TypeError: logger.error is not a function\n    at register (file:///C:/Users/aabid/Downloads/TankTurnTactics/TankTurnTactics/server/src/controllers/auth.controller.js:37:14)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)","service":"tank-turn-tactics","timestamp":"2025-03-13T08:02:59.178Z"}
 {"email":"aabid@gmail.com","level":"error","message":"Registration error: Email already in use","timestamp":"2025-03-13 13:34:02:342"}
 {"email":"aabidhussain@gmail.com","level":"error","message":"Registration error: Username already in use","timestamp":"2025-03-13 13:34:25:3425"}
+{"email":"aabid@gmail.com","level":"error","message":"Registration error: Email already in use","timestamp":"2025-03-14 06:55:59:5559"}
+{"email":"aabidhussain@gmail.com","level":"error","message":"Registration error: Email already in use","timestamp":"2025-03-14 07:06:28:628"}
+{"email":"aabidhussainpas@gmail.com","level":"error","message":"Registration error: Username already in use","timestamp":"2025-03-14 07:07:16:716"}
+{"level":"error","message":"Validation error on body: [{\"field\":\"email\",\"message\":\"Please provide a valid email address\"}]","timestamp":"2025-03-14 07:16:38:1638"}
+{"level":"error","message":"Create game error: Cannot read properties of undefined (reading 'generateInitialBoard')","timestamp":"2025-03-14 07:25:29:2529","userId":"user:1741916599177"}
+{"level":"error","message":"Create game error: Cannot read properties of undefined (reading 'generateInitialBoard')","timestamp":"2025-03-14 07:26:24:2624","userId":"user:1741916599177"}
+{"level":"error","message":"Create game error: Cannot read properties of undefined (reading 'generateInitialBoard')","timestamp":"2025-03-14 07:28:55:2855","userId":"user:1741916599177"}
+{"level":"error","message":"Create game error: generateInitialBoard is not defined","timestamp":"2025-03-14 07:29:21:2921","userId":"user:1741916599177"}
+{"level":"error","message":"Create game error: Cannot read properties of undefined (reading 'generateInitialBoard')","timestamp":"2025-03-14 07:34:18:3418","userId":"user:1741916599177"}
