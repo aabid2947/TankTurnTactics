@@ -17,3 +17,70 @@
 {"level":"error","message":"Create game error: Cannot read properties of undefined (reading 'generateInitialBoard')","timestamp":"2025-03-14 07:28:55:2855","userId":"user:1741916599177"}
 {"level":"error","message":"Create game error: generateInitialBoard is not defined","timestamp":"2025-03-14 07:29:21:2921","userId":"user:1741916599177"}
 {"level":"error","message":"Create game error: Cannot read properties of undefined (reading 'generateInitialBoard')","timestamp":"2025-03-14 07:34:18:3418","userId":"user:1741916599177"}
+{"level":"error","message":"Validation error on body: [{\"field\":\"password\",\"message\":\"Password must include at least one uppercase letter, one lowercase letter, one number, and one special character\"}]","timestamp":"2025-03-14 22:20:36:2036"}
+{"level":"error","message":"Validation error on body: [{\"field\":\"confirmPassword\",\"message\":\"Passwords do not match\"}]","timestamp":"2025-03-14 22:21:03:213"}
+{"level":"error","message":"Validation error on body: [{\"field\":\"confirmPassword\",\"message\":\"Passwords do not match\"}]","timestamp":"2025-03-14 22:21:17:2117"}
+{"level":"error","message":"Validation error on body: [{\"field\":\"confirmPassword\",\"message\":\"Passwords do not match\"}]","timestamp":"2025-03-14 22:21:21:2121"}
+{"level":"error","message":"Validation error on body: [{\"field\":\"confirmPassword\",\"message\":\"Passwords do not match\"}]","timestamp":"2025-03-14 22:21:42:2142"}
+{"email":"aabidhussainpas@gmail.com","level":"error","message":"Registration error: Email already in use","timestamp":"2025-03-14 22:22:52:2252"}
+{"email":"aabidhussainpas@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-14 22:32:32:3232"}
+{"level":"error","message":"Validation error on body: [{\"field\":\"password\",\"message\":\"Password must include at least one uppercase letter, one lowercase letter, one number, and one special character\"},{\"field\":\"confirmPassword\",\"message\":\"Passwords do not match\"}]","timestamp":"2025-03-15 05:54:52:5452"}
+{"level":"error","message":"Validation error on body: [{\"field\":\"password\",\"message\":\"Password must include at least one uppercase letter, one lowercase letter, one number, and one special character\"},{\"field\":\"confirmPassword\",\"message\":\"Passwords do not match\"}]","timestamp":"2025-03-15 05:55:27:5527"}
+{"level":"error","message":"Validation error on body: [{\"field\":\"password\",\"message\":\"Password must include at least one uppercase letter, one lowercase letter, one number, and one special character\"},{\"field\":\"confirmPassword\",\"message\":\"Passwords do not match\"}]","timestamp":"2025-03-15 05:55:42:5542"}
+{"level":"error","message":"Validation error on body: [{\"field\":\"password\",\"message\":\"Password must include at least one uppercase letter, one lowercase letter, one number, and one special character\"},{\"field\":\"confirmPassword\",\"message\":\"Passwords do not match\"}]","timestamp":"2025-03-15 05:56:06:566"}
+{"level":"error","message":"Validation error on body: [{\"field\":\"confirmPassword\",\"message\":\"Passwords do not match\"}]","timestamp":"2025-03-15 05:56:20:5620"}
+{"email":"A@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 06:01:25:125"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 06:01:37:137"}
+{"email":"uisgodf@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 06:02:32:232"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 06:03:51:351"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 06:05:47:547"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 06:07:18:718"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 06:10:32:1032"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 06:11:06:116"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 06:12:59:1259"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 06:14:31:1431"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 06:15:06:156"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 06:16:11:1611"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 06:17:17:1717"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 06:19:09:199"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 06:19:25:1925"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 06:23:52:2352"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 06:25:15:2515"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 06:26:29:2629"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 06:28:36:2836"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 06:28:58:2858"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 06:29:24:2924"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 06:29:41:2941"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 06:30:14:3014"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 06:30:29:3029"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 06:35:54:3554"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 06:40:06:406"}
+{"level":"error","message":"Validation error on body: [{\"field\":\"password\",\"message\":\"Password must be at least 8 characters long\"},{\"field\":\"password\",\"message\":\"Password must include at least one uppercase letter, one lowercase letter, one number, and one special character\"},{\"field\":\"confirmPassword\",\"message\":\"Passwords do not match\"}]","timestamp":"2025-03-15 06:45:42:4542"}
+{"level":"error","message":"Validation error on body: [{\"field\":\"password\",\"message\":\"Password must be at least 8 characters long\"},{\"field\":\"password\",\"message\":\"Password must include at least one uppercase letter, one lowercase letter, one number, and one special character\"},{\"field\":\"confirmPassword\",\"message\":\"Passwords do not match\"}]","timestamp":"2025-03-15 06:45:43:4543"}
+{"level":"error","message":"Validation error on body: [{\"field\":\"password\",\"message\":\"Password must be at least 8 characters long\"},{\"field\":\"password\",\"message\":\"Password must include at least one uppercase letter, one lowercase letter, one number, and one special character\"},{\"field\":\"confirmPassword\",\"message\":\"Passwords do not match\"}]","timestamp":"2025-03-15 06:45:45:4545"}
+{"level":"error","message":"Validation error on body: [{\"field\":\"password\",\"message\":\"Password must be at least 8 characters long\"},{\"field\":\"password\",\"message\":\"Password must include at least one uppercase letter, one lowercase letter, one number, and one special character\"},{\"field\":\"confirmPassword\",\"message\":\"Passwords do not match\"}]","timestamp":"2025-03-15 06:45:46:4546"}
+{"level":"error","message":"Validation error on body: [{\"field\":\"password\",\"message\":\"Password must include at least one uppercase letter, one lowercase letter, one number, and one special character\"},{\"field\":\"confirmPassword\",\"message\":\"Passwords do not match\"}]","timestamp":"2025-03-15 06:46:33:4633"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 06:47:41:4741"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 06:48:04:484"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 07:02:20:220"}
+{"level":"error","message":"Validation error on body: [{\"field\":\"password\",\"message\":\"\\\"password\\\" is not allowed to be empty\"}]","timestamp":"2025-03-15 07:03:10:310"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 07:03:16:316"}
+{"level":"error","message":"Validation error on body: [{\"field\":\"password\",\"message\":\"\\\"password\\\" is not allowed to be empty\"}]","timestamp":"2025-03-15 07:03:31:331"}
+{"level":"error","message":"Validation error on body: [{\"field\":\"password\",\"message\":\"\\\"password\\\" is not allowed to be empty\"}]","timestamp":"2025-03-15 07:04:10:410"}
+{"level":"error","message":"Validation error on body: [{\"field\":\"password\",\"message\":\"\\\"password\\\" is not allowed to be empty\"}]","timestamp":"2025-03-15 07:04:29:429"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 07:05:09:59"}
+{"level":"error","message":"Validation error on body: [{\"field\":\"password\",\"message\":\"\\\"password\\\" is not allowed to be empty\"}]","timestamp":"2025-03-15 07:05:31:531"}
+{"level":"error","message":"Validation error on body: [{\"field\":\"password\",\"message\":\"\\\"password\\\" is not allowed to be empty\"}]","timestamp":"2025-03-15 07:05:37:537"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 07:05:43:543"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 07:05:44:544"}
+{"level":"error","message":"Validation error on body: [{\"field\":\"password\",\"message\":\"\\\"password\\\" is not allowed to be empty\"}]","timestamp":"2025-03-15 07:06:49:649"}
+{"level":"error","message":"Validation error on body: [{\"field\":\"email\",\"message\":\"\\\"email\\\" is not allowed to be empty\"},{\"field\":\"password\",\"message\":\"\\\"password\\\" is not allowed to be empty\"}]","timestamp":"2025-03-15 07:07:09:79"}
+{"level":"error","message":"Validation error on body: [{\"field\":\"email\",\"message\":\"\\\"email\\\" is not allowed to be empty\"},{\"field\":\"password\",\"message\":\"\\\"password\\\" is not allowed to be empty\"}]","timestamp":"2025-03-15 07:07:25:725"}
+{"level":"error","message":"Validation error on body: [{\"field\":\"email\",\"message\":\"\\\"email\\\" is not allowed to be empty\"},{\"field\":\"password\",\"message\":\"\\\"password\\\" is not allowed to be empty\"}]","timestamp":"2025-03-15 07:07:35:735"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 07:08:55:855"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 07:09:53:953"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 07:10:33:1033"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 07:11:30:1130"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 07:12:44:1244"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 07:18:56:1856"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 07:19:53:1953"}

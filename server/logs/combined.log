@@ -80,3 +80,140 @@
 {"email":"aabid29472@gmail.com","level":"info","message":"User logged in: aabid29472","timestamp":"2025-03-14 07:45:15:4515"}
 {"gameId":"game:1741917924244","level":"info","message":"Player joined game: game:1741917924244","timestamp":"2025-03-14 07:48:11:4811","userId":"user:1741918498547"}
 {"gameId":"game:1741917924244","level":"info","message":"Game started: game:1741917924244","timestamp":"2025-03-14 07:49:30:4930","userId":"user:1741916599177"}
+{"level":"info","message":"Connected to Upstash Redis Cloud","service":"tank-turn-tactics","timestamp":"2025-03-14T16:48:19.010Z"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"tank-turn-tactics","timestamp":"2025-03-14T16:48:19.023Z"}
+{"level":"error","message":"Validation error on body: [{\"field\":\"password\",\"message\":\"Password must include at least one uppercase letter, one lowercase letter, one number, and one special character\"}]","timestamp":"2025-03-14 22:20:36:2036"}
+{"level":"error","message":"Validation error on body: [{\"field\":\"confirmPassword\",\"message\":\"Passwords do not match\"}]","timestamp":"2025-03-14 22:21:03:213"}
+{"level":"error","message":"Validation error on body: [{\"field\":\"confirmPassword\",\"message\":\"Passwords do not match\"}]","timestamp":"2025-03-14 22:21:17:2117"}
+{"level":"error","message":"Validation error on body: [{\"field\":\"confirmPassword\",\"message\":\"Passwords do not match\"}]","timestamp":"2025-03-14 22:21:21:2121"}
+{"level":"error","message":"Validation error on body: [{\"field\":\"confirmPassword\",\"message\":\"Passwords do not match\"}]","timestamp":"2025-03-14 22:21:42:2142"}
+{"level":"debug","message":"Validation successful for body with value: {\"username\":\"Md Aabid Hussain\",\"email\":\"aabidhussainpas@gmail.com\",\"password\":\"#Thor7860.\",\"confirmPassword\":\"#Thor7860.\"}","timestamp":"2025-03-14 22:22:52:2252"}
+{"email":"aabidhussainpas@gmail.com","level":"error","message":"Registration error: Email already in use","timestamp":"2025-03-14 22:22:52:2252"}
+{"level":"debug","message":"Validation successful for body with value: {\"username\":\"Md Aabid Hussain\",\"email\":\"aabidhussainjmi@gmail.com\",\"password\":\"#Thor7860.\",\"confirmPassword\":\"#Thor7860.\"}","timestamp":"2025-03-14 22:22:59:2259"}
+{"email":"aabidhussainjmi@gmail.com","level":"info","message":"User registered: Md Aabid Hussain","timestamp":"2025-03-14 22:23:02:232"}
+{"level":"debug","message":"Validation successful for body with value: {\"username\":\"aadil\",\"email\":\"aadilhussainpas@gmail.com\",\"password\":\"#Thor7860.\",\"confirmPassword\":\"#Thor7860.\"}","timestamp":"2025-03-14 22:29:28:2928"}
+{"email":"aadilhussainpas@gmail.com","level":"info","message":"User registered: aadil","timestamp":"2025-03-14 22:29:30:2930"}
+{"level":"debug","message":"Validation successful for body with value: {\"email\":\"aadilhussainpas@gmail.com\",\"password\":\"#Thor7860.\"}","timestamp":"2025-03-14 22:30:17:3017"}
+{"email":"aadilhussainpas@gmail.com","level":"info","message":"User logged in: aadil","timestamp":"2025-03-14 22:30:18:3018"}
+{"level":"debug","message":"Validation successful for body with value: {\"email\":\"aadilhussainpas@gmail.com\",\"password\":\"#Thor7860.\"}","timestamp":"2025-03-14 22:31:24:3124"}
+{"email":"aadilhussainpas@gmail.com","level":"info","message":"User logged in: aadil","timestamp":"2025-03-14 22:31:25:3125"}
+{"level":"debug","message":"Validation successful for body with value: {\"email\":\"aabidhussainpas@gmail.com\",\"password\":\"#Thor7860.\"}","timestamp":"2025-03-14 22:32:31:3231"}
+{"email":"aabidhussainpas@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-14 22:32:32:3232"}
+{"level":"debug","message":"Validation successful for body with value: {\"email\":\"aadilhussainpas@gmail.com\",\"password\":\"#Thor7860.\"}","timestamp":"2025-03-14 22:32:55:3255"}
+{"email":"aadilhussainpas@gmail.com","level":"info","message":"User logged in: aadil","timestamp":"2025-03-14 22:32:56:3256"}
+{"level":"debug","message":"Validation successful for body with value: {\"email\":\"aadilhussainpas@gmail.com\",\"password\":\"#Thor7860.\"}","timestamp":"2025-03-14 22:33:21:3321"}
+{"email":"aadilhussainpas@gmail.com","level":"info","message":"User logged in: aadil","timestamp":"2025-03-14 22:33:22:3322"}
+{"level":"debug","message":"Validation successful for body with value: {\"email\":\"aadilhussainpas@gmail.com\",\"password\":\"#Thor7860.\"}","timestamp":"2025-03-14 22:37:06:376"}
+{"email":"aadilhussainpas@gmail.com","level":"info","message":"User logged in: aadil","timestamp":"2025-03-14 22:37:07:377"}
+{"level":"debug","message":"Validation successful for body with value: {\"email\":\"aadilhussainpas@gmail.com\",\"password\":\"#Thor7860.\"}","timestamp":"2025-03-14 22:40:08:408"}
+{"email":"aadilhussainpas@gmail.com","level":"info","message":"User logged in: aadil","timestamp":"2025-03-14 22:40:09:409"}
+{"level":"debug","message":"Validation successful for body with value: {\"email\":\"aadilhussainpas@gmail.com\",\"password\":\"#Thor7860.\"}","timestamp":"2025-03-14 22:41:19:4119"}
+{"level":"debug","message":"Validation successful for body with value: {\"email\":\"aadilhussainpas@gmail.com\",\"password\":\"#Thor7860.\"}","timestamp":"2025-03-14 22:41:20:4120"}
+{"email":"aadilhussainpas@gmail.com","level":"info","message":"User logged in: aadil","timestamp":"2025-03-14 22:41:20:4120"}
+{"email":"aadilhussainpas@gmail.com","level":"info","message":"User logged in: aadil","timestamp":"2025-03-14 22:41:21:4121"}
+{"level":"debug","message":"Validation successful for body with value: {\"email\":\"aadilhussainpas@gmail.com\",\"password\":\"#Thor7860.\"}","timestamp":"2025-03-14 22:43:16:4316"}
+{"email":"aadilhussainpas@gmail.com","level":"info","message":"User logged in: aadil","timestamp":"2025-03-14 22:43:17:4317"}
+{"level":"debug","message":"Validation successful for body with value: {\"username\":\"Hammad\",\"email\":\"hammad@gmail.com\",\"password\":\"#Thor7860.\",\"confirmPassword\":\"#Thor7860.\"}","timestamp":"2025-03-14 22:44:27:4427"}
+{"email":"hammad@gmail.com","level":"info","message":"User registered: Hammad","timestamp":"2025-03-14 22:44:29:4429"}
+{"level":"info","message":"Connected to Upstash Redis Cloud","service":"tank-turn-tactics","timestamp":"2025-03-15T00:24:37.316Z"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"tank-turn-tactics","timestamp":"2025-03-15T00:24:37.331Z"}
+{"level":"error","message":"Validation error on body: [{\"field\":\"password\",\"message\":\"Password must include at least one uppercase letter, one lowercase letter, one number, and one special character\"},{\"field\":\"confirmPassword\",\"message\":\"Passwords do not match\"}]","timestamp":"2025-03-15 05:54:52:5452"}
+{"level":"error","message":"Validation error on body: [{\"field\":\"password\",\"message\":\"Password must include at least one uppercase letter, one lowercase letter, one number, and one special character\"},{\"field\":\"confirmPassword\",\"message\":\"Passwords do not match\"}]","timestamp":"2025-03-15 05:55:27:5527"}
+{"level":"error","message":"Validation error on body: [{\"field\":\"password\",\"message\":\"Password must include at least one uppercase letter, one lowercase letter, one number, and one special character\"},{\"field\":\"confirmPassword\",\"message\":\"Passwords do not match\"}]","timestamp":"2025-03-15 05:55:42:5542"}
+{"level":"error","message":"Validation error on body: [{\"field\":\"password\",\"message\":\"Password must include at least one uppercase letter, one lowercase letter, one number, and one special character\"},{\"field\":\"confirmPassword\",\"message\":\"Passwords do not match\"}]","timestamp":"2025-03-15 05:56:06:566"}
+{"level":"error","message":"Validation error on body: [{\"field\":\"confirmPassword\",\"message\":\"Passwords do not match\"}]","timestamp":"2025-03-15 05:56:20:5620"}
+{"level":"debug","message":"Validation successful for body with value: {\"email\":\"A@gmail.com\",\"password\":\"jdjdjdjjd\"}","timestamp":"2025-03-15 06:01:24:124"}
+{"email":"A@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 06:01:25:125"}
+{"level":"debug","message":"Validation successful for body with value: {\"email\":\"a@gmail.com\",\"password\":\"djdaljdfa\"}","timestamp":"2025-03-15 06:01:36:136"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 06:01:37:137"}
+{"level":"debug","message":"Validation successful for body with value: {\"email\":\"uisgodf@gmail.com\",\"password\":\"dahfds\"}","timestamp":"2025-03-15 06:02:32:232"}
+{"email":"uisgodf@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 06:02:32:232"}
+{"level":"debug","message":"Validation successful for body with value: {\"email\":\"a@gmail.com\",\"password\":\"thiaijfd\"}","timestamp":"2025-03-15 06:03:50:350"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 06:03:51:351"}
+{"level":"debug","message":"Validation successful for body with value: {\"email\":\"a@gmail.com\",\"password\":\"iyhbkjn\"}","timestamp":"2025-03-15 06:05:47:547"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 06:05:47:547"}
+{"level":"debug","message":"Validation successful for body with value: {\"email\":\"a@gmail.com\",\"password\":\"regdfsfgd\"}","timestamp":"2025-03-15 06:07:18:718"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 06:07:18:718"}
+{"level":"debug","message":"Validation successful for body with value: {\"email\":\"a@gmail.com\",\"password\":\"agdasdfsad\"}","timestamp":"2025-03-15 06:10:31:1031"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 06:10:32:1032"}
+{"level":"debug","message":"Validation successful for body with value: {\"email\":\"a@gmail.com\",\"password\":\"thor8903\"}","timestamp":"2025-03-15 06:11:06:116"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 06:11:06:116"}
+{"level":"debug","message":"Validation successful for body with value: {\"email\":\"a@gmail.com\",\"password\":\"fgeerger\"}","timestamp":"2025-03-15 06:12:59:1259"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 06:12:59:1259"}
+{"level":"debug","message":"Validation successful for body with value: {\"email\":\"a@gmail.com\",\"password\":\"ohiuyhbj\"}","timestamp":"2025-03-15 06:14:31:1431"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 06:14:31:1431"}
+{"level":"debug","message":"Validation successful for body with value: {\"email\":\"a@gmail.com\",\"password\":\"54rtf\"}","timestamp":"2025-03-15 06:15:05:155"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 06:15:06:156"}
+{"level":"debug","message":"Validation successful for body with value: {\"email\":\"a@gmail.com\",\"password\":\"4f4e4f\"}","timestamp":"2025-03-15 06:16:11:1611"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 06:16:11:1611"}
+{"level":"debug","message":"Validation successful for body with value: {\"email\":\"a@gmail.com\",\"password\":\"44r43\"}","timestamp":"2025-03-15 06:17:17:1717"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 06:17:17:1717"}
+{"level":"debug","message":"Validation successful for body with value: {\"email\":\"a@gmail.com\",\"password\":\"5tggwetrt\"}","timestamp":"2025-03-15 06:19:08:198"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 06:19:09:199"}
+{"level":"debug","message":"Validation successful for body with value: {\"email\":\"a@gmail.com\",\"password\":\"5345tg5rg\"}","timestamp":"2025-03-15 06:19:24:1924"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 06:19:25:1925"}
+{"level":"debug","message":"Validation successful for body with value: {\"email\":\"a@gmail.com\",\"password\":\"5tr4trgf\"}","timestamp":"2025-03-15 06:23:52:2352"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 06:23:52:2352"}
+{"level":"debug","message":"Validation successful for body with value: {\"email\":\"a@gmail.com\",\"password\":\"54er5tgre\"}","timestamp":"2025-03-15 06:25:15:2515"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 06:25:15:2515"}
+{"level":"debug","message":"Validation successful for body with value: {\"email\":\"a@gmail.com\",\"password\":\"reredfegr\"}","timestamp":"2025-03-15 06:26:28:2628"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 06:26:29:2629"}
+{"level":"debug","message":"Validation successful for body with value: {\"email\":\"a@gmail.com\",\"password\":\"43redff\"}","timestamp":"2025-03-15 06:28:36:2836"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 06:28:36:2836"}
+{"level":"debug","message":"Validation successful for body with value: {\"email\":\"a@gmail.com\",\"password\":\"43rerre\"}","timestamp":"2025-03-15 06:28:58:2858"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 06:28:58:2858"}
+{"level":"debug","message":"Validation successful for body with value: {\"email\":\"a@gmail.com\",\"password\":\"32weffsads\"}","timestamp":"2025-03-15 06:29:24:2924"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 06:29:24:2924"}
+{"level":"debug","message":"Validation successful for body with value: {\"email\":\"a@gmail.com\",\"password\":\"43twfar\"}","timestamp":"2025-03-15 06:29:41:2941"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 06:29:41:2941"}
+{"level":"debug","message":"Validation successful for body with value: {\"email\":\"a@gmail.com\",\"password\":\"5r4egdrea\"}","timestamp":"2025-03-15 06:30:14:3014"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 06:30:14:3014"}
+{"level":"debug","message":"Validation successful for body with value: {\"email\":\"a@gmail.com\",\"password\":\"redfdfdfsa\"}","timestamp":"2025-03-15 06:30:29:3029"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 06:30:29:3029"}
+{"level":"debug","message":"Validation successful for body with value: {\"email\":\"a@gmail.com\",\"password\":\"4rragdad\"}","timestamp":"2025-03-15 06:35:54:3554"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 06:35:54:3554"}
+{"level":"debug","message":"Validation successful for body with value: {\"email\":\"a@gmail.com\",\"password\":\"43gagdfg\"}","timestamp":"2025-03-15 06:40:06:406"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 06:40:06:406"}
+{"level":"error","message":"Validation error on body: [{\"field\":\"password\",\"message\":\"Password must be at least 8 characters long\"},{\"field\":\"password\",\"message\":\"Password must include at least one uppercase letter, one lowercase letter, one number, and one special character\"},{\"field\":\"confirmPassword\",\"message\":\"Passwords do not match\"}]","timestamp":"2025-03-15 06:45:42:4542"}
+{"level":"error","message":"Validation error on body: [{\"field\":\"password\",\"message\":\"Password must be at least 8 characters long\"},{\"field\":\"password\",\"message\":\"Password must include at least one uppercase letter, one lowercase letter, one number, and one special character\"},{\"field\":\"confirmPassword\",\"message\":\"Passwords do not match\"}]","timestamp":"2025-03-15 06:45:43:4543"}
+{"level":"error","message":"Validation error on body: [{\"field\":\"password\",\"message\":\"Password must be at least 8 characters long\"},{\"field\":\"password\",\"message\":\"Password must include at least one uppercase letter, one lowercase letter, one number, and one special character\"},{\"field\":\"confirmPassword\",\"message\":\"Passwords do not match\"}]","timestamp":"2025-03-15 06:45:45:4545"}
+{"level":"error","message":"Validation error on body: [{\"field\":\"password\",\"message\":\"Password must be at least 8 characters long\"},{\"field\":\"password\",\"message\":\"Password must include at least one uppercase letter, one lowercase letter, one number, and one special character\"},{\"field\":\"confirmPassword\",\"message\":\"Passwords do not match\"}]","timestamp":"2025-03-15 06:45:46:4546"}
+{"level":"error","message":"Validation error on body: [{\"field\":\"password\",\"message\":\"Password must include at least one uppercase letter, one lowercase letter, one number, and one special character\"},{\"field\":\"confirmPassword\",\"message\":\"Passwords do not match\"}]","timestamp":"2025-03-15 06:46:33:4633"}
+{"level":"debug","message":"Validation successful for body with value: {\"email\":\"a@gmail.com\",\"password\":\"iubkjuojk\"}","timestamp":"2025-03-15 06:47:41:4741"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 06:47:41:4741"}
+{"level":"debug","message":"Validation successful for body with value: {\"email\":\"a@gmail.com\",\"password\":\"uh8yohlij\"}","timestamp":"2025-03-15 06:48:04:484"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 06:48:04:484"}
+{"level":"debug","message":"Validation successful for body with value: {\"email\":\"a@gmail.com\",\"password\":\"43refdwr\"}","timestamp":"2025-03-15 07:02:19:219"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 07:02:20:220"}
+{"level":"error","message":"Validation error on body: [{\"field\":\"password\",\"message\":\"\\\"password\\\" is not allowed to be empty\"}]","timestamp":"2025-03-15 07:03:10:310"}
+{"level":"debug","message":"Validation successful for body with value: {\"email\":\"a@gmail.com\",\"password\":\"87yubbihiu\"}","timestamp":"2025-03-15 07:03:15:315"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 07:03:16:316"}
+{"level":"error","message":"Validation error on body: [{\"field\":\"password\",\"message\":\"\\\"password\\\" is not allowed to be empty\"}]","timestamp":"2025-03-15 07:03:31:331"}
+{"level":"error","message":"Validation error on body: [{\"field\":\"password\",\"message\":\"\\\"password\\\" is not allowed to be empty\"}]","timestamp":"2025-03-15 07:04:10:410"}
+{"level":"error","message":"Validation error on body: [{\"field\":\"password\",\"message\":\"\\\"password\\\" is not allowed to be empty\"}]","timestamp":"2025-03-15 07:04:29:429"}
+{"level":"debug","message":"Validation successful for body with value: {\"email\":\"a@gmail.com\",\"password\":\"4rggrgaer\"}","timestamp":"2025-03-15 07:05:09:59"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 07:05:09:59"}
+{"level":"error","message":"Validation error on body: [{\"field\":\"password\",\"message\":\"\\\"password\\\" is not allowed to be empty\"}]","timestamp":"2025-03-15 07:05:32:532"}
+{"level":"error","message":"Validation error on body: [{\"field\":\"password\",\"message\":\"\\\"password\\\" is not allowed to be empty\"}]","timestamp":"2025-03-15 07:05:37:537"}
+{"level":"debug","message":"Validation successful for body with value: {\"email\":\"a@gmail.com\",\"password\":\"43efdsadfasd\"}","timestamp":"2025-03-15 07:05:43:543"}
+{"level":"debug","message":"Validation successful for body with value: {\"email\":\"a@gmail.com\",\"password\":\"43efdsadfasd\"}","timestamp":"2025-03-15 07:05:43:543"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 07:05:43:543"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 07:05:44:544"}
+{"level":"error","message":"Validation error on body: [{\"field\":\"password\",\"message\":\"\\\"password\\\" is not allowed to be empty\"}]","timestamp":"2025-03-15 07:06:49:649"}
+{"level":"error","message":"Validation error on body: [{\"field\":\"email\",\"message\":\"\\\"email\\\" is not allowed to be empty\"},{\"field\":\"password\",\"message\":\"\\\"password\\\" is not allowed to be empty\"}]","timestamp":"2025-03-15 07:07:09:79"}
+{"level":"error","message":"Validation error on body: [{\"field\":\"email\",\"message\":\"\\\"email\\\" is not allowed to be empty\"},{\"field\":\"password\",\"message\":\"\\\"password\\\" is not allowed to be empty\"}]","timestamp":"2025-03-15 07:07:25:725"}
+{"level":"error","message":"Validation error on body: [{\"field\":\"email\",\"message\":\"\\\"email\\\" is not allowed to be empty\"},{\"field\":\"password\",\"message\":\"\\\"password\\\" is not allowed to be empty\"}]","timestamp":"2025-03-15 07:07:35:735"}
+{"level":"debug","message":"Validation successful for body with value: {\"email\":\"a@gmail.com\",\"password\":\"a@gmail.com\"}","timestamp":"2025-03-15 07:08:55:855"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 07:08:55:855"}
+{"level":"debug","message":"Validation successful for body with value: {\"email\":\"a@gmail.com\",\"password\":\"a@gmail.com\"}","timestamp":"2025-03-15 07:09:53:953"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 07:09:53:953"}
+{"level":"debug","message":"Validation successful for body with value: {\"email\":\"a@gmail.com\",\"password\":\"9hu89iuonjk\"}","timestamp":"2025-03-15 07:10:33:1033"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 07:10:33:1033"}
+{"level":"debug","message":"Validation successful for body with value: {\"email\":\"a@gmail.com\",\"password\":\"5gresgreg\"}","timestamp":"2025-03-15 07:11:30:1130"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 07:11:30:1130"}
+{"level":"debug","message":"Validation successful for body with value: {\"email\":\"a@gmail.com\",\"password\":\"ergsdfdfa\"}","timestamp":"2025-03-15 07:12:43:1243"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 07:12:44:1244"}
+{"level":"debug","message":"Validation successful for body with value: {\"email\":\"a@gmail.com\",\"password\":\"34effd\"}","timestamp":"2025-03-15 07:18:56:1856"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 07:18:56:1856"}
+{"level":"debug","message":"Validation successful for body with value: {\"email\":\"a@gmail.com\",\"password\":\"regffgfgd\"}","timestamp":"2025-03-15 07:19:53:1953"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 07:19:53:1953"}
