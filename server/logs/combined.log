@@ -217,3 +217,33 @@
 {"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 07:18:56:1856"}
 {"level":"debug","message":"Validation successful for body with value: {\"email\":\"a@gmail.com\",\"password\":\"regffgfgd\"}","timestamp":"2025-03-15 07:19:53:1953"}
 {"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 07:19:53:1953"}
+{"level":"info","message":"Connected to Upstash Redis Cloud","service":"tank-turn-tactics","timestamp":"2025-03-15T08:54:22.945Z"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"tank-turn-tactics","timestamp":"2025-03-15T08:54:22.955Z"}
+{"level":"debug","message":"Validation successful for body with value: {\"email\":\"a@gmail.com\",\"password\":\"4yghbkf\"}","timestamp":"2025-03-15 14:24:45:2445"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 14:24:45:2445"}
+{"level":"debug","message":"Validation successful for body with value: {\"email\":\"a@gmail.com\",\"password\":\"jkmgfvdg\"}","timestamp":"2025-03-15 14:27:05:275"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 14:27:05:275"}
+{"level":"debug","message":"Validation successful for body with value: {\"email\":\"a@gmail.com\",\"password\":\"a@gmail.com\"}","timestamp":"2025-03-15 14:27:51:2751"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 14:27:51:2751"}
+{"level":"debug","message":"Validation successful for body with value: {\"email\":\"a@gmail.com\",\"password\":\"a@gmail.com\"}","timestamp":"2025-03-15 14:28:23:2823"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 14:28:24:2824"}
+{"level":"debug","message":"Validation successful for body with value: {\"email\":\"a@gmail.com\",\"password\":\"a@gmail.com\"}","timestamp":"2025-03-15 14:28:31:2831"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 14:28:31:2831"}
+{"level":"debug","message":"Validation successful for body with value: {\"email\":\"a@gmail.com\",\"password\":\"43tewrsgf\"}","timestamp":"2025-03-15 14:31:27:3127"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 14:31:27:3127"}
+{"level":"debug","message":"Validation successful for body with value: {\"email\":\"a@gmail.com\",\"password\":\"y948ewkjrds\"}","timestamp":"2025-03-15 14:43:05:435"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 14:43:05:435"}
+{"level":"debug","message":"Validation successful for body with value: {\"email\":\"a@gmail.com\",\"password\":\"94yhuerjd\"}","timestamp":"2025-03-15 15:08:12:812"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 15:08:13:813"}
+{"level":"debug","message":"Validation successful for body with value: {\"email\":\"a@gmail.com\",\"password\":\"a@gmail.com\"}","timestamp":"2025-03-15 15:08:39:839"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 15:08:40:840"}
+{"level":"debug","message":"Validation successful for body with value: {\"email\":\"a@gmail.com\",\"password\":\"a@gmail.com\"}","timestamp":"2025-03-15 15:09:28:928"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 15:09:29:929"}
+{"level":"debug","message":"Validation successful for body with value: {\"email\":\"a@gmail.com\",\"password\":\"56ghghtrd\"}","timestamp":"2025-03-15 15:21:53:2153"}
+{"email":"a@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 15:21:53:2153"}
+{"level":"debug","message":"Validation successful for body with value: {\"email\":\"aabidhussainpas@gmail.com\",\"password\":\"#Thor7860.\"}","timestamp":"2025-03-15 15:23:05:235"}
+{"email":"aabidhussainpas@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-15 15:23:06:236"}
+{"level":"debug","message":"Validation successful for body with value: {\"email\":\"aadilhussainpas@gmail.com\",\"password\":\"#Thor7860.\"}","timestamp":"2025-03-15 15:23:27:2327"}
+{"email":"aadilhussainpas@gmail.com","level":"info","message":"User logged in: aadil","timestamp":"2025-03-15 15:23:28:2328"}
+{"level":"debug","message":"Validation successful for body with value: {\"email\":\"aadilhussainpas@gmail.com\",\"password\":\"#Thor7860.\"}","timestamp":"2025-03-15 15:30:52:3052"}
+{"email":"aadilhussainpas@gmail.com","level":"info","message":"User logged in: aadil","timestamp":"2025-03-15 15:30:53:3053"}
