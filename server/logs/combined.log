@@ -247,3 +247,21 @@
 {"email":"aadilhussainpas@gmail.com","level":"info","message":"User logged in: aadil","timestamp":"2025-03-15 15:23:28:2328"}
 {"level":"debug","message":"Validation successful for body with value: {\"email\":\"aadilhussainpas@gmail.com\",\"password\":\"#Thor7860.\"}","timestamp":"2025-03-15 15:30:52:3052"}
 {"email":"aadilhussainpas@gmail.com","level":"info","message":"User logged in: aadil","timestamp":"2025-03-15 15:30:53:3053"}
+{"level":"info","message":"Connected to Upstash Redis Cloud","service":"tank-turn-tactics","timestamp":"2025-03-16T13:54:31.741Z"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"tank-turn-tactics","timestamp":"2025-03-16T13:54:31.753Z"}
+{"level":"debug","message":"Validation successful for body with value: {\"email\":\"Alpha@gmail.com\",\"password\":\"Alpha@123\"}","timestamp":"2025-03-16 19:36:03:363"}
+{"email":"Alpha@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-16 19:36:05:365"}
+{"level":"info","message":"Connected to Upstash Redis Cloud","service":"tank-turn-tactics","timestamp":"2025-03-16T14:32:29.476Z"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"tank-turn-tactics","timestamp":"2025-03-16T14:32:29.483Z"}
+{"level":"debug","message":"Validation successful for body with value: {\"email\":\"Alpha@gmail.com\",\"password\":\"Alpha@123\"}","timestamp":"2025-03-16 20:02:41:241"}
+{"email":"Alpha@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-16 20:02:42:242"}
+{"level":"debug","message":"Validation successful for body with value: {\"email\":\"Alpha@gmail.com\",\"password\":\"Alpha@123\"}","timestamp":"2025-03-16 20:02:45:245"}
+{"email":"Alpha@gmail.com","level":"error","message":"Login error: Invalid email or password","timestamp":"2025-03-16 20:02:46:246"}
+{"level":"debug","message":"Validation successful for body with value: {\"email\":\"Alpha@gmail.com\",\"password\":\"#Thor7860.\"}","timestamp":"2025-03-16 20:03:33:333"}
+{"email":"Alpha@gmail.com","level":"info","message":"User logged in: Bushra","timestamp":"2025-03-16 20:03:34:334"}
+{"level":"info","message":"Connected to Upstash Redis Cloud","service":"tank-turn-tactics","timestamp":"2025-03-16T15:01:54.225Z"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"tank-turn-tactics","timestamp":"2025-03-16T15:01:54.234Z"}
+{"level":"debug","message":"Validation successful for body with value: {\"email\":\"Alpha@gmail.com\",\"password\":\"#Thor7860.\"}","timestamp":"2025-03-16 20:32:28:3228"}
+{"email":"Alpha@gmail.com","level":"info","message":"User logged in: Bushra","timestamp":"2025-03-16 20:32:30:3230"}
+{"level":"info","message":"Connected to Upstash Redis Cloud","service":"tank-turn-tactics","timestamp":"2025-03-16T15:08:46.311Z"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"tank-turn-tactics","timestamp":"2025-03-16T15:08:46.319Z"}

@@ -6,6 +6,8 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import { Register } from './pages/auth/Register.jsx';
 import Login from './pages/auth/Login.jsx'
 import { Game } from './pages/game/Game.jsx';
+import GamePage from './pages/game/GamePage.jsx'
+
 
 function PrivateRoute({ children }) {
   const { isAuthenticated } = useAuth();
@@ -43,6 +45,12 @@ function App() {
               element={
                 <PrivateRoute>
                   <Game />
+                </PrivateRoute>
+              } />
+            <Route path='/main'
+              element={
+                <PrivateRoute>
+                  <GamePage/>
                 </PrivateRoute>
               } />
           </Routes>
