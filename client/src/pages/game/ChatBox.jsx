@@ -5,7 +5,7 @@ const socket = io("http://localhost:5000");
 
 const ChatWindow = ({ chatId, username = "You", onBack }) => {
   const [messages, setMessages] = useState([
-    { sender: "Sagar", message: "Hello! How are you?" },
+    { sender: "Alpha", message: "Hello! How are you?" },
     { sender: "You", message: "I'm good! What about you?" },
     { sender: chatId, message: "This is a test message!" }
   ]); // Dummy Messages

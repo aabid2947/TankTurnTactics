@@ -265,3 +265,17 @@
 {"email":"Alpha@gmail.com","level":"info","message":"User logged in: Bushra","timestamp":"2025-03-16 20:32:30:3230"}
 {"level":"info","message":"Connected to Upstash Redis Cloud","service":"tank-turn-tactics","timestamp":"2025-03-16T15:08:46.311Z"}
 {"level":"info","message":"Server running in development mode on port 5000","service":"tank-turn-tactics","timestamp":"2025-03-16T15:08:46.319Z"}
+{"level":"info","message":"Connected to Upstash Redis Cloud","service":"tank-turn-tactics","timestamp":"2025-03-17T17:55:39.607Z"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"tank-turn-tactics","timestamp":"2025-03-17T17:55:39.620Z"}
+{"level":"info","message":"Connected to Upstash Redis Cloud","service":"tank-turn-tactics","timestamp":"2025-03-18T12:23:26.444Z"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"tank-turn-tactics","timestamp":"2025-03-18T12:23:26.451Z"}
+{"level":"debug","message":"Validation successful for body with value: {\"email\":\"Alpha@gmail.com\",\"password\":\"#Thor7860.\"}","timestamp":"2025-03-18 17:53:45:5345"}
+{"level":"debug","message":"Validation successful for body with value: {\"email\":\"Alpha@gmail.com\",\"password\":\"#Thor7860.\"}","timestamp":"2025-03-18 17:53:46:5346"}
+{"email":"Alpha@gmail.com","level":"info","message":"User logged in: Bushra","timestamp":"2025-03-18 17:53:46:5346"}
+{"email":"Alpha@gmail.com","level":"info","message":"User logged in: Bushra","timestamp":"2025-03-18 17:53:47:5347"}
+{"level":"info","message":"Connected to Upstash Redis Cloud","service":"tank-turn-tactics","timestamp":"2025-03-18T13:51:15.813Z"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"tank-turn-tactics","timestamp":"2025-03-18T13:51:15.832Z"}
+{"level":"info","message":"Connected to Upstash Redis Cloud","service":"tank-turn-tactics","timestamp":"2025-03-18T17:58:58.163Z"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"tank-turn-tactics","timestamp":"2025-03-18T17:58:58.170Z"}
+{"level":"info","message":"Connected to Upstash Redis Cloud","service":"tank-turn-tactics","timestamp":"2025-03-19T14:40:33.292Z"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"tank-turn-tactics","timestamp":"2025-03-19T14:40:33.306Z"}
