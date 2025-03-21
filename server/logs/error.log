@@ -297,3 +297,11 @@
 {"gameId":"game:1742483409396","level":"error","message":"Leave game error: \"[object Object]\" is not valid JSON","timestamp":"2025-03-20 20:47:32:4732","userId":"user:d0c2373c-77b0-4247-a198-ee3f97b7cb8b"}
 {"gameId":"game:1742483827734","level":"error","message":"Leave game error: \"[object Object]\" is not valid JSON","timestamp":"2025-03-20 21:01:31:131","userId":"user:d0c2373c-77b0-4247-a198-ee3f97b7cb8b"}
 {"gameId":"game:1742483827734","level":"error","message":"Leave game error: \"[object Object]\" is not valid JSON","timestamp":"2025-03-20 21:01:34:134","userId":"user:3a0dfcc6-9a77-45fa-85f8-8e54ce2a0def"}
+{"level":"error","message":"Unhandled Rejection: read ECONNRESET","service":"tank-turn-tactics","timestamp":"2025-03-21T09:53:05.296Z"}
+{"level":"error","message":"Error: read ECONNRESET\n    at TLSWrap.onStreamRead (node:internal/stream_base_commons:216:20)","service":"tank-turn-tactics","timestamp":"2025-03-21T09:53:05.301Z"}
+{"level":"error","message":"Unhandled Rejection: read ECONNRESET","service":"tank-turn-tactics","timestamp":"2025-03-21T09:53:05.304Z"}
+{"level":"error","message":"Error: read ECONNRESET\n    at TLSWrap.onStreamRead (node:internal/stream_base_commons:216:20)","service":"tank-turn-tactics","timestamp":"2025-03-21T09:53:05.312Z"}
+{"level":"error","message":"Unhandled Rejection: read ECONNRESET","service":"tank-turn-tactics","timestamp":"2025-03-21T09:53:05.313Z"}
+{"level":"error","message":"Error: read ECONNRESET\n    at TLSWrap.onStreamRead (node:internal/stream_base_commons:216:20)","service":"tank-turn-tactics","timestamp":"2025-03-21T09:53:05.314Z"}
+{"level":"error","message":"Unhandled Rejection: read ECONNRESET","service":"tank-turn-tactics","timestamp":"2025-03-21T09:53:05.316Z"}
+{"level":"error","message":"Error: read ECONNRESET\n    at TLSWrap.onStreamRead (node:internal/stream_base_commons:216:20)","service":"tank-turn-tactics","timestamp":"2025-03-21T09:53:05.319Z"}

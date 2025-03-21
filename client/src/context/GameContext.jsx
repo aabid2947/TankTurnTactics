@@ -41,15 +41,11 @@ export const GameProvider = ({ children }) => {
   // Initialize socket when user is authenticated
   useEffect(() => {
 
-
-
-
     if (currentGame && isAuthenticated) {
       const socketInstance = socketService.getSocket();
       setSocket(socketInstance);
 
       socketInstance.on('playerJoined', (data) => {
-        console.log(currentGame)
         if (currentGame && data.gameId === currentGame.data.gameId) {
           setCurrentGame((prev) => ({
             ...prev,
@@ -62,15 +58,9 @@ export const GameProvider = ({ children }) => {
       });
 
       socketInstance.on('gameStarted', (data) => {
-        console.log(currentGame)
         if (currentGame && data.gameId === currentGame.data.gameId) {
-          setCurrentGame((prev) => ({
-            ...prev,
-            data: {
-              ...prev.data,
-              status: "active"
-            },
-          }));
+          console.log(data)
+          setCurrentGame(data);
         }
       });
 
@@ -179,8 +169,6 @@ export const GameProvider = ({ children }) => {
 
       // Make an api request to join a game 
       const game = await gameService.joinGame(gameId);
-
-      // set the current game 
       setCurrentGame(game);
 
       // trigger sokcet to join game 
@@ -299,8 +287,6 @@ export const GameProvider = ({ children }) => {
 
   const leaveCurrentGame = () => {
     if (currentGame) {
-      console.log(currentGame['data'].id)
-
 
       // remove player data from the game 
       gameService.leaveGame(currentGame['data'].gameId)

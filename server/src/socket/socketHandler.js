@@ -60,7 +60,6 @@ const setupSocketHandlers = (io) => {
 
         const game = await gameRedisService.getGameById(gameId);
 
-
         if (!game) {
           socket.emit('error', { message: 'Game not found' });
           return;
@@ -68,9 +67,6 @@ const setupSocketHandlers = (io) => {
 
 
         // Ensure user is a player
-
-
-
         const clients = await io.in(gameId).fetchSockets();
         console.log(`Clients in room ${gameId}:`, clients.map(client => client.id));
 
@@ -113,7 +109,6 @@ const setupSocketHandlers = (io) => {
     // Handle game leave
     socket.on('leaveGame', async (gameId) => {
       try {
-        console.log(gameId)
         socket.leave(gameId);
 
         // Notify other players
@@ -131,12 +126,13 @@ const setupSocketHandlers = (io) => {
     // Handle game leave
     socket.on('startGame', async (gameId) => {
       try {
-        console.log(gameId)
-        
+        // get updated gaem from redis 
+        const game = await gameRedisService.getGameById(gameId);
 
         // Notify other players
         socket.to(gameId).emit('gameStarted', {
-          gameId:gameId
+          gameId:gameId,
+          data:game
         });
 
         logger.info(`game has started: ${gameId}`);

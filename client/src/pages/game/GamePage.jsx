@@ -11,7 +11,6 @@ const MainPage = () => {
   const {currentGame} = useGame()
 
   useEffect(()=>{
-    console.log(currentGame['data'])
   },[])
   return (
     <div className="flex h-screen">

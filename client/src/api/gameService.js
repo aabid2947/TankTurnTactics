@@ -36,7 +36,11 @@ const gameService = {
     try {
       
       const response = await api.post(`/game/${gameId}/join`);
-      console.log(response)
+      if(!response){
+        console.log("Error in player joiing in the room")
+      }
+
+      console.log("Player joined in room succesfully")
       return response.data;
     } catch (error) {
       throw error.response?.data || { message: 'Failed to join game' };

@@ -9,6 +9,7 @@ const WaitingRoom = ({ gameId, setGameStarted }) => {
 
 
   useEffect(() => {
+    console.log(currentGame)
     if (!currentGame) {
       navigate("/")
     }
@@ -23,7 +24,6 @@ const WaitingRoom = ({ gameId, setGameStarted }) => {
   
   const handleLeaveGame = async () => {
     try {
-      console.log("leave")
       await leaveCurrentGame()
       navigate("/")
     } catch (error) {
@@ -52,8 +52,9 @@ const WaitingRoom = ({ gameId, setGameStarted }) => {
         <h2 className="text-xl font-bold">Waiting for Players...</h2>
         {currentGame ?
           <div>
-            <p className="mt-2">Game ID: {currentGame['data'].gameId}</p>
+            
             <p className="mt-2">Players Joined: {currentGame['data'].players.length} / {currentGame['data'].maxPlayers}</p>
+            <p className="mt-2">Game ID: {currentGame['data'].gameId}</p>
           </div> :
           <></>}
 
