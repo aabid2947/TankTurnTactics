@@ -18,6 +18,7 @@ class AuthController {
       
       // Validate required fields
       if (!email || !username || !password) {
+        
         return res.status(400).json({
           success: false,
           error: 'Please provide email, username, and password'

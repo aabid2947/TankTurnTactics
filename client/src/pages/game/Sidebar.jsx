@@ -1,9 +1,17 @@
 import { useState } from "react";
+import { useGame } from "../../context/GameContext";
+import { useNavigate } from "react-router-dom";
 // import { FiMenu, FiSidebar } from "react-icons/fi";
 
 export default function Sidebar() {
   const [isOpen, setIsOpen] = useState(true);
+  const {leaveCurrentGame } = useGame()
+  const navigate = useNavigate()
 
+   const handleLeaveGame = () =>{
+    leaveCurrentGame()
+    navigate("/")
+   }
   return (
     <div className={`h-screen bg-gray-800 text-white p-4 transition-all ${isOpen ? "w-48" : "w-16"}`}>
       
@@ -28,6 +36,10 @@ export default function Sidebar() {
         <li className="flex items-center gap-2 cursor-pointer hover:bg-gray-700 p-2 rounded">
           <img src="/icons/logout.png" alt="Logout" className="w-6 h-6" />
           {isOpen && <span>Logout</span>}
+        </li>
+        <li className="flex items-center gap-2 cursor-pointer hover:bg-gray-700 p-2 rounded" onClick={handleLeaveGame}>
+          <img src="/icons/logout.png" alt="Logout" className="w-6 h-6" />
+          {isOpen && <span>Leave Game</span>}
         </li>
       </ul>
     </div>

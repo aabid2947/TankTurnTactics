@@ -34,10 +34,21 @@ const gameService = {
   // Join a game
   joinGame: async (gameId) => {
     try {
+      
       const response = await api.post(`/game/${gameId}/join`);
+      console.log(response)
       return response.data;
     } catch (error) {
       throw error.response?.data || { message: 'Failed to join game' };
+    }
+  },
+
+  leaveGame: async (gameId) => {
+    try {
+      const response = await api.post(`/game/${gameId}/leave`);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || { message: 'Failed to leave the  game' };
     }
   },
 

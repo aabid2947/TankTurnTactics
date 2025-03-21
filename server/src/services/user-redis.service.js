@@ -1,4 +1,5 @@
 import bcrypt from 'bcrypt';
+import { v4 as uuidv4 } from 'uuid'; // Use UUID for unique user IDs
 import redisClient from '../config/redis.js';
 
 /**
@@ -12,69 +13,68 @@ class UserRedisService {
    */
   async createUser(userData) {
     const { email, username, password } = userData;
-    
+
     // Check if user already exists
     const emailExists = await redisClient.exists(`user:email:${email}`);
-    if (emailExists) {
-      throw new Error('Email already in use');
-    }
-    
+    if (emailExists) throw new Error('Email already in use');
+
     const usernameExists = await redisClient.exists(`user:username:${username}`);
-    if (usernameExists) {
-      throw new Error('Username already in use');
-    }
-    
-    // Generate user ID
-    const userId = `user:${Date.now()}`;
-    
+    if (usernameExists) throw new Error('Username already in use');
+
+    // Generate a unique user ID using UUID
+    const userId = `user:${uuidv4()}`;
+
     // Hash password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
-    
+
     // Create user object
     const user = {
       id: userId,
       email,
       username,
       password: hashedPassword,
+      isOnline: false, // Default offline
+      lastActive: Date.now(),
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       stats: {
         gamesPlayed: 0,
         gamesWon: 0,
-        totalKills: 0
+        totalKills: 0,
+        totalDeaths: 0
       }
     };
-    
-    // Store user in Redis
-    await redisClient.set(userId, user);
-    
+
+    // Store user in Redis (JSON.stringify required)
+    await redisClient.set(userId, JSON.stringify(user));
+
     // Create indexes for email and username
     await redisClient.set(`user:email:${email}`, userId);
     await redisClient.set(`user:username:${username}`, userId);
-    
+
     // Add to users set
     await redisClient.sadd('users', userId);
-    
+
     // Return user without password
     const { password: _, ...userWithoutPassword } = user;
     return userWithoutPassword;
   }
-  
+
   /**
    * Get a user by ID
    * @param {string} userId - User ID
    * @returns {Promise<Object|null>} - User data or null if not found
    */
   async getUserById(userId) {
-    const user = await redisClient.get(userId);
-    if (!user) return null;
-    
-    // Return user without password
-    const { password, ...userWithoutPassword } = user;
-    return userWithoutPassword;
+    const userData = await redisClient.get(userId);
+    if (!userData) return null;
+
+    const user = JSON.parse(userData);
+    delete user.password; // Remove password before returning
+    return user;
   }
-  
+
   /**
    * Get a user by email
    * @param {string} email - User email
@@ -83,10 +83,10 @@ class UserRedisService {
   async getUserByEmail(email) {
     const userId = await redisClient.get(`user:email:${email}`);
     if (!userId) return null;
-    
+
     return await this.getUserById(userId);
   }
-  
+
   /**
    * Get a user by username
    * @param {string} username - Username
@@ -95,10 +95,10 @@ class UserRedisService {
   async getUserByUsername(username) {
     const userId = await redisClient.get(`user:username:${username}`);
     if (!userId) return null;
-    
+
     return await this.getUserById(userId);
   }
-  
+
   /**
    * Update a user
    * @param {string} userId - User ID
@@ -106,53 +106,37 @@ class UserRedisService {
    * @returns {Promise<Object>} - Updated user
    */
   async updateUser(userId, updateData) {
-    const user = await redisClient.get(userId);
+    const user = await this.getUserById(userId);
     if (!user) throw new Error('User not found');
-    
+
     // Update user data
     const updatedUser = {
       ...user,
       ...updateData,
       updatedAt: new Date().toISOString()
     };
-    
+
     // Store updated user
-    await redisClient.set(userId, updatedUser);
-    
-    // Return user without password
-    const { password, ...userWithoutPassword } = updatedUser;
-    return userWithoutPassword;
+    await redisClient.set(userId, JSON.stringify(updatedUser));
+
+    return updatedUser;
   }
-  
+
   /**
-   * Update user password
+   * Update user status (online/offline)
    * @param {string} userId - User ID
-   * @param {string} newPassword - New password
-   * @returns {Promise<Object>} - Updated user
+   * @param {boolean} isOnline - User online status
    */
-  async updatePassword(userId, newPassword) {
-    const user = await redisClient.get(userId);
+  async updateUserStatus(userId, isOnline) {
+    const user = await this.getUserById(userId);
     if (!user) throw new Error('User not found');
-    
-    // Hash new password
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(newPassword, salt);
-    
-    // Update user with new password
-    const updatedUser = {
-      ...user,
-      password: hashedPassword,
-      updatedAt: new Date().toISOString()
-    };
-    
-    // Store updated user
-    await redisClient.set(userId, updatedUser);
-    
-    // Return user without password
-    const { password, ...userWithoutPassword } = updatedUser;
-    return userWithoutPassword;
+
+    user.isOnline = isOnline;
+    user.lastActive = Date.now();
+
+    await redisClient.set(userId, JSON.stringify(user));
   }
-  
+
   /**
    * Authenticate a user
    * @param {string} email - User email
@@ -160,23 +144,18 @@ class UserRedisService {
    * @returns {Promise<Object|null>} - User data if authenticated, null otherwise
    */
   async authenticateUser(email, password) {
-    // Get user ID by email
-    const userId = await redisClient.get(`user:email:${email}`);
-    if (!userId) return null;
-    
-    // Get full user data including password
-    const user = await redisClient.get(userId);
+    const user = await this.getUserByEmail(email);
     if (!user) return null;
-    
-    // Check password
+
+    // Compare password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return null;
-    
+
     // Return user without password
-    const { password: _, ...userWithoutPassword } = user;
-    return userWithoutPassword;
+    delete user.password;
+    return user;
   }
-  
+
   /**
    * Update user stats
    * @param {string} userId - User ID
@@ -184,39 +163,33 @@ class UserRedisService {
    * @returns {Promise<Object>} - Updated user
    */
   async updateUserStats(userId, statsUpdate) {
-    const user = await redisClient.get(userId);
+    const user = await this.getUserById(userId);
     if (!user) throw new Error('User not found');
-    
+
     // Update stats
-    const updatedUser = {
-      ...user,
-      stats: {
-        ...user.stats,
-        ...statsUpdate
-      },
-      updatedAt: new Date().toISOString()
+    user.stats = {
+      ...user.stats,
+      ...statsUpdate
     };
-    
-    // Store updated user
-    await redisClient.set(userId, updatedUser);
-    
-    // Return user without password
-    const { password, ...userWithoutPassword } = updatedUser;
-    return userWithoutPassword;
+    user.updatedAt = new Date().toISOString();
+
+    await redisClient.set(userId, JSON.stringify(user));
+
+    return user;
   }
-  
+
   /**
    * Get user stats
    * @param {string} userId - User ID
    * @returns {Promise<Object>} - User stats
    */
   async getUserStats(userId) {
-    const user = await redisClient.get(userId);
+    const user = await this.getUserById(userId);
     if (!user) throw new Error('User not found');
-    
+
     return user.stats;
   }
-  
+
   /**
    * Get top users by wins
    * @param {number} limit - Number of users to return
@@ -225,18 +198,15 @@ class UserRedisService {
   async getTopUsersByWins(limit = 10) {
     // Get all users
     const userIds = await redisClient.smembers('users');
-    
+
     // Get user data for each ID
     const users = await Promise.all(
       userIds.map(async (userId) => {
-        const user = await redisClient.get(userId);
-        if (!user) return null;
-        
-        const { password, ...userWithoutPassword } = user;
-        return userWithoutPassword;
+        const user = await this.getUserById(userId);
+        return user || null;
       })
     );
-    
+
     // Filter out null values and sort by wins
     return users
       .filter(user => user !== null)
@@ -247,4 +217,4 @@ class UserRedisService {
 
 // Create and export a singleton instance
 const userRedisService = new UserRedisService();
-export default userRedisService; 
+export default userRedisService;

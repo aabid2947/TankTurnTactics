@@ -5,6 +5,7 @@ let socket;
 const socketService = {
   // Initialize socket connection
   initSocket: () => {
+    console.log('Initializing socket connection');
     socket = io('http://localhost:5000', {
       auth: {
         token: localStorage.getItem('token'),
@@ -23,6 +24,14 @@ const socketService = {
       console.error('Socket error:', error);
     });
 
+    socket.on('playerJoined',(data)=>{
+      console.log('A new player has joined:', data);
+    })
+
+    socket.on('playerLeft',(data)=>{
+      console.log('A  player has leaved the game:', data);
+    })
+
     return socket;
   },
 
@@ -36,12 +45,21 @@ const socketService = {
 
   // Join a game room
   joinGame: (gameId) => {
+    
     if (!socket) socketService.initSocket();
-    socket.emit('joinGame', { gameId });
+    socket.emit('joinGame', gameId );
+  },
+
+   // Join a game room
+   startGame: (gameId) => {
+    
+    if (!socket) socketService.initSocket();
+    socket.emit('startGame', gameId );
   },
 
   // Leave a game room
   leaveGame: (gameId) => {
+    console.log(typeof(gameId))
     if (!socket) return;
     socket.emit('leaveGame', { gameId });
   },

@@ -33,6 +33,7 @@ const colors = {
 // Add colors to winston
 winston.addColors(colors);
 
+
 // Define format for console output
 const consoleFormat = winston.format.combine(
   winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss:ms' }),
@@ -69,6 +70,7 @@ const transports = [
 
 // Create the logger
  const logger = winston.createLogger({
+  level: 'debug', // Ensure logs from info/debug/error are visible
   level: level(),
   levels,
   transports,

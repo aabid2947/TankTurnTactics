@@ -19,6 +19,8 @@ class GameController {
   async createGame(req, res) {
     try {
       const { name, maxPlayers, boardSize = 20 } = req.body;
+
+
       const userId = req.user.id;
      
       const game = await gameRedisService.createGame({
@@ -29,13 +31,13 @@ class GameController {
       }, userId);
       
       // Add creator as first player
-      await gameRedisService.addPlayerToGame(game.id, userId);
+      const updatedGame = await gameRedisService.addPlayerToGame(game.id, userId);
       
       logger.info(`Game created: ${game.id}`, { userId, gameId: game.id });
       
       res.status(201).json({
         success: true,
-        data: game
+        data: {gameId:game.id, ...updatedGame}
       });
     } catch (error) {
       logger.error(`Create game error: ${error.message}`, { userId: req.user.id });
@@ -65,7 +67,7 @@ class GameController {
       
       res.status(200).json({
         success: true,
-        data: game
+        data:  { id: id, ...game }
       });
     } catch (error) {
       logger.error(`Get game error: ${error.message}`, { gameId: req.params.id });
@@ -119,6 +121,7 @@ class GameController {
       }
       
       // Check if game is joinable
+      console.log(typeof(game))
       if (game.status !== 'waiting') {
         return res.status(400).json({
           success: false,
@@ -146,11 +149,15 @@ class GameController {
       // Add player to game
       const updatedGame = await gameRedisService.addPlayerToGame(id, userId);
       
+      const finalizeGame = await gameRedisService.getGameById(id)
+
+      
+
       logger.info(`Player joined game: ${id}`, { userId, gameId: id });
       
       res.status(200).json({
         success: true,
-        data: updatedGame
+        data: {gameId:id, ...finalizeGame}
       });
     } catch (error) {
       logger.error(`Join game error: ${error.message}`, { userId: req.user.id, gameId: req.params.id });
@@ -160,6 +167,50 @@ class GameController {
       });
     }
   }
+
+  async leaveGame(req, res) {
+    try {
+      const { id } = req.params;
+      const userId = req.user.id;
+   
+      const game = await gameRedisService.getGameById(id);
+      
+      if (!game) {
+        return res.status(404).json({
+          success: false,
+          error: 'Game not found'
+        });
+      }
+      
+      
+      // Check if player is  in the game
+      const isPlayerInGame = game.players.some(player => player.userId === userId);
+      if (!isPlayerInGame) {
+        return res.status(200).json({
+          success: true,
+          error: 'You are not in the game'
+        });
+      }
+      
+     
+      // Add player to game
+      const updatedGame = await gameRedisService.removePlayerFromGame(id, userId);
+      
+      logger.info(`Player leaved game: ${id}`, { userId, gameId: id });
+      
+      res.status(200).json({
+        success: true,
+        data: updatedGame
+      });
+    } catch (error) {
+      logger.error(`Leave game error: ${error.message}`, { userId: req.user.id, gameId: req.params.id });
+      res.status(500).json({
+        success: false,
+        error: 'Failed to leave the game'
+      });
+    }
+  }
+  
   
   /**
    * Start a game

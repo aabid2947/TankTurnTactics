@@ -28,7 +28,7 @@ import redisClient from './config/redis.js';
 import setupSocketHandlers from './socket/socketHandler.js';
 
 // Import database connection
-import connectDB from './config/database.js';
+// import connectDB from './config/database.js';
 
 // Get current file directory (ESM equivalent of __dirname)
 const __filename = fileURLToPath(import.meta.url);
@@ -43,7 +43,7 @@ const io = new Server(server, {
   cors: {
     origin: process.env.NODE_ENV === 'production' 
       ? 'https://your-production-domain.com' 
-      : 'http://localhost:3000',
+      : 'http://localhost:5173',
     methods: ['GET', 'POST'],
     credentials: true
   }

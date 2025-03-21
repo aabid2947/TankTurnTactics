@@ -105,6 +105,7 @@ const AuthProvider = ({ children }) => {
     try {
       // Call the registration endpoint from authService
       const response = await authService.register(userData);
+      
       // If a token is returned, registration is successful
       if (response.data.token) {
         localStorage.setItem('token', response.data.token); // Store token for future requests

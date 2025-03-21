@@ -1,13 +1,18 @@
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Sidebar from "./Sidebar";
 import ChatList from "./ChatList";
 import ChatBox from "./ChatBox";
 import GameBoard from "./GameBoard";
+import { useGame } from "../../context/GameContext";
 
 const MainPage = () => {
   const [selectedChat, setSelectedChat] = useState(null); // Track selected chat
+  const {currentGame} = useGame()
 
+  useEffect(()=>{
+    console.log(currentGame['data'])
+  },[])
   return (
     <div className="flex h-screen">
       {/* Sidebar */}

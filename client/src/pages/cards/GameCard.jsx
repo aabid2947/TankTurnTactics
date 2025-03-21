@@ -50,17 +50,31 @@
 
 // export default GameCard;
 import { useState } from "react";
+import { useGame } from "../../context/GameContext";
+import { useNavigate } from "react-router-dom";
 
 const GameCard = ({ modal, setModal, gameId, setGameStarted, setIsJoined }) => {
   const [gameIdInput, setGameIdInput] = useState("");
+  const {joinGame}  = useGame()
+  const navigate = useNavigate()
 
-  const handleJoin = () => {
-    if (gameIdInput.trim()) {
-      setIsJoined(true); // Set the user as joined
+  const handleJoin =async () => {
+    try {
+
+      const response = await joinGame(gameIdInput)
+     
+      if(response.error){
+        console.log("Error joining game ")
+      }
+
+      navigate("/lobby")
+      setIsJoined(true); // Move to waiting list
       setModal(null); // Close the modal
-    } else {
-      alert("Please enter a valid Game ID.");
+    } catch (error) {
+      console.error("Failed to join the game:", error);
     }
+
+    
   };
 
   const handleStartGame = () => {

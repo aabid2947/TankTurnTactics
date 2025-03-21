@@ -13,6 +13,7 @@ router.post('/', gameController.createGame);
 router.get('/', gameController.getAllGames);
 router.get('/:id', gameController.getGameById);
 router.post('/:id/join', gameController.joinGame);
+router.post('/:id/leave', gameController.leaveGame);
 router.post('/:id/start', gameController.startGame);
 router.post('/:id/end', gameController.endGame);
 router.post('/:id/chat', gameController.addChatMessage);

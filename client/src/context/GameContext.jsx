@@ -2,42 +2,80 @@ import { createContext, useState, useEffect, useContext } from 'react';
 import { gameService, socketService } from '../api';
 import { useAuth } from './AuthContext';
 
-// Create the game context
+
 const GameContext = createContext();
 
-// Custom hook to use the game context
 export const useGame = () => {
   return useContext(GameContext);
 };
 
-// Game provider component
 export const GameProvider = ({ children }) => {
   const { currentUser, isAuthenticated } = useAuth();
-  const [games, setGames] = useState([]);
-  const [currentGame, setCurrentGame] = useState(null);
-  const [gameHistory, setGameHistory] = useState([]);
+
+  // Load persisted state from sessionStorage
+  const loadFromStorage = (key, defaultValue) => {
+    const storedValue = sessionStorage.getItem(key);
+    return storedValue ? JSON.parse(storedValue) : defaultValue;
+  };
+
+  const [games, setGames] = useState(() => loadFromStorage('games', []));
+  const [currentGame, setCurrentGame] = useState(() => loadFromStorage('currentGame', null));
+  const [gameHistory, setGameHistory] = useState(() => loadFromStorage('gameHistory', []));
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [socket, setSocket] = useState(null);
 
+  // Save state to sessionStorage when it changes
+  useEffect(() => {
+    sessionStorage.setItem('games', JSON.stringify(games));
+  }, [games]);
+
+  useEffect(() => {
+    sessionStorage.setItem('currentGame', JSON.stringify(currentGame));
+  }, [currentGame]);
+
+  useEffect(() => {
+    sessionStorage.setItem('gameHistory', JSON.stringify(gameHistory));
+  }, [gameHistory]);
+
   // Initialize socket when user is authenticated
   useEffect(() => {
-    if (isAuthenticated) {
-      const socketInstance = socketService.initSocket();
+
+
+
+
+    if (currentGame && isAuthenticated) {
+      const socketInstance = socketService.getSocket();
       setSocket(socketInstance);
 
-      // Socket event listeners
       socketInstance.on('playerJoined', (data) => {
-        if (currentGame && data.gameId === currentGame._id) {
+        console.log(currentGame)
+        if (currentGame && data.gameId === currentGame.data.gameId) {
           setCurrentGame((prev) => ({
             ...prev,
-            players: [...prev.players, data.player],
+            data: {
+              ...prev.data,
+              players: [...(prev.data.players || []), { userId: data.userId, username: data.username }],
+            },
+          }));
+        }
+      });
+
+      socketInstance.on('gameStarted', (data) => {
+        console.log(currentGame)
+        if (currentGame && data.gameId === currentGame.data.gameId) {
+          setCurrentGame((prev) => ({
+            ...prev,
+            data: {
+              ...prev.data,
+              status: "active"
+            },
           }));
         }
       });
 
       socketInstance.on('playerLeft', (data) => {
-        if (currentGame && data.gameId === currentGame._id) {
+        if (currentGame && data.gameId === currentGame['data'].gameId) {
           setCurrentGame((prev) => ({
             ...prev,
             players: prev.players.filter((p) => p._id !== data.playerId),
@@ -53,7 +91,6 @@ export const GameProvider = ({ children }) => {
 
       socketInstance.on('gameAction', (data) => {
         if (currentGame && data.gameId === currentGame._id) {
-          // Update game state based on action
           setCurrentGame((prev) => ({
             ...prev,
             ...data.gameState,
@@ -62,9 +99,7 @@ export const GameProvider = ({ children }) => {
         }
       });
 
-      return () => {
-        socketService.disconnect();
-      };
+     
     }
   }, [isAuthenticated, currentGame]);
 
@@ -73,10 +108,17 @@ export const GameProvider = ({ children }) => {
     setLoading(true);
     setError(null);
     try {
+      // Make an Api call to get all games
       const gamesData = await gameService.getAllGames();
+
+      // set games in sesssion storage
       setGames(gamesData);
+
+      // return game data
       return gamesData;
+
     } catch (error) {
+      // set error
       setError(error.message || 'Failed to fetch games');
       throw error;
     } finally {
@@ -86,8 +128,8 @@ export const GameProvider = ({ children }) => {
 
   // Fetch a game by ID
   const fetchGameById = async (gameId) => {
-    setLoading(true);
-    setError(null);
+    setLoading(true); ~
+      setError(null);
     try {
       const gameData = await gameService.getGameById(gameId);
       setCurrentGame(gameData);
@@ -105,8 +147,21 @@ export const GameProvider = ({ children }) => {
     setLoading(true);
     setError(null);
     try {
+
+      // Make an api request to create games
       const newGame = await gameService.createGame(gameData);
+
+  
+      // Update the games
       setGames((prev) => [...prev, newGame]);
+    
+      // trigger sokcet to join game 
+      socketService.joinGame(newGame['data'].gameId);
+
+      // set the current game
+      setCurrentGame(newGame)
+
+      // return this game 
       return newGame;
     } catch (error) {
       setError(error.message || 'Failed to create game');
@@ -121,9 +176,17 @@ export const GameProvider = ({ children }) => {
     setLoading(true);
     setError(null);
     try {
+
+      // Make an api request to join a game 
       const game = await gameService.joinGame(gameId);
+
+      // set the current game 
       setCurrentGame(game);
+
+      // trigger sokcet to join game 
       socketService.joinGame(gameId);
+
+      // return game 
       return game;
     } catch (error) {
       setError(error.message || 'Failed to join game');
@@ -138,8 +201,13 @@ export const GameProvider = ({ children }) => {
     setLoading(true);
     setError(null);
     try {
+
+      // call api to start game 
       const game = await gameService.startGame(gameId);
       setCurrentGame(game);
+
+      socketService.startGame(gameId);
+
       return game;
     } catch (error) {
       setError(error.message || 'Failed to start game');
@@ -225,39 +293,36 @@ export const GameProvider = ({ children }) => {
     }
   };
 
-  // Send a chat message
   const sendChatMessage = (gameId, message) => {
     socketService.sendChatMessage(gameId, message);
   };
 
-  // Leave current game
   const leaveCurrentGame = () => {
     if (currentGame) {
-      socketService.leaveGame(currentGame._id);
+      console.log(currentGame['data'].id)
+
+
+      // remove player data from the game 
+      gameService.leaveGame(currentGame['data'].gameId)
+      // Leave the room 
+      // Disconnet to socket
+      socketService.leaveGame(currentGame['data'].gameId);
+
+      // set Current game null
       setCurrentGame(null);
+
       setGameHistory([]);
     }
   };
 
-  const value = {
-    games,
-    currentGame,
-    gameHistory,
-    loading,
-    error,
-    fetchGames,
-    fetchGameById,
-    createGame,
-    joinGame,
-    startGame,
-    movePlayer,
-    shootPlayer,
-    upgradeRange,
-    tradeActionPoints,
-    fetchGameHistory,
-    sendChatMessage,
-    leaveCurrentGame,
-  };
-
-  return <GameContext.Provider value={value}>{children}</GameContext.Provider>;
-}; 
+  return (
+    <GameContext.Provider value={{
+      games, currentGame, gameHistory, loading, error,
+      fetchGames, fetchGameById, createGame, joinGame, startGame,
+      movePlayer, shootPlayer, upgradeRange, tradeActionPoints,
+      fetchGameHistory, sendChatMessage, leaveCurrentGame,
+    }}>
+      {children}
+    </GameContext.Provider>
+  );
+};
