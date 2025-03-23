@@ -28,6 +28,8 @@ const socketService = {
       console.log('A new player has joined:', data);
     })
 
+
+
     socket.on('playerLeft',(data)=>{
       console.log('A  player has leaved the game:', data);
     })
@@ -59,9 +61,32 @@ const socketService = {
 
   // Leave a game room
   leaveGame: (gameId) => {
-    console.log(typeof(gameId))
     if (!socket) return;
     socket.emit('leaveGame', { gameId });
+  },
+
+  // Action:Move
+  movePlayer: (gameId,moveData) => {
+    if (!socket) return;
+    socket.emit('movePlayer', { gameId,moveData });
+  },
+
+   // Action:Shoot
+   shootPlayer: (gameId,shootData) => {
+    if (!socket) return;
+    socket.emit('shootPlayer', { gameId,shootData });
+  },
+
+  // Action:Transfer AP
+  transferActionPoint: (gameId,transferData) => {
+    if (!socket) return;
+    socket.emit('transferAP', { gameId,transferData });
+  },
+
+  // Action:increase Range
+  increaseRange: (gameId) => {
+    if (!socket) return;
+    socket.emit('increaseRange', { gameId });
   },
 
   // Send a chat message

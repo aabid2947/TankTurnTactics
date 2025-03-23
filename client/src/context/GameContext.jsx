@@ -3,6 +3,7 @@ import { gameService, socketService } from '../api';
 import { useAuth } from './AuthContext';
 
 
+
 const GameContext = createContext();
 
 export const useGame = () => {
@@ -20,6 +21,8 @@ export const GameProvider = ({ children }) => {
 
   const [games, setGames] = useState(() => loadFromStorage('games', []));
   const [currentGame, setCurrentGame] = useState(() => loadFromStorage('currentGame', null));
+  const [playerAttributes, setPlyerAttributes] = useState(() => loadFromStorage('playerAttributes', null));
+
   const [gameHistory, setGameHistory] = useState(() => loadFromStorage('gameHistory', []));
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -58,11 +61,37 @@ export const GameProvider = ({ children }) => {
       });
 
       socketInstance.on('gameStarted', (data) => {
-        if (currentGame && data.gameId === currentGame.data.gameId) {
-          console.log(data)
+        if (currentGame ) {
           setCurrentGame(data);
         }
       });
+
+      socketInstance.on('playerMoved',(data)=>{
+        if (currentGame ) {
+          setCurrentGame(data);
+        }
+      })
+
+      socketInstance.on('playerShot',(data)=>{
+        if (currentGame ) {
+          setCurrentGame(data);
+        }
+      })
+
+      socketInstance.on('apTransferred',(data)=>{
+        if (currentGame ) {
+       
+          setCurrentGame(data);
+        }
+      })
+
+      socketInstance.on('rangeIncreased',(data)=>{
+
+        console.log(data)
+        if (currentGame ) {
+          setCurrentGame(data);
+        }
+      })
 
       socketInstance.on('playerLeft', (data) => {
         if (currentGame && data.gameId === currentGame['data'].gameId) {
@@ -192,11 +221,27 @@ export const GameProvider = ({ children }) => {
 
       // call api to start game 
       const game = await gameService.startGame(gameId);
-      setCurrentGame(game);
 
       socketService.startGame(gameId);
 
       return game;
+    } catch (error) {
+      setError(error.message || 'Failed to start game');
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+   // Start a game
+   const assignPlayerAttributes = async (player) => {
+    setLoading(true);
+    setError(null);
+    try {
+
+      setPlyerAttributes(player)
+
+      return player;
     } catch (error) {
       setError(error.message || 'Failed to start game');
       throw error;
@@ -210,8 +255,8 @@ export const GameProvider = ({ children }) => {
     setLoading(true);
     setError(null);
     try {
-      const result = await gameService.movePlayer(gameId, moveData);
-      return result;
+       socketService.movePlayer(gameId, moveData);
+      return;
     } catch (error) {
       setError(error.message || 'Failed to move player');
       throw error;
@@ -225,8 +270,8 @@ export const GameProvider = ({ children }) => {
     setLoading(true);
     setError(null);
     try {
-      const result = await gameService.shootPlayer(gameId, shootData);
-      return result;
+       socketService.shootPlayer(gameId, shootData);
+      return ;
     } catch (error) {
       setError(error.message || 'Failed to shoot player');
       throw error;
@@ -236,12 +281,12 @@ export const GameProvider = ({ children }) => {
   };
 
   // Upgrade player range
-  const upgradeRange = async (gameId) => {
+  const increaseRange = async (gameId) => {
     setLoading(true);
     setError(null);
     try {
-      const result = await gameService.upgradeRange(gameId);
-      return result;
+       socketService.increaseRange(gameId);
+      return ;
     } catch (error) {
       setError(error.message || 'Failed to upgrade range');
       throw error;
@@ -251,12 +296,12 @@ export const GameProvider = ({ children }) => {
   };
 
   // Trade action points
-  const tradeActionPoints = async (gameId, tradeData) => {
+  const transferActionPoints = async (gameId, transferData) => {
     setLoading(true);
     setError(null);
     try {
-      const result = await gameService.tradeActionPoints(gameId, tradeData);
-      return result;
+      socketService.transferActionPoint(gameId, transferData);
+      return ;
     } catch (error) {
       setError(error.message || 'Failed to trade action points');
       throw error;
@@ -303,9 +348,9 @@ export const GameProvider = ({ children }) => {
 
   return (
     <GameContext.Provider value={{
-      games, currentGame, gameHistory, loading, error,
-      fetchGames, fetchGameById, createGame, joinGame, startGame,
-      movePlayer, shootPlayer, upgradeRange, tradeActionPoints,
+      games, currentGame, gameHistory, loading, error,playerAttributes,
+      fetchGames, fetchGameById, createGame, joinGame, startGame,assignPlayerAttributes,
+      movePlayer, shootPlayer, increaseRange, transferActionPoints,
       fetchGameHistory, sendChatMessage, leaveCurrentGame,
     }}>
       {children}

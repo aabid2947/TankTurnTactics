@@ -112,7 +112,7 @@ const setupSocketHandlers = (io) => {
         socket.leave(gameId);
 
         // Notify other players
-        socket.to(gameId).emit('playerLeft', {
+        socket.emit('playerLeft', {
           userId: socket.user.id,
           username: socket.user.username,
         });
@@ -123,21 +123,101 @@ const setupSocketHandlers = (io) => {
       }
     });
 
-    // Handle game leave
+    // Handle game start
     socket.on('startGame', async (gameId) => {
       try {
         // get updated gaem from redis 
         const game = await gameRedisService.getGameById(gameId);
 
         // Notify other players
-        socket.to(gameId).emit('gameStarted', {
-          gameId:gameId,
-          data:game
+        io.to(gameId).emit('gameStarted', {
+          gameId: gameId,
+          data: game,
         });
 
         logger.info(`game has started: ${gameId}`);
       } catch (error) {
         logger.error(`Leave game error: ${error.message}`);
+      }
+    });
+
+    // Handle Action:Move
+    socket.on('movePlayer', async ({gameId,moveData}) => {
+      try {
+        console.log(moveData)
+        // get updated game from redis 
+        const game = await gameRedisService.movePlayer(gameId,socket.user.id,moveData.newX,moveData.newY);
+
+        
+        // Notify other players
+        io.to(gameId).emit('playerMoved', {
+          gameId:gameId,
+          data:game
+        });
+
+        logger.info(`The Player has moved: ${gameId}`);
+      } catch (error) {
+        logger.error(`Error in moving the player: ${error.message}`);
+      }
+    });
+
+    // Handle Action:shoot
+    socket.on('shootPlayer', async ({gameId,shootData}) => {
+      try {
+        console.log(gameId,shootData)
+        // get updated game from redis 
+        const game = await gameRedisService.shootPlayer(gameId,socket.user.id,shootData.targetX,shootData.targetY);
+
+        
+        // Notify other players
+        io.to(gameId).emit('playerShot', {
+          gameId:gameId,
+          data:game
+        });
+
+        logger.info(`The Player has been shot: ${gameId}`);
+      } catch (error) {
+        logger.error(`Error in shooting the player: ${error.message}`);
+      }
+    });
+
+    // Handle Action:Increase Range 
+    socket.on('increaseRange', async ({gameId}) => {
+      try {
+        // get updated game from redis
+        const game = await gameRedisService.increaseRange(gameId,socket.user.id);
+
+        
+        // Notify other players
+        io.to(gameId).emit('rangeIncreased', {
+          gameId:gameId,
+          data:game
+        });
+        console.log(game.board[11][12])
+
+        logger.info(`The Range has been increased: ${gameId}`);
+      } catch (error) {
+        logger.error(`Error in increasing the range  : ${error.message}`);
+      }
+    });
+
+    // Handle Action:Transfer Action Point 
+    socket.on('transferAP', async ({gameId,transferData}) => {
+      try {
+        console.log(transferData.targetX,transferData.targetY)
+        // get updated game from redis 
+        const game = await gameRedisService.transferActionPoints(gameId,socket.user.id,transferData.targetX,transferData.targetY);
+
+        
+        // Notify other players
+        io.to(gameId).emit('apTransferred', {
+          gameId:gameId,
+          data:game
+        });
+
+        logger.info(`The Action Point has been transferred: ${gameId}`);
+      } catch (error) {
+        logger.error(`Error in transferring action point: ${error.message}`);
       }
     });
 
