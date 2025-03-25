@@ -124,8 +124,9 @@ const setupSocketHandlers = (io) => {
     });
 
     // Handle game start
-    socket.on('startGame', async (gameId) => {
+    socket.on('startGame', async ({gameId}) => {
       try {
+        console.log(gameId)
         // get updated gaem from redis 
         const game = await gameRedisService.getGameById(gameId);
 

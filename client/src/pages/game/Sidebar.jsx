@@ -5,11 +5,12 @@ import { useNavigate } from "react-router-dom";
 
 export default function Sidebar() {
   const [isOpen, setIsOpen] = useState(true);
-  const {leaveCurrentGame } = useGame()
+  const {leaveCurrentGame,currentGame } = useGame()
   const navigate = useNavigate()
 
    const handleLeaveGame = () =>{
-    leaveCurrentGame()
+    console.log(currentGame)
+    leaveCurrentGame(currentGame.gameId)
     navigate("/")
    }
   return (

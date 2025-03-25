@@ -9,74 +9,68 @@ import Login from './pages/auth/Login.jsx'
 import { Game } from './pages/game/Game.jsx';
 import GamePage from './pages/game/GamePage.jsx'
 import WaitingRoom from './pages/game/WaitingRoom.jsx';
-
+import { ChatProvider } from './context/ChatContext.jsx';
 
 function PrivateRoute({ children }) {
   const { isAuthenticated } = useAuth();
   return isAuthenticated ? children : <Navigate to="/login" />;
 }
+
 function App() {
   const [count, setCount] = useState(0)
 
   return (
     <>
       <AuthProvider>
+        <ChatProvider>
+          <Router>
+            <Routes>
+              <Route path='/register'
+                element={<Register />} />
 
-        <Router>
+              <Route path='/login'
+                element={<Login />} />
 
-          <Routes>
-            <Route path='/register'
-              element={<Register />} />
+              <Route path='/'
+                element={
+                  <PrivateRoute>
+                    <GameProvider>
+                      <Home />
+                    </GameProvider>
+                  </PrivateRoute>
+                }
+              />
 
-            <Route path='/login'
-              element={<Login />} />
+              <Route path='/game'
+                element={
+                  <PrivateRoute>
+                    <GameProvider>
+                      <Game />
+                    </GameProvider>
+                  </PrivateRoute>
+                } />
+              <Route path='/main'
+                element={
+                  <PrivateRoute>
+                    <GameProvider>
+                      <GamePage />
+                    </GameProvider>
+                  </PrivateRoute>
+                } />
 
-            <Route path='/'
-              element={
-                <PrivateRoute>
-                  <GameProvider>
-                    <Home />
-                  </GameProvider>
-                </PrivateRoute>
-              }
-            />
+              <Route path='/lobby'
+                element={
+                  <PrivateRoute>
+                    <GameProvider>
+                      <WaitingRoom />
+                    </GameProvider>
+                  </PrivateRoute>
+                } />
 
-            <Route path='/game'
-              element={
-                <PrivateRoute>
-                  <GameProvider>
-                    <Game />
-                  </GameProvider>
-                </PrivateRoute>
-              } />
-            <Route path='/main'
-              element={
-                <PrivateRoute>
-                  <GameProvider>
-                    <GamePage />
-                  </GameProvider>
-                </PrivateRoute>
-              } />
-
-            <Route path='/lobby'
-              element={
-                <PrivateRoute>
-                  <GameProvider>
-                    <WaitingRoom />
-                  </GameProvider>
-                </PrivateRoute>
-              } />
-
-          </Routes>
-
-
-
-
-        </Router>
-
-      </AuthProvider >
-
-
+            </Routes>
+          </Router>
+        </ChatProvider>
+      </AuthProvider>
     </>
   )
 }

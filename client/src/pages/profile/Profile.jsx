@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { userService } from '../../api';
-import { useAuth } from '../../context';
-import { useProtectedRoute } from '../../hooks';
+import { useAuth } from '../../context/AuthContext';
 
 const Profile = () => {
   // Protect this route

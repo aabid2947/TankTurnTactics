@@ -1,13 +1,16 @@
 import { createContext, useState, useEffect, useContext } from 'react';
 import { gameService, socketService } from '../api';
 import { useAuth } from './AuthContext';
-
-
+import chatSocketService from '../services/chatSocketService';
 
 const GameContext = createContext();
 
 export const useGame = () => {
-  return useContext(GameContext);
+  const context = useContext(GameContext);
+  if (!context) {
+    throw new Error('useGame must be used within a GameProvider');
+  }
+  return context;
 };
 
 export const GameProvider = ({ children }) => {
@@ -43,7 +46,6 @@ export const GameProvider = ({ children }) => {
 
   // Initialize socket when user is authenticated
   useEffect(() => {
-
     if (currentGame && isAuthenticated) {
       const socketInstance = socketService.getSocket();
       setSocket(socketInstance);
@@ -57,41 +59,46 @@ export const GameProvider = ({ children }) => {
               players: [...(prev.data.players || []), { userId: data.userId, username: data.username }],
             },
           }));
+
+          // When a new player joins, create a private chat room
+          if (data.userId !== localStorage.getItem('userId')) {
+            chatSocketService.startPrivateChat(data.userId);
+          }
         }
       });
 
       socketInstance.on('gameStarted', (data) => {
-        if (currentGame ) {
+        if (currentGame) {
+          setCurrentGame(data);
+          // Join the game chat room when game starts
+          const gameRoomId = `game:${data.data.gameId}`;
+          chatSocketService.joinChatRoom(gameRoomId);
+        }
+      });
+
+      socketInstance.on('playerMoved', (data) => {
+        if (currentGame) {
           setCurrentGame(data);
         }
       });
 
-      socketInstance.on('playerMoved',(data)=>{
-        if (currentGame ) {
+      socketInstance.on('playerShot', (data) => {
+        if (currentGame) {
           setCurrentGame(data);
         }
-      })
+      });
 
-      socketInstance.on('playerShot',(data)=>{
-        if (currentGame ) {
+      socketInstance.on('apTransferred', (data) => {
+        if (currentGame) {
           setCurrentGame(data);
         }
-      })
+      });
 
-      socketInstance.on('apTransferred',(data)=>{
-        if (currentGame ) {
-       
+      socketInstance.on('rangeIncreased', (data) => {
+        if (currentGame) {
           setCurrentGame(data);
         }
-      })
-
-      socketInstance.on('rangeIncreased',(data)=>{
-
-        console.log(data)
-        if (currentGame ) {
-          setCurrentGame(data);
-        }
-      })
+      });
 
       socketInstance.on('playerLeft', (data) => {
         if (currentGame && data.gameId === currentGame['data'].gameId) {
@@ -117,8 +124,6 @@ export const GameProvider = ({ children }) => {
           setGameHistory((prev) => [...prev, data]);
         }
       });
-
-     
     }
   }, [isAuthenticated, currentGame]);
 
@@ -147,8 +152,8 @@ export const GameProvider = ({ children }) => {
 
   // Fetch a game by ID
   const fetchGameById = async (gameId) => {
-    setLoading(true); ~
-      setError(null);
+    setLoading(true);
+    setError(null);
     try {
       const gameData = await gameService.getGameById(gameId);
       setCurrentGame(gameData);
@@ -166,22 +171,12 @@ export const GameProvider = ({ children }) => {
     setLoading(true);
     setError(null);
     try {
-
-      // Make an api request to create games
-      const newGame = await gameService.createGame(gameData);
-
-  
-      // Update the games
-      setGames((prev) => [...prev, newGame]);
-    
-      // trigger sokcet to join game 
-      socketService.joinGame(newGame['data'].gameId);
-
-      // set the current game
-      setCurrentGame(newGame)
-
-      // return this game 
-      return newGame;
+      const game = await gameService.createGame(gameData);
+      setCurrentGame(game);
+      // Create a chat room for the game
+      const gameRoomId = `game:${game.data.gameId}`;
+      await chatSocketService.createChatRoom(gameRoomId);
+      return game;
     } catch (error) {
       setError(error.message || 'Failed to create game');
       throw error;
@@ -195,15 +190,13 @@ export const GameProvider = ({ children }) => {
     setLoading(true);
     setError(null);
     try {
-
-      // Make an api request to join a game 
       const game = await gameService.joinGame(gameId);
       setCurrentGame(game);
 
-      // trigger sokcet to join game 
       socketService.joinGame(gameId);
-
-      // return game 
+      // Join the game chat room
+      const gameRoomId = `game:${gameId}`;
+       chatSocketService.joinChatRoom(gameRoomId);
       return game;
     } catch (error) {
       setError(error.message || 'Failed to join game');
@@ -218,12 +211,13 @@ export const GameProvider = ({ children }) => {
     setLoading(true);
     setError(null);
     try {
-
-      // call api to start game 
       const game = await gameService.startGame(gameId);
+      setCurrentGame(game);
 
       socketService.startGame(gameId);
-
+      // Ensure all players are in the game chat room
+      const gameRoomId = `game:${gameId}`;
+       chatSocketService.joinChatRoom(gameRoomId);
       return game;
     } catch (error) {
       setError(error.message || 'Failed to start game');
@@ -233,14 +227,12 @@ export const GameProvider = ({ children }) => {
     }
   };
 
-   // Start a game
-   const assignPlayerAttributes = async (player) => {
+  // Start a game
+  const assignPlayerAttributes = async (player) => {
     setLoading(true);
     setError(null);
     try {
-
       setPlyerAttributes(player)
-
       return player;
     } catch (error) {
       setError(error.message || 'Failed to start game');
@@ -255,7 +247,7 @@ export const GameProvider = ({ children }) => {
     setLoading(true);
     setError(null);
     try {
-       socketService.movePlayer(gameId, moveData);
+      socketService.movePlayer(gameId, moveData);
       return;
     } catch (error) {
       setError(error.message || 'Failed to move player');
@@ -270,8 +262,8 @@ export const GameProvider = ({ children }) => {
     setLoading(true);
     setError(null);
     try {
-       socketService.shootPlayer(gameId, shootData);
-      return ;
+      socketService.shootPlayer(gameId, shootData);
+      return;
     } catch (error) {
       setError(error.message || 'Failed to shoot player');
       throw error;
@@ -285,8 +277,8 @@ export const GameProvider = ({ children }) => {
     setLoading(true);
     setError(null);
     try {
-       socketService.increaseRange(gameId);
-      return ;
+      socketService.increaseRange(gameId);
+      return;
     } catch (error) {
       setError(error.message || 'Failed to upgrade range');
       throw error;
@@ -301,7 +293,7 @@ export const GameProvider = ({ children }) => {
     setError(null);
     try {
       socketService.transferActionPoint(gameId, transferData);
-      return ;
+      return;
     } catch (error) {
       setError(error.message || 'Failed to trade action points');
       throw error;
@@ -330,26 +322,27 @@ export const GameProvider = ({ children }) => {
     socketService.sendChatMessage(gameId, message);
   };
 
-  const leaveCurrentGame = () => {
+  const leaveCurrentGame = (gameId) => {
     if (currentGame) {
-
       // remove player data from the game 
-      gameService.leaveGame(currentGame['data'].gameId)
+      gameService.leaveGame(gameId);
       // Leave the room 
       // Disconnet to socket
-      socketService.leaveGame(currentGame['data'].gameId);
+      socketService.leaveGame(gameId);
+      // Leave the chat room
+      const gameRoomId = `game:${gameId}`;
+      chatSocketService.leaveChatRoom(gameRoomId);
 
       // set Current game null
       setCurrentGame(null);
-
       setGameHistory([]);
     }
   };
 
   return (
     <GameContext.Provider value={{
-      games, currentGame, gameHistory, loading, error,playerAttributes,
-      fetchGames, fetchGameById, createGame, joinGame, startGame,assignPlayerAttributes,
+      games, currentGame, gameHistory, loading, error, playerAttributes,
+      fetchGames, fetchGameById, createGame, joinGame, startGame, assignPlayerAttributes,
       movePlayer, shootPlayer, increaseRange, transferActionPoints,
       fetchGameHistory, sendChatMessage, leaveCurrentGame,
     }}>

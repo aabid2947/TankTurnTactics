@@ -54,9 +54,9 @@ const socketService = {
 
    // Join a game room
    startGame: (gameId) => {
-    
+    console.log(gameId)
     if (!socket) socketService.initSocket();
-    socket.emit('startGame', gameId );
+    socket.emit('startGame', {gameId} );
   },
 
   // Leave a game room

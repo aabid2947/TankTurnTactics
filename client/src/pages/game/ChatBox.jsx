@@ -1,9 +1,12 @@
 import { useState, useEffect } from "react";
 import { io } from "socket.io-client";
+import chatSocketService from "../../services/chatSocketService";
+import { useGame } from "../../context/GameContext";
 
 const socket = io("http://localhost:5000");
 
 const ChatWindow = ({ chatId, username = "You", onBack }) => {
+  const { currentGame } = useGame();
   const [messages, setMessages] = useState([
     { sender: "Alpha", message: "Hello! How are you?" },
     { sender: "You", message: "I'm good! What about you?" },
@@ -25,9 +28,26 @@ const ChatWindow = ({ chatId, username = "You", onBack }) => {
       }
     });
 
+    const chatSocket = chatSocketService.socket;
+    
+    chatSocket.on('newMessage', (msgData) => {
+      const isPersonalChat = chatId !== "global";
+      const isRelevantMessage = isPersonalChat 
+        ? (msgData.username === chatId || msgData.userId === localStorage.getItem('userId'))
+        : msgData.roomId?.startsWith('game:');
+      
+      if (isRelevantMessage) {
+        setMessages((prev) => [...prev, {
+          sender: msgData.username,
+          message: msgData.message
+        }]);
+      }
+    });
+
     return () => {
       socket.off("receiveGlobalMessage");
       socket.off("receivePrivateMessage");
+      chatSocket.off('newMessage');
     };
   }, [chatId]);
 
@@ -38,8 +58,22 @@ const ChatWindow = ({ chatId, username = "You", onBack }) => {
 
     if (chatId === "global") {
       socket.emit("sendGlobalMessage", newMessage);
+      
+      if (currentGame && currentGame.data) {
+        const gameRoomId = `game:${currentGame.data.gameId}`;
+        chatSocketService.sendMessage(gameRoomId, message);
+      }
     } else {
       socket.emit("sendPrivateMessage", newMessage);
+      
+      if (currentGame && currentGame.data && currentGame.data.players) {
+        const targetPlayer = currentGame.data.players.find(p => p.username === chatId);
+        if (targetPlayer) {
+          const currentUserId = localStorage.getItem('userId');
+          const roomId = `private:${[currentUserId, targetPlayer.userId].sort().join(':')}`;
+          chatSocketService.sendMessage(roomId, message);
+        }
+      }
     }
 
     setMessages((prev) => [...prev, newMessage]);

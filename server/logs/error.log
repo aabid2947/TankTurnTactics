@@ -29,3 +29,4 @@
 {"level":"error","message":"Error in transferring action point: Target's cell not found on board","timestamp":"2025-03-23 20:06:41:641"}
 {"level":"error","message":"Error in transferring action point: Target's cell not found on board","timestamp":"2025-03-23 20:07:40:740"}
 {"level":"error","message":"Error in transferring action point: Cannot read properties of undefined (reading 'undefined')","timestamp":"2025-03-23 20:14:08:148"}
+{"level":"error","message":"Leave game error: Invalid argument type","timestamp":"2025-03-25 16:17:33:1733"}

@@ -9,7 +9,6 @@ const WaitingRoom = ({ gameId, setGameStarted }) => {
 
 
   useEffect(() => {
-    console.log(currentGame)
     if (!currentGame) {
       navigate("/")
     }
@@ -24,7 +23,7 @@ const WaitingRoom = ({ gameId, setGameStarted }) => {
   
   const handleLeaveGame = async () => {
     try {
-      await leaveCurrentGame()
+      await leaveCurrentGame(currentGame['data'].gameId)
       navigate("/")
     } catch (error) {
       console.log("error leaving room:", error)
