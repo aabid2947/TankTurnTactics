@@ -6,7 +6,7 @@ const socketService = {
   // Initialize socket connection
   initSocket: () => {
     console.log('Initializing socket connection');
-    socket = io('http://localhost:5000', {
+    socket = io('https://cf3a-103-134-102-70.ngrok-free.app', {
       auth: {
         token: localStorage.getItem('token'),
       },

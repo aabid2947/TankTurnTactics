@@ -42,7 +42,7 @@ const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
     origin: process.env.NODE_ENV === 'production' 
-      ? 'https://your-production-domain.com' 
+      ? 'https://tank-turn-tactics.vercel.app/' 
       : 'http://localhost:5173',
     methods: ['GET', 'POST'],
     credentials: true
