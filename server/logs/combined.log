@@ -1376,3 +1376,25 @@
 {"level":"info","message":"The Range has been increased: game:1742748855523","timestamp":"2025-03-23 22:25:31:2531"}
 {"level":"info","message":"The Action Point has been transferred: game:1742748855523","timestamp":"2025-03-23 22:25:36:2536"}
 {"level":"info","message":"Socket disconnected: IFrlsvtX7zQfHVf3AAAH -> Reason transport close","timestamp":"2025-03-23 22:51:44:5144","userId":"user:0094f9c1-435f-458a-bac2-e258521a90a4"}
+{"level":"info","message":"Connected to Upstash Redis Cloud","service":"tank-turn-tactics","timestamp":"2025-03-28T19:05:50.307Z"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"tank-turn-tactics","timestamp":"2025-03-28T19:05:50.400Z"}
+{"level":"debug","message":"Validation successful for body with value: {\"username\":\"lkahdfkj alsdf\",\"email\":\"adsklfh@gmail.com\",\"password\":\"8pTKpp#o\",\"confirmPassword\":\"8pTKpp#o\"}","timestamp":"2025-03-29 00:37:50:3750"}
+{"email":"adsklfh@gmail.com","level":"info","message":"User registered: lkahdfkj alsdf","timestamp":"2025-03-29 00:37:55:3755"}
+{"level":"debug","message":"Validation successful for body with value: {\"username\":\"ffgargd\",\"email\":\"fgsdfgdsg@gmail.com\",\"password\":\"8pTKpp#o\",\"confirmPassword\":\"8pTKpp#o\"}","timestamp":"2025-03-29 00:38:22:3822"}
+{"email":"fgsdfgdsg@gmail.com","level":"info","message":"User registered: ffgargd","timestamp":"2025-03-29 00:38:24:3824"}
+{"gameId":"game:1743188910627","level":"info","message":"Game created: game:1743188910627","timestamp":"2025-03-29 00:38:31:3831","userId":"user:6169277d-d3bd-489b-bc94-40840886dff4"}
+{"level":"info","message":"Socket connected: 8YcV1YjfdqIjOfhsAAAN","timestamp":"2025-03-29 00:38:33:3833","userId":"user:6169277d-d3bd-489b-bc94-40840886dff4"}
+{"gameId":"game:1743188910627","level":"info","message":"Player joined game room: game:1743188910627","timestamp":"2025-03-29 00:38:33:3833","userId":"user:6169277d-d3bd-489b-bc94-40840886dff4"}
+{"gameId":"game:1743188910627","level":"info","message":"Player joined game: game:1743188910627","timestamp":"2025-03-29 00:38:42:3842","userId":"user:d5ec5262-b70e-44c4-85e4-313e2346051b"}
+{"level":"info","message":"Socket connected: e3Wi9eLi9dKIOMeOAAAP","timestamp":"2025-03-29 00:38:44:3844","userId":"user:d5ec5262-b70e-44c4-85e4-313e2346051b"}
+{"gameId":"game:1743188910627","level":"info","message":"Player joined game room: game:1743188910627","timestamp":"2025-03-29 00:38:44:3844","userId":"user:d5ec5262-b70e-44c4-85e4-313e2346051b"}
+{"gameId":"game:1743188910627","level":"info","message":"Game started: game:1743188910627","timestamp":"2025-03-29 00:38:46:3846","userId":"user:6169277d-d3bd-489b-bc94-40840886dff4"}
+{"level":"info","message":"game has started: game:1743188910627","timestamp":"2025-03-29 00:38:46:3846"}
+{"level":"info","message":"The Player has moved: game:1743188910627","timestamp":"2025-03-29 00:39:20:3920"}
+{"level":"info","message":"The Range has been increased: game:1743188910627","timestamp":"2025-03-29 00:39:32:3932"}
+{"level":"info","message":"The Player has moved: game:1743188910627","timestamp":"2025-03-29 00:39:36:3936"}
+{"level":"info","message":"The Player has been shot: game:1743188910627","timestamp":"2025-03-29 00:39:41:3941"}
+{"level":"info","message":"Socket disconnected: e3Wi9eLi9dKIOMeOAAAP -> Reason transport close","timestamp":"2025-03-29 00:50:24:5024","userId":"user:d5ec5262-b70e-44c4-85e4-313e2346051b"}
+{"level":"info","message":"Socket disconnected: 8YcV1YjfdqIjOfhsAAAN -> Reason transport close","timestamp":"2025-03-29 01:45:38:4538","userId":"user:6169277d-d3bd-489b-bc94-40840886dff4"}
+{"level":"debug","message":"Validation successful for body with value: {\"username\":\"LigmaBall\",\"email\":\"LigmaBall@gmail.com\",\"password\":\"8pTKpp#o\",\"confirmPassword\":\"8pTKpp#o\"}","timestamp":"2025-03-29 01:58:40:5840"}
+{"email":"LigmaBall@gmail.com","level":"info","message":"User registered: LigmaBall","timestamp":"2025-03-29 01:58:43:5843"}
