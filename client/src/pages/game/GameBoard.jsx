@@ -1,4 +1,3 @@
-"use client"
 
 import React, { useState, useEffect, useMemo, useRef } from "react"
 import { useGame } from "../../context/GameContext"
@@ -27,11 +26,12 @@ const GameBoard = () => {
   const [showMinimap, setShowMinimap] = useState(false)
   
   const { currentGame, movePlayer, shootPlayer, transferActionPoints, increaseRange } = useGame()
-  const { currentUser } = useAuth()
+  const { currentPlayer } = useAuth()
   const boardRef = useRef(null)
 
   // Calculate and update marker positions for players
   useEffect(() => {
+    console.log(currentPlayer)
     if (!currentGame || !currentGame.data || !currentGame.data.board) return
 
     // Flatten board if needed
@@ -57,17 +57,17 @@ const GameBoard = () => {
 
   // Get my player attributes from the board
   const myPlayerAttributes = useMemo(() => {
-    if (!currentGame || !currentGame.data || !currentGame.data.board || !currentUser) return null
+    if (!currentGame || !currentGame.data || !currentGame.data.board || !currentPlayer) return null
     const flatBoard = Array.isArray(currentGame.data.board[0])
       ? currentGame.data.board.flat()
       : currentGame.data.board
     const myCell = flatBoard.find(cell =>
       typeof cell.type === "object" &&
       cell.type.role === "player" &&
-      cell.type.userId === currentUser.data.id
+      cell.type.userId === currentPlayer.data.id
     )
     return myCell ? myCell.type : null
-  }, [currentGame, currentUser])
+  }, [currentGame, currentPlayer])
 
   // Compute possible move options based on my player's attributes using Chebyshev distance
   const moveOptions = useMemo(() => {
@@ -78,7 +78,7 @@ const GameBoard = () => {
     const myCell = flatBoard.find(cell =>
       typeof cell.type === "object" &&
       cell.type.role === "player" &&
-      cell.type.userId === currentUser.data.id
+      cell.type.userId === currentPlayer.data.id
     )
     if (!myCell) return []
     const range = myPlayerAttributes.range || 1
@@ -91,7 +91,7 @@ const GameBoard = () => {
         return distance > 0 && distance <= range
       })
       .map(cell => cell.y * GRID_SIZE + cell.x)
-  }, [myPlayerAttributes, currentGame, currentUser])
+  }, [myPlayerAttributes, currentGame, currentPlayer])
 
   // Compute possible attack options (cells with another player within range)
   const attackOptions = useMemo(() => {
@@ -102,12 +102,12 @@ const GameBoard = () => {
     const myCell = flatBoard.find(cell =>
       typeof cell.type === "object" &&
       cell.type.role === "player" &&
-      cell.type.userId === currentUser.data.id
+      cell.type.userId === currentPlayer.data.id
     )
     if (!myCell) return []
     const range = myPlayerAttributes.range || 1
     return flatBoard
-      .filter(cell => typeof cell.type === "object" && cell.type.role === "player" && cell.type.userId !== currentUser.data.id)
+      .filter(cell => typeof cell.type === "object" && cell.type.role === "player" && cell.type.userId !== currentPlayer.data.id)
       .filter(cell => {
         const dx = Math.abs(cell.x - myCell.x)
         const dy = Math.abs(cell.y - myCell.y)
@@ -115,7 +115,7 @@ const GameBoard = () => {
         return distance > 0 && distance <= range
       })
       .map(cell => cell.y * GRID_SIZE + cell.x)
-  }, [myPlayerAttributes, currentGame, currentUser])
+  }, [myPlayerAttributes, currentGame, currentPlayer])
 
   // For transfer, we reuse attackOptions (i.e. transfer to a player within range)
   const transferOptions = attackOptions;

@@ -97,7 +97,7 @@ import { useAuth } from "../../context/AuthContext";
 
 const HomePage = () => {
   const { createGame, currentGame } = useGame();
-  const {logout} = useAuth()
+  const {logout,currentPlayer} = useAuth()
   const navigate = useNavigate();
   const [modal, setModal] = useState(null);
   const [gameId, setGameId] = useState("");
@@ -107,6 +107,7 @@ const HomePage = () => {
 
 
   useEffect(()=>{
+    console.log(currentPlayer)
     if(currentGame){
       navigate("/lobby")
     }

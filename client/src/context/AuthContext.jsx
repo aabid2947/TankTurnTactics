@@ -12,8 +12,8 @@ const AuthContext = createContext();
 const AuthProvider = ({ children }) => {
   // Initialize currentUser state from localStorage, if it exists.
   // This allows the user information to persist across page refreshes.
-  const [currentUser, setCurrentUser] = useState(() => {
-    const storedUser = localStorage.getItem('currentUser');
+  const [currentPlayer, setCurrentUser] = useState(() => {
+    const storedUser = localStorage.getItem('currentPlayer');
     return storedUser ? JSON.parse(storedUser) : null;
   });
   
@@ -64,12 +64,12 @@ const AuthProvider = ({ children }) => {
           setCurrentUser(userData);
           setIsAuthenticated(true);
           // Persist the user data and authentication status in localStorage
-          localStorage.setItem('currentUser', JSON.stringify(userData));
+          localStorage.setItem('currentPlayer', JSON.stringify(userData));
           localStorage.setItem('isAuthenticated', 'true');
         } else {
           // If token is missing or invalid, clear relevant data from localStorage and state
           localStorage.removeItem('token');
-          localStorage.removeItem('currentUser');
+          localStorage.removeItem('currentPlayer');
           localStorage.removeItem('isAuthenticated');
           setCurrentUser(null);
           setIsAuthenticated(false);
@@ -78,7 +78,7 @@ const AuthProvider = ({ children }) => {
         // In case of errors (like API failure), log the error and clear stored data
         console.error('Failed to load user:', error);
         localStorage.removeItem('token');
-        localStorage.removeItem('currentUser');
+        localStorage.removeItem('currentPlayer');
         localStorage.removeItem('isAuthenticated');
         setCurrentUser(null);
         setIsAuthenticated(false);
@@ -112,7 +112,7 @@ const AuthProvider = ({ children }) => {
         setCurrentUser(response.data.user); // Update state with user data
         setIsAuthenticated(true);           // Set authentication status to true
         // Persist user information and auth status in localStorage
-        localStorage.setItem('currentUser', JSON.stringify(response.data.user));
+        localStorage.setItem('currentPlayer', JSON.stringify(response.data.user));
         localStorage.setItem('isAuthenticated', 'true');
       }
       return response.data;
@@ -147,7 +147,7 @@ const AuthProvider = ({ children }) => {
         setCurrentUser(response.data.user); // Update state with user data
         setIsAuthenticated(true);           // Mark the user as authenticated
         // Persist the current user and auth status in localStorage
-        localStorage.setItem('currentUser', JSON.stringify(response.data.user));
+        localStorage.setItem('currentPlayer', JSON.stringify(response.data.user));
         localStorage.setItem('isAuthenticated', 'true');
       }
       return response.data;
@@ -172,7 +172,7 @@ const AuthProvider = ({ children }) => {
     setIsAuthenticated(false);
     // Clear all authentication related data from localStorage
     localStorage.removeItem('token');
-    localStorage.removeItem('currentUser');
+    localStorage.removeItem('currentPlayer');
     localStorage.removeItem('isAuthenticated');
     localStorage.removeItem('authError');
   };
@@ -205,7 +205,7 @@ const AuthProvider = ({ children }) => {
   // It includes the current user, authentication status, error state, loading state,
   // and all the authentication related functions.
   const value = {
-    currentUser,
+    currentPlayer,
     loading,
     error,
     isAuthenticated,
