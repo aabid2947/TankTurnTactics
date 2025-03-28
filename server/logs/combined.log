@@ -1356,3 +1356,23 @@
 {"level":"info","message":"The Action Point has been transferred: game:1742740554426","timestamp":"2025-03-23 20:15:00:150"}
 {"level":"info","message":"The Action Point has been transferred: game:1742740554426","timestamp":"2025-03-23 20:15:45:1545"}
 {"level":"info","message":"The Action Point has been transferred: game:1742740554426","timestamp":"2025-03-23 20:15:49:1549"}
+{"level":"info","message":"Connected to Upstash Redis Cloud","service":"tank-turn-tactics","timestamp":"2025-03-23T16:53:45.420Z"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"tank-turn-tactics","timestamp":"2025-03-23T16:53:45.428Z"}
+{"gameId":"game:1742748855523","level":"info","message":"Game created: game:1742748855523","timestamp":"2025-03-23 22:24:18:2418","userId":"user:0094f9c1-435f-458a-bac2-e258521a90a4"}
+{"level":"info","message":"Socket connected: IFrlsvtX7zQfHVf3AAAH","timestamp":"2025-03-23 22:24:20:2420","userId":"user:0094f9c1-435f-458a-bac2-e258521a90a4"}
+{"gameId":"game:1742748855523","level":"info","message":"Player joined game room: game:1742748855523","timestamp":"2025-03-23 22:24:20:2420","userId":"user:0094f9c1-435f-458a-bac2-e258521a90a4"}
+{"gameId":"game:1742748855523","level":"info","message":"Player joined game: game:1742748855523","timestamp":"2025-03-23 22:24:31:2431","userId":"user:64c50e8e-9411-4c2e-9473-ae889416849e"}
+{"level":"info","message":"Socket connected: uhtkSbX4E791N6ZmAAAJ","timestamp":"2025-03-23 22:24:32:2432","userId":"user:64c50e8e-9411-4c2e-9473-ae889416849e"}
+{"gameId":"game:1742748855523","level":"info","message":"Player joined game room: game:1742748855523","timestamp":"2025-03-23 22:24:33:2433","userId":"user:64c50e8e-9411-4c2e-9473-ae889416849e"}
+{"gameId":"game:1742748855523","level":"info","message":"Game started: game:1742748855523","timestamp":"2025-03-23 22:24:34:2434","userId":"user:0094f9c1-435f-458a-bac2-e258521a90a4"}
+{"level":"info","message":"game has started: game:1742748855523","timestamp":"2025-03-23 22:24:35:2435"}
+{"level":"info","message":"The Player has moved: game:1742748855523","timestamp":"2025-03-23 22:25:02:252"}
+{"level":"info","message":"The Player has moved: game:1742748855523","timestamp":"2025-03-23 22:25:05:255"}
+{"level":"info","message":"The Range has been increased: game:1742748855523","timestamp":"2025-03-23 22:25:09:259"}
+{"level":"info","message":"The Player has been shot: game:1742748855523","timestamp":"2025-03-23 22:25:14:2514"}
+{"level":"info","message":"The Range has been increased: game:1742748855523","timestamp":"2025-03-23 22:25:17:2517"}
+{"level":"info","message":"The Player has been shot: game:1742748855523","timestamp":"2025-03-23 22:25:21:2521"}
+{"level":"info","message":"The Player has moved: game:1742748855523","timestamp":"2025-03-23 22:25:28:2528"}
+{"level":"info","message":"The Range has been increased: game:1742748855523","timestamp":"2025-03-23 22:25:31:2531"}
+{"level":"info","message":"The Action Point has been transferred: game:1742748855523","timestamp":"2025-03-23 22:25:36:2536"}
+{"level":"info","message":"Socket disconnected: IFrlsvtX7zQfHVf3AAAH -> Reason transport close","timestamp":"2025-03-23 22:51:44:5144","userId":"user:0094f9c1-435f-458a-bac2-e258521a90a4"}
