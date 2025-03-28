@@ -1,7 +1,14 @@
 import { useState, useEffect } from "react";
 import { io } from "socket.io-client";
 
-const socket = io("http://localhost:5000");
+const socket = io("https://cf3a-103-134-102-70.ngrok-free.app",{
+  
+  transports: ['websocket','polling'],
+  withCredentials: true,
+  auth: {
+    token: localStorage.getItem('token'),
+  },
+});
 
 const ChatWindow = ({ chatId, username = "You", onBack }) => {
   const [messages, setMessages] = useState([

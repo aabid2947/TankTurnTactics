@@ -7,6 +7,9 @@ const socketService = {
   initSocket: () => {
     console.log('Initializing socket connection');
     socket = io('https://cf3a-103-134-102-70.ngrok-free.app', {
+      
+      transports: ['websocket','polling'],
+      withCredentials: true,
       auth: {
         token: localStorage.getItem('token'),
       },

@@ -10,10 +10,14 @@ export default defineConfig({
     port: 5173, // Default Vite port
     strictPort: true, // Ensures the port does not change
     cors: true, // Enables CORS
-    origin: "https://06ca-103-134-102-70.ngrok-free.app", // Defines the allowed origin
-    hmr: {
-      clientPort: 443, // Ensures HMR works with ngrok
-    },
+    // origin: "http:localhost:5173", // Defines the allowed origin
+    // hmr: {
+    //   protocol: "wss", 
+    //   clientPort: 443, // Ensures HMR works with ngrok
+    //   path: "/vite-hmr",
+    //   host: "localhost", // Allows access from external networks
+    // },
+ 
   },
   
 })
