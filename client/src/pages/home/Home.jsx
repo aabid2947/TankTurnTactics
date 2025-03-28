@@ -119,7 +119,7 @@ const HomePage = () => {
       
       const gameData = {
         "name":"game",
-        "maxPlayers":3
+        "maxPlayers":5
 
       }
       // Call context function to create game
