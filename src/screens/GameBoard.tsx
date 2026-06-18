@@ -18,7 +18,8 @@ type ActionInput =
   | { kind: "upgrade" }
   | { kind: "collect" }
   | { kind: "move"; to: Cell }
-  | { kind: "shoot"; target: Cell };
+  | { kind: "shoot"; target: Cell }
+  | { kind: "give"; targetId: Id<"players"> };
 
 export function GameBoard({ game, meId }: { game: GameDetail; meId?: Id<"users"> }) {
   const me = useQuery(api.games.getMyPlayer, { gameId: game._id });
@@ -29,13 +30,14 @@ export function GameBoard({ game, meId }: { game: GameDetail; meId?: Id<"users">
   const clearMyQueue = useMutation(api.actions.clearMyQueue);
   const forceResolve = useMutation(api.resolve.forceResolve);
 
-  const [mode, setMode] = useState<"move" | "shoot" | null>(null);
+  const [mode, setMode] = useState<"move" | "shoot" | "give" | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const secsLeft = useCountdown(game.currentPeriodEndsAt);
   const alive = game.players.filter((p) => p.status === "alive").length;
   const isHost = meId !== undefined && game.createdBy === meId;
   const amAlive = me?.status === "alive";
+  const nameOf = (id: string) => game.players.find((p) => p._id === id)?.name ?? "a tank";
 
   const tryQueue = async (action: ActionInput) => {
     setError(null);
@@ -49,6 +51,12 @@ export function GameBoard({ game, meId }: { game: GameDetail; meId?: Id<"users">
   const onPick = (cell: Cell) => {
     if (mode === "move") void tryQueue({ kind: "move", to: cell });
     else if (mode === "shoot") void tryQueue({ kind: "shoot", target: cell });
+    else if (mode === "give") {
+      const target = game.players.find(
+        (p) => p.x === cell.x && p.y === cell.y && p._id !== me?._id && (p.status === "dead" || p.hearts < 3),
+      );
+      if (target) void tryQueue({ kind: "give", targetId: target._id });
+    }
   };
 
   return (
@@ -100,6 +108,7 @@ export function GameBoard({ game, meId }: { game: GameDetail; meId?: Id<"users">
             mode={mode}
             setMode={setMode}
             disabled={!amAlive}
+            nameOf={nameOf}
             onSimple={(kind) => void tryQueue({ kind })}
             onCancel={(id) => void cancelAction({ actionId: id })}
             onClear={() => void clearMyQueue({ gameId: game._id })}
@@ -118,7 +127,9 @@ export function GameBoard({ game, meId }: { game: GameDetail; meId?: Id<"users">
               ? "Click a highlighted cell to queue a move."
               : mode === "shoot"
                 ? "Click a cell in range to queue a shot."
-                : "Pick Move or Shoot, then click the board. Everything resolves at the buzzer."}
+                : mode === "give"
+                  ? "Click a wounded ally or a fallen tank in range to give a heart / revive."
+                  : "Pick Move, Shoot, or Give, then click the board. Everything resolves at the buzzer."}
           </p>
         </div>
         <div className="order-3 h-[560px] lg:order-3">

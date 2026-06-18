@@ -16,13 +16,14 @@ export const configValidator = v.object({
 
 const cellValidator = v.object({ x: v.number(), y: v.number() });
 
-/** A queued action (Stage 3 set: heal/upgrade/collect/move/shoot). Transfers come later. */
+/** A queued action. `give` is one-way (heal an ally / revive a body). Mutual trades use a handshake. */
 export const actionValidator = v.union(
   v.object({ kind: v.literal("heal") }),
   v.object({ kind: v.literal("upgrade") }),
   v.object({ kind: v.literal("collect") }),
   v.object({ kind: v.literal("move"), to: cellValidator }),
   v.object({ kind: v.literal("shoot"), target: cellValidator }),
+  v.object({ kind: v.literal("give"), targetId: v.id("players") }),
 );
 
 export default defineSchema({

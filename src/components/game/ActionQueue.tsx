@@ -1,10 +1,12 @@
 import type { LucideIcon } from "lucide-react";
-import { ChevronsUp, Coins, Crosshair, Heart, Lock, Move, Trash2 } from "lucide-react";
+import { ChevronsUp, Coins, Crosshair, Gift, Heart, Lock, Move, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { queueCost, type QueuedKind } from "@convex/lib/cost";
 import type { Id } from "@convex/_generated/dataModel";
 import type { MyPlayer, QueueRow } from "@/lib/gameTypes";
+
+type Mode = "move" | "shoot" | "give" | null;
 
 const KIND_ICON: Record<string, LucideIcon> = {
   move: Move,
@@ -12,9 +14,10 @@ const KIND_ICON: Record<string, LucideIcon> = {
   heal: Heart,
   upgrade: ChevronsUp,
   collect: Coins,
+  give: Gift,
 };
 
-function actionLabel(row: QueueRow): string {
+function actionLabel(row: QueueRow, nameOf: (id: string) => string): string {
   const a = row.action;
   switch (a.kind) {
     case "move":
@@ -27,27 +30,29 @@ function actionLabel(row: QueueRow): string {
       return "Upgrade range";
     case "collect":
       return "Collect AP";
+    case "give":
+      return `Give ♥ → ${nameOf(a.targetId)}`;
   }
 }
 
 interface Props {
   me?: MyPlayer;
   queue: QueueRow[];
-  mode: "move" | "shoot" | null;
-  setMode: (m: "move" | "shoot" | null) => void;
+  mode: Mode;
+  setMode: (m: Mode) => void;
   disabled: boolean;
+  nameOf: (id: string) => string;
   onSimple: (kind: "heal" | "upgrade" | "collect") => void;
   onCancel: (id: Id<"queuedActions">) => void;
   onClear: () => void;
 }
 
-export function ActionQueue({ me, queue, mode, setMode, disabled, onSimple, onCancel, onClear }: Props) {
+export function ActionQueue({ me, queue, mode, setMode, disabled, nameOf, onSimple, onCancel, onClear }: Props) {
   const ap = me?.ap ?? 0;
   const range = me?.range ?? 1;
   const spent = queueCost(queue.map((r) => r.action.kind) as QueuedKind[], range);
   const remaining = ap - spent;
-
-  const toggle = (m: "move" | "shoot") => setMode(mode === m ? null : m);
+  const toggle = (m: "move" | "shoot" | "give") => setMode(mode === m ? null : m);
 
   return (
     <Card className="flex h-full flex-col overflow-hidden p-0">
@@ -70,7 +75,7 @@ export function ActionQueue({ me, queue, mode, setMode, disabled, onSimple, onCa
                   {idx + 1}
                 </span>
                 <Icon className="size-4 shrink-0" />
-                <span className="flex-1 truncate font-mono text-xs">{actionLabel(row)}</span>
+                <span className="flex-1 truncate font-mono text-xs">{actionLabel(row, nameOf)}</span>
                 <button onClick={() => onCancel(row._id)} className="text-muted-foreground hover:text-destructive" aria-label="Cancel action">
                   <Trash2 className="size-4" />
                 </button>
@@ -93,6 +98,10 @@ export function ActionQueue({ me, queue, mode, setMode, disabled, onSimple, onCa
             <Crosshair className="size-4" />
             Shoot
           </Button>
+          <Button variant={mode === "give" ? "accent" : "outline"} size="sm" disabled={disabled} onClick={() => toggle("give")}>
+            <Gift className="size-4" />
+            Give
+          </Button>
           <Button variant="outline" size="sm" disabled={disabled} onClick={() => onSimple("heal")}>
             <Heart className="size-4" />
             Heal
@@ -105,15 +114,15 @@ export function ActionQueue({ me, queue, mode, setMode, disabled, onSimple, onCa
             <Coins className="size-4" />
             Collect
           </Button>
-          <Button variant="ghost" size="sm" disabled={disabled || queue.length === 0} onClick={onClear}>
+          <Button variant="ghost" size="sm" className="col-span-2" disabled={disabled || queue.length === 0} onClick={onClear}>
             <Trash2 className="size-4" />
-            Clear
+            Clear queue
           </Button>
         </div>
 
         <div className="mt-auto flex items-center gap-2 rounded-[10px] border-2 border-foreground bg-muted px-3 py-2 font-mono text-[10px] leading-snug text-muted-foreground">
           <Lock className="size-3.5 shrink-0" />
-          Locks at the buzzer · resolves heal → upgrade → move → shoot, ties by who queued first.
+          Locks at the buzzer · heal → upgrade → give → collect → move → shoot, ties by who queued first.
         </div>
       </div>
     </Card>

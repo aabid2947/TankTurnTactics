@@ -9,7 +9,7 @@ interface Props {
   game: GameDetail;
   me?: MyPlayer;
   meUserId?: string;
-  mode: "move" | "shoot" | null;
+  mode: "move" | "shoot" | "give" | null;
   onPick: (cell: { x: number; y: number }) => void;
 }
 
@@ -35,7 +35,11 @@ export function InGameBoard({ game, me, meUserId, mode, onPick }: Props) {
     if (!me || me.status !== "alive" || !mode) return false;
     const d = chebyshev({ x: me.x, y: me.y }, { x, y });
     if (mode === "move") return d === 1 && !livingAt.has(`${x},${y}`);
-    return d >= 1 && d <= me.range; // shoot: any in-range cell (not self)
+    if (mode === "shoot") return d >= 1 && d <= me.range;
+    // give: a tank in range that's a fallen body or a wounded ally (not me)
+    if (d < 1 || d > me.range) return false;
+    const target = livingAt.get(`${x},${y}`) ?? deadAt.get(`${x},${y}`);
+    return !!target && target._id !== me._id && (target.status === "dead" || target.hearts < 3);
   };
 
   const tokenSize = Math.max(14, Math.floor(560 / Math.max(width, height)));
@@ -62,6 +66,7 @@ export function InGameBoard({ game, me, meUserId, mode, onPick }: Props) {
                 "relative grid place-items-center border-b border-r border-foreground/10",
                 isValid && mode === "move" && "cursor-pointer bg-accent/30 hover:bg-accent/50",
                 isValid && mode === "shoot" && "cursor-pointer bg-destructive/20 hover:bg-destructive/35",
+                isValid && mode === "give" && "cursor-pointer bg-primary/25 hover:bg-primary/40",
               )}
             >
               {!tank && cacheAt.has(key) && (

@@ -5,7 +5,7 @@
 > the same change (see `CLAUDE.md`, rules 1 & 2). Organize code **by feature** so this index stays
 > meaningful.
 >
-> Last updated: 2026-06-18 (Stage 3 complete — action loop + in-game UI on `main`)
+> Last updated: 2026-06-18 (Stage 4 in progress — give/revive done; jury + trade next)
 
 ## Root — docs & config
 
@@ -91,7 +91,7 @@ src/
 │       ├── TankToken.tsx     Circular bordered tank token (monogram, hearts, leader/dead markers).
 │       ├── BoardGrid.tsx     Read-only board (Stage 1 waiting/spectate).
 │       ├── InGameBoard.tsx   Interactive board: click to queue moves/shots (origin-aware, range highlights).
-│       ├── ActionQueue.tsx   Queue panel: AP meter, queued actions, move/shoot/heal/upgrade/collect, cancel/clear.
+│       ├── ActionQueue.tsx   Queue panel: AP meter, queued actions, move/shoot/give/heal/upgrade/collect, cancel/clear.
 │       ├── HistoryPanel.tsx  Public event log grouped by period.
 │       └── HudChip.tsx       Mono data chip with icon (AP, range, hearts, players…).
 └── screens/
