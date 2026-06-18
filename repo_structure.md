@@ -5,7 +5,7 @@
 > the same change (see `CLAUDE.md`, rules 1 & 2). Organize code **by feature** so this index stays
 > meaningful.
 >
-> Last updated: 2026-06-18 (Stage 3 in progress — backend resolve loop on `feat/stage-3-loop`)
+> Last updated: 2026-06-18 (Stage 3 complete — action loop + in-game UI on `main`)
 
 ## Root — docs & config
 
@@ -78,7 +78,9 @@ src/
 │   ├── utils.ts              `cn()` className merge.
 │   ├── geometry.ts           Chebyshev / adjacency helpers (shared) + geometry.test.ts.
 │   ├── board.ts              Player colors, display-name + monogram helpers.
-│   └── gameTypes.ts          Shared types derived from the getGame query (GameDetail).
+│   ├── gameTypes.ts          Shared types from queries (GameDetail, MyPlayer, QueueRow).
+│   ├── useCountdown.ts       Live period countdown hook + time formatter.
+│   └── events.ts             Maps resolution events to readable history labels.
 ├── test/setup.ts             Vitest setup (jest-dom matchers).
 ├── components/
 │   ├── ui/                   Brutalist primitives: button, input, card, badge, stepper, progress.
@@ -87,7 +89,10 @@ src/
 │   │   └── AuthShell.tsx     Centered auth card on lavender backdrop + `Field` helper.
 │   └── game/
 │       ├── TankToken.tsx     Circular bordered tank token (monogram, hearts, leader/dead markers).
-│       ├── BoardGrid.tsx     Read-only board: places tanks on a width×height grid (props-driven).
+│       ├── BoardGrid.tsx     Read-only board (Stage 1 waiting/spectate).
+│       ├── InGameBoard.tsx   Interactive board: click to queue moves/shots (origin-aware, range highlights).
+│       ├── ActionQueue.tsx   Queue panel: AP meter, queued actions, move/shoot/heal/upgrade/collect, cancel/clear.
+│       ├── HistoryPanel.tsx  Public event log grouped by period.
 │       └── HudChip.tsx       Mono data chip with icon (AP, range, hearts, players…).
 └── screens/
     ├── SignInScreen.tsx      Email+password sign-in / sign-up (Convex Auth, no verification).
@@ -95,7 +100,7 @@ src/
     ├── CreateGameScreen.tsx  Config form (period, AP, intervals, board, players) → createGame.
     ├── GameRoute.tsx         Routes /game/:id → WaitingRoom (lobby) or GameBoard (active).
     ├── WaitingRoom.tsx       Live roster + invite code + host start (startGame).
-    └── GameBoard.tsx         Live read-only board + HUD (your AP/range/hearts via getMyPlayer).
+    └── GameBoard.tsx         In-game: interactive board + action queue + countdown + resolve-now + history.
 ```
 
 ## `.github/` · `.claude/`
@@ -107,8 +112,7 @@ src/
 
 ## Planned (upcoming stages — not yet created)
 
-- Stage 3 remaining (client): action-queue UI, live countdown, resolution reveal, history panel;
-  then Playwright E2E in CI.
+- Playwright E2E in CI (signup→create→start→queue→resolve), gated on a `CONVEX_DEPLOY_KEY` secret.
 - `convex/trade.ts`, `convex/chat.ts`, `convex/notify.ts` — trade/jury, chat, notifications (Stages 4–6).
 - `src/components/game/` additions — ActionQueuePanel, ChatPanel, range/move overlays (Stages 3–5).
 - More `src/components/ui/*` primitives (dialog, tabs, …) as screens need them.

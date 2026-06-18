@@ -45,8 +45,9 @@ detail & acceptance criteria in `Implementation.md §11`.
       `startGame` with spawn placement, live read-only board — **complete** (design system applied).
 - [x] **Stage 2 — Core engine (critical path):** pure slot-based resolver + full deterministic test
       suite (33 tests) — **complete**. Not yet wired to Convex/UI (that's Stage 3).
-- [ ] **Stage 3 — Action queue & loop:** persisted private queue (edit/cancel, affordability),
-      scheduled `resolvePeriod`, AP grant, live countdown + resolution reveal, public history.
+- [x] **Stage 3 — Action queue & loop:** private queue (queue/cancel/clear, affordability), scheduled
+      `resolvePeriod` + host `forceResolve`, AP grant, live countdown, interactive board, public
+      history — **complete**. (Playwright E2E still pending — needs a `CONVEX_DEPLOY_KEY` CI secret.)
 - [ ] **Stage 4 — Full action set:** shoot/range/upgrade, self-heal, death→cache→collect, revival,
       board shrink, heart spawns, trade handshake, jury & haunting.
 - [ ] **Stage 5 — Social & endgame:** global + 1:1 chat, alliance/betrayal UX, win detection,
@@ -55,8 +56,9 @@ detail & acceptance criteria in `Implementation.md §11`.
       security/secrecy pass.
 - [ ] **Stage 7 — Beta & launch:** playtest, balance-tune the configurable knobs, polish, deploy.
 
-**Current status:** Stages 0–2 complete and on `main`. Convex is live; the design system is applied;
-the pure slot-based **engine** (`convex/engine/`) is done & deterministically tested (33 tests). All
-gates green (app + Convex typecheck, lint, 33 tests, build). **Next: Stage 3 — action queue & the
-scheduled resolve loop** (persist a private per-period queue, wire `resolvePeriod` into a Convex
-scheduled function, AP grant, live countdown + resolution reveal, public history).
+**Current status:** Stages 0–3 complete and on `main`. The **period loop is live**: queue actions →
+buzzer (scheduled `resolvePeriod`, or host `forceResolve`) → the pure engine resolves → board &
+history update reactively. All gates green (app + Convex typecheck, lint, 37 tests, build). **Next:
+Stage 4 — full action set surfacing** (trade handshake + give/revive UI, jury & haunting, death→cache
+→collect/revival UX) and **Playwright E2E in CI**. Run `npx convex dev` + `npm run dev`, create a
+game (min players 1, short period) and use **Resolve now** to watch the loop.
