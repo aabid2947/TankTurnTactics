@@ -5,6 +5,7 @@ import type { Doc, Id } from "./_generated/dataModel";
 import { internalMutation, mutation, query, type MutationCtx } from "./_generated/server";
 import { resolvePeriod as engineResolve } from "./engine";
 import type { EngineState, GameEvent, QueuedAction, Queues } from "./engine/types";
+import { tallyJury } from "./lib/jury";
 import { makeRng } from "./lib/rng";
 
 function buildEngineState(game: Doc<"games">, players: Doc<"players">[]): EngineState {
@@ -62,9 +63,20 @@ async function doResolve(ctx: MutationCtx, gameId: Id<"games">): Promise<void> {
   const heartEvery = game.config.heartSpawnEveryPeriods;
   const spawnHeart = heartEvery > 0 && (period + 1) % heartEvery === 0;
 
+  // Jury vote (if due this period): tally eliminated players' ballots into an outcome the engine applies.
+  const juryEvery = game.config.juryVoteEveryPeriods;
+  const voteDue = juryEvery > 0 && (period + 1) % juryEvery === 0;
+  const voteRows = voteDue
+    ? await ctx.db.query("juryVotes").withIndex("by_game", (q) => q.eq("gameId", gameId)).collect()
+    : [];
+  const juryResult = voteDue
+    ? tallyJury(voteRows.map((r) => ({ effect: r.effect, targetId: r.targetId })))
+    : null;
+
   const result = engineResolve(buildEngineState(game, players), queues, {
     spawnHeart,
     rng: makeRng(hashSeed(gameId, period)),
+    juryResult,
   });
 
   const byId = new Map(players.map((p) => [p._id as string, p]));
@@ -91,6 +103,7 @@ async function doResolve(ctx: MutationCtx, gameId: Id<"games">): Promise<void> {
     ),
   );
   await Promise.all(queuedRows.map((row) => ctx.db.delete(row._id)));
+  await Promise.all(voteRows.map((row) => ctx.db.delete(row._id)));
 
   const board = {
     originX: result.state.originX,

@@ -5,7 +5,7 @@
 > the same change (see `CLAUDE.md`, rules 1 & 2). Organize code **by feature** so this index stays
 > meaningful.
 >
-> Last updated: 2026-06-18 (Stage 4 in progress — give/revive done; jury + trade next)
+> Last updated: 2026-06-18 (Stage 4 in progress — give/revive + jury done; trade next)
 
 ## Root — docs & config
 
@@ -47,13 +47,16 @@ convex/
 ├── actions.ts         Private queue: queueAction (affordability-checked) / cancel / clear / getMyQueue.
 ├── resolve.ts         Scheduled resolvePeriod() wires the pure engine into Convex; forceResolve (host,
 │                      testing); getHistory. Writes state back, logs events, reschedules next period.
+├── jury.ts            castJuryVote (dead players) + getJuryState; tally wired into the resolve loop.
 ├── lib/
 │   ├── geometry.ts    Chebyshev distance (pure, shared backend geometry).
 │   ├── rng.ts         Seeded PRNG (mulberry32) for deterministic spawn + tests.
 │   ├── spawn.ts       Spawn placement: inner region, pairwise Chebyshev ≥ 2 (Implementation.md §3.17).
 │   ├── spawn.test.ts  Vitest unit tests for spawn placement.
 │   ├── cost.ts        AP cost model (mirrors the engine) for queue affordability.
-│   └── cost.test.ts   Vitest unit tests for queue cost (scaling upgrades).
+│   ├── cost.test.ts   Vitest unit tests for queue cost (scaling upgrades).
+│   ├── jury.ts        Jury tally (top (effect,target) wins; ties → null).
+│   └── jury.test.ts   Vitest unit tests for the jury tally.
 ├── engine/            PURE slot-based resolver (no Convex/IO) — the full Stage 2 ruleset, test-first.
 │   ├── types.ts       Engine model: EngineState, EngineTank, QueuedAction, GameEvent, ResolveOptions.
 │   ├── resolve.ts     resolvePeriod(): slots × phases (heal/upgrade/transfer/collect/move/shoot),
@@ -93,6 +96,7 @@ src/
 │       ├── InGameBoard.tsx   Interactive board: click to queue moves/shots (origin-aware, range highlights).
 │       ├── ActionQueue.tsx   Queue panel: AP meter, queued actions, move/shoot/give/heal/upgrade/collect, cancel/clear.
 │       ├── HistoryPanel.tsx  Public event log grouped by period.
+│       ├── JuryPanel.tsx     Eliminated players vote to haunt/gift a living tank.
 │       └── HudChip.tsx       Mono data chip with icon (AP, range, hearts, players…).
 └── screens/
     ├── SignInScreen.tsx      Email+password sign-in / sign-up (Convex Auth, no verification).

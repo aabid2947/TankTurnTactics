@@ -93,4 +93,15 @@ export default defineSchema({
     index: v.number(),
     event: v.any(),
   }).index("by_game_period", ["gameId", "periodNumber"]),
+
+  // Jury ballots from eliminated players for the current cycle (secret; cleared after each tally).
+  juryVotes: defineTable({
+    gameId: v.id("games"),
+    voterId: v.id("players"),
+    effect: v.union(v.literal("haunt"), v.literal("gift")),
+    targetId: v.id("players"),
+    createdAt: v.number(),
+  })
+    .index("by_game", ["gameId"])
+    .index("by_game_voter", ["gameId", "voterId"]),
 });

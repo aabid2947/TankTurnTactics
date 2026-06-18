@@ -6,6 +6,7 @@ import type { Id } from "@convex/_generated/dataModel";
 import { Button } from "@/components/ui/button";
 import { ActionQueue } from "@/components/game/ActionQueue";
 import { HistoryPanel } from "@/components/game/HistoryPanel";
+import { JuryPanel } from "@/components/game/JuryPanel";
 import { HudChip } from "@/components/game/HudChip";
 import { InGameBoard } from "@/components/game/InGameBoard";
 import { fmtTime, useCountdown } from "@/lib/useCountdown";
@@ -102,17 +103,21 @@ export function GameBoard({ game, meId }: { game: GameDetail; meId?: Id<"users">
 
       <div className="grid gap-4 lg:grid-cols-[300px_minmax(0,1fr)_300px]">
         <div className="order-2 lg:order-1 lg:h-[560px]">
-          <ActionQueue
-            me={me ?? undefined}
-            queue={queue}
-            mode={mode}
-            setMode={setMode}
-            disabled={!amAlive}
-            nameOf={nameOf}
-            onSimple={(kind) => void tryQueue({ kind })}
-            onCancel={(id) => void cancelAction({ actionId: id })}
-            onClear={() => void clearMyQueue({ gameId: game._id })}
-          />
+          {amAlive ? (
+            <ActionQueue
+              me={me ?? undefined}
+              queue={queue}
+              mode={mode}
+              setMode={setMode}
+              disabled={!amAlive}
+              nameOf={nameOf}
+              onSimple={(kind) => void tryQueue({ kind })}
+              onCancel={(id) => void cancelAction({ actionId: id })}
+              onClear={() => void clearMyQueue({ gameId: game._id })}
+            />
+          ) : (
+            <JuryPanel gameId={game._id} />
+          )}
         </div>
         <div className="order-1 lg:order-2">
           <InGameBoard
