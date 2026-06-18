@@ -5,7 +5,7 @@
 > the same change (see `CLAUDE.md`, rules 1 & 2). Organize code **by feature** so this index stays
 > meaningful.
 >
-> Last updated: 2026-06-18 (Stage 1 complete — lobby, lifecycle & live board on `main`)
+> Last updated: 2026-06-18 (Stage 2 in progress — engine core on `feat/engine`)
 
 ## Root — docs & config
 
@@ -49,6 +49,12 @@ convex/
 │   ├── rng.ts         Seeded PRNG (mulberry32) for deterministic spawn + tests.
 │   ├── spawn.ts       Spawn placement: inner region, pairwise Chebyshev ≥ 2 (Implementation.md §3.17).
 │   └── spawn.test.ts  Vitest unit tests for spawn placement.
+├── engine/            PURE slot-based resolver (no Convex/IO) — Stage 2, built test-first.
+│   ├── types.ts       Engine data model: EngineState, EngineTank, QueuedAction, GameEvent.
+│   ├── resolve.ts     resolvePeriod(): slot loop + priority buckets (heal/upgrade/collect/move/shoot),
+│   │                  lock-in move tiebreak, simultaneous shots, death→cache. (Increment 1.)
+│   ├── resolve.test.ts Deterministic resolver tests (14 cases).
+│   └── index.ts       Barrel export.
 ├── tsconfig.json      TS config scoped to the Convex backend (types: ["node"] for process.env).
 └── _generated/        Convex-generated api/types — COMMITTED so CI typechecks without a deploy key.
 ```
@@ -94,8 +100,8 @@ src/
 
 ## Planned (upcoming stages — not yet created)
 
-- `convex/engine/` — **pure, backend-agnostic** slot-based resolver + types + tests
-  (Stage 2; Implementation.md §3.5/§6). The riskiest component, built test-first.
+- `convex/engine/` **increment 2** — transfers (trade / give-revive), board shrink, heart spawn,
+  jury, win check (Stage 2; Implementation.md §3.5/§6). Core resolver landed in increment 1.
 - `convex/resolve.ts` — scheduled `resolvePeriod` heartbeat wiring the engine (Stage 3).
 - `convex/trade.ts`, `convex/chat.ts`, `convex/notify.ts` — trade/jury, chat, notifications (Stages 4–6).
 - `src/components/game/` additions — ActionQueuePanel, ChatPanel, range/move overlays (Stages 3–5).
