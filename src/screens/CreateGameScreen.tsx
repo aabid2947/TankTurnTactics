@@ -98,7 +98,7 @@ export function CreateGameScreen() {
               <Stepper value={board} onChange={setBoard} min={10} max={24} />
             </Row>
             <Row label="Min players">
-              <Stepper value={minP} onChange={setMinP} min={2} max={maxP} />
+              <Stepper value={minP} onChange={setMinP} min={1} max={maxP} />
             </Row>
             <Row label="Max players">
               <Stepper value={maxP} onChange={setMaxP} min={minP} max={17} />
