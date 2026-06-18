@@ -5,7 +5,7 @@
 > the same change (see `CLAUDE.md`, rules 1 & 2). Organize code **by feature** so this index stays
 > meaningful.
 >
-> Last updated: 2026-06-18 (Stage 2 complete — pure engine + tests, merged to `main`)
+> Last updated: 2026-06-18 (Stage 3 in progress — backend resolve loop on `feat/stage-3-loop`)
 
 ## Root — docs & config
 
@@ -37,18 +37,23 @@ TankTurnTactics/
 
 ```
 convex/
-├── schema.ts          Schema: Convex Auth tables + games (lobby/lifecycle + config) + players.
+├── schema.ts          Schema: auth tables + games (config/board/caches) + players + queuedActions + events.
 ├── auth.ts            Convex Auth setup (email+password provider).
 ├── auth.config.ts     Auth provider domain config for the deployment.
 ├── http.ts            HTTP router; registers Convex Auth endpoints.
 ├── users.ts           `viewer` query — the current authenticated user.
 ├── games.ts           Lifecycle: create/join/joinByCode/leave/startGame + listOpen/getGame/getMyPlayer.
-│                      Public queries omit secret ap/range; startGame runs spawn placement.
+│                      Public queries omit secret ap/range; startGame spawns + schedules the loop.
+├── actions.ts         Private queue: queueAction (affordability-checked) / cancel / clear / getMyQueue.
+├── resolve.ts         Scheduled resolvePeriod() wires the pure engine into Convex; forceResolve (host,
+│                      testing); getHistory. Writes state back, logs events, reschedules next period.
 ├── lib/
 │   ├── geometry.ts    Chebyshev distance (pure, shared backend geometry).
 │   ├── rng.ts         Seeded PRNG (mulberry32) for deterministic spawn + tests.
 │   ├── spawn.ts       Spawn placement: inner region, pairwise Chebyshev ≥ 2 (Implementation.md §3.17).
-│   └── spawn.test.ts  Vitest unit tests for spawn placement.
+│   ├── spawn.test.ts  Vitest unit tests for spawn placement.
+│   ├── cost.ts        AP cost model (mirrors the engine) for queue affordability.
+│   └── cost.test.ts   Vitest unit tests for queue cost (scaling upgrades).
 ├── engine/            PURE slot-based resolver (no Convex/IO) — the full Stage 2 ruleset, test-first.
 │   ├── types.ts       Engine model: EngineState, EngineTank, QueuedAction, GameEvent, ResolveOptions.
 │   ├── resolve.ts     resolvePeriod(): slots × phases (heal/upgrade/transfer/collect/move/shoot),
@@ -102,7 +107,8 @@ src/
 
 ## Planned (upcoming stages — not yet created)
 
-- `convex/resolve.ts` — scheduled `resolvePeriod` heartbeat wiring the engine (Stage 3).
+- Stage 3 remaining (client): action-queue UI, live countdown, resolution reveal, history panel;
+  then Playwright E2E in CI.
 - `convex/trade.ts`, `convex/chat.ts`, `convex/notify.ts` — trade/jury, chat, notifications (Stages 4–6).
 - `src/components/game/` additions — ActionQueuePanel, ChatPanel, range/move overlays (Stages 3–5).
 - More `src/components/ui/*` primitives (dialog, tabs, …) as screens need them.

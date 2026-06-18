@@ -14,11 +14,17 @@ export const configValidator = v.object({
   maxPlayers: v.number(),
 });
 
-/**
- * Stage 1 schema: Convex Auth tables + games (lobby/lifecycle) + players (membership → placed).
- * Gameplay tables (queuedActions, tradeOffers, apCaches, heartSpawns, events, chatMessages,
- * juryVotes) arrive in later stages — see Implementation.md §4.
- */
+const cellValidator = v.object({ x: v.number(), y: v.number() });
+
+/** A queued action (Stage 3 set: heal/upgrade/collect/move/shoot). Transfers come later. */
+export const actionValidator = v.union(
+  v.object({ kind: v.literal("heal") }),
+  v.object({ kind: v.literal("upgrade") }),
+  v.object({ kind: v.literal("collect") }),
+  v.object({ kind: v.literal("move"), to: cellValidator }),
+  v.object({ kind: v.literal("shoot"), target: cellValidator }),
+);
+
 export default defineSchema({
   ...authTables,
 
@@ -37,7 +43,11 @@ export default defineSchema({
         shrinkStep: v.number(),
       }),
     ),
+    caches: v.optional(v.array(v.object({ x: v.number(), y: v.number(), amount: v.number() }))),
+    heartSpawns: v.optional(v.array(cellValidator)),
     periodNumber: v.optional(v.number()),
+    currentPeriodEndsAt: v.optional(v.number()),
+    nextResolveId: v.optional(v.id("_scheduled_functions")),
     startedAt: v.optional(v.number()),
     endedAt: v.optional(v.number()),
   })
@@ -49,17 +59,37 @@ export default defineSchema({
     userId: v.id("users"),
     name: v.string(),
     status: v.union(v.literal("alive"), v.literal("dead")),
-    // Position is (-1,-1) while in the lobby; assigned at startGame.
     x: v.number(),
     y: v.number(),
     hearts: v.number(),
-    ap: v.number(), // SECRET — never returned by public queries
+    ap: v.number(), // SECRET
     range: v.number(), // SECRET
     kills: v.number(),
     spawnOrder: v.number(),
+    hauntedNextGrant: v.optional(v.boolean()),
     joinedAt: v.number(),
   })
     .index("by_game", ["gameId"])
     .index("by_game_user", ["gameId", "userId"])
     .index("by_user", ["userId"]),
+
+  // Private per-player queue for the current period. `lockedAt` orders a player's own actions AND
+  // breaks cross-player contention (Implementation.md §3.5). Never exposed to other players.
+  queuedActions: defineTable({
+    gameId: v.id("games"),
+    playerId: v.id("players"),
+    periodNumber: v.number(),
+    action: actionValidator,
+    lockedAt: v.number(),
+  })
+    .index("by_game_period", ["gameId", "periodNumber"])
+    .index("by_player_period", ["playerId", "periodNumber"]),
+
+  // Public resolution history (chess-style move log).
+  events: defineTable({
+    gameId: v.id("games"),
+    periodNumber: v.number(),
+    index: v.number(),
+    event: v.any(),
+  }).index("by_game_period", ["gameId", "periodNumber"]),
 });

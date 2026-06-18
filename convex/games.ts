@@ -1,6 +1,7 @@
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { v } from "convex/values";
 import { type Doc, type Id } from "./_generated/dataModel";
+import { internal } from "./_generated/api";
 import { type MutationCtx, mutation, query } from "./_generated/server";
 import { configValidator } from "./schema";
 import { placeSpawns } from "./lib/spawn";
@@ -109,7 +110,12 @@ export const getGame = query({
       .withIndex("by_game", (q) => q.eq("gameId", game._id))
       .collect();
     players.sort((a, b) => a.joinedAt - b.joinedAt);
-    return { ...game, players: players.map(publicPlayer) };
+    // Public board state: cache *positions* only — amounts stay hidden until collected (§3.18).
+    return {
+      ...game,
+      caches: (game.caches ?? []).map((c) => ({ x: c.x, y: c.y })),
+      players: players.map(publicPlayer),
+    };
   },
 });
 
@@ -224,13 +230,20 @@ export const startGame = mutation({
       ),
     );
 
+    const periodMs = game.config.periodSeconds * 1000;
+    const nextResolveId = await ctx.scheduler.runAfter(periodMs, internal.resolve.resolvePeriod, {
+      gameId: game._id,
+    });
     await ctx.db.patch(game._id, {
       status: "active",
       board: { originX: 0, originY: 0, width: w, height: h, shrinkStep: 0 },
+      caches: [],
+      heartSpawns: [],
       periodNumber: 0,
       startedAt: Date.now(),
+      currentPeriodEndsAt: Date.now() + periodMs,
+      nextResolveId,
     });
-    // Period scheduling (the resolve loop) arrives in Stage 3.
     return game._id;
   },
 });

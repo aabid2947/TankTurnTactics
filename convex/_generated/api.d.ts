@@ -8,12 +8,18 @@
  * @module
  */
 
+import type * as actions from "../actions.js";
 import type * as auth from "../auth.js";
+import type * as engine_index from "../engine/index.js";
+import type * as engine_resolve from "../engine/resolve.js";
+import type * as engine_types from "../engine/types.js";
 import type * as games from "../games.js";
 import type * as http from "../http.js";
+import type * as lib_cost from "../lib/cost.js";
 import type * as lib_geometry from "../lib/geometry.js";
 import type * as lib_rng from "../lib/rng.js";
 import type * as lib_spawn from "../lib/spawn.js";
+import type * as resolve from "../resolve.js";
 import type * as users from "../users.js";
 
 import type {
@@ -23,12 +29,18 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  actions: typeof actions;
   auth: typeof auth;
+  "engine/index": typeof engine_index;
+  "engine/resolve": typeof engine_resolve;
+  "engine/types": typeof engine_types;
   games: typeof games;
   http: typeof http;
+  "lib/cost": typeof lib_cost;
   "lib/geometry": typeof lib_geometry;
   "lib/rng": typeof lib_rng;
   "lib/spawn": typeof lib_spawn;
+  resolve: typeof resolve;
   users: typeof users;
 }>;
 
