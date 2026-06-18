@@ -5,7 +5,7 @@
 > the same change (see `CLAUDE.md`, rules 1 & 2). Organize code **by feature** so this index stays
 > meaningful.
 >
-> Last updated: 2026-06-18 (Stage 2 in progress — engine core on `feat/engine`)
+> Last updated: 2026-06-18 (Stage 2 complete — pure engine + tests, merged to `main`)
 
 ## Root — docs & config
 
@@ -49,11 +49,13 @@ convex/
 │   ├── rng.ts         Seeded PRNG (mulberry32) for deterministic spawn + tests.
 │   ├── spawn.ts       Spawn placement: inner region, pairwise Chebyshev ≥ 2 (Implementation.md §3.17).
 │   └── spawn.test.ts  Vitest unit tests for spawn placement.
-├── engine/            PURE slot-based resolver (no Convex/IO) — Stage 2, built test-first.
-│   ├── types.ts       Engine data model: EngineState, EngineTank, QueuedAction, GameEvent.
-│   ├── resolve.ts     resolvePeriod(): slot loop + priority buckets (heal/upgrade/collect/move/shoot),
-│   │                  lock-in move tiebreak, simultaneous shots, death→cache. (Increment 1.)
-│   ├── resolve.test.ts Deterministic resolver tests (14 cases).
+├── engine/            PURE slot-based resolver (no Convex/IO) — the full Stage 2 ruleset, test-first.
+│   ├── types.ts       Engine model: EngineState, EngineTank, QueuedAction, GameEvent, ResolveOptions.
+│   ├── resolve.ts     resolvePeriod(): slots × phases (heal/upgrade/transfer/collect/move/shoot),
+│   │                  lock-in move tiebreak, simultaneous shots, trade/give/revive, board shrink,
+│   │                  heart spawn, jury, AP grant, win check. Pure & deterministic.
+│   ├── resolve.test.ts         Core resolver tests (14).
+│   ├── resolve.systems.test.ts Transfers, shrink, heart-spawn, jury, win tests (12).
 │   └── index.ts       Barrel export.
 ├── tsconfig.json      TS config scoped to the Convex backend (types: ["node"] for process.env).
 └── _generated/        Convex-generated api/types — COMMITTED so CI typechecks without a deploy key.
@@ -100,8 +102,6 @@ src/
 
 ## Planned (upcoming stages — not yet created)
 
-- `convex/engine/` **increment 2** — transfers (trade / give-revive), board shrink, heart spawn,
-  jury, win check (Stage 2; Implementation.md §3.5/§6). Core resolver landed in increment 1.
 - `convex/resolve.ts` — scheduled `resolvePeriod` heartbeat wiring the engine (Stage 3).
 - `convex/trade.ts`, `convex/chat.ts`, `convex/notify.ts` — trade/jury, chat, notifications (Stages 4–6).
 - `src/components/game/` additions — ActionQueuePanel, ChatPanel, range/move overlays (Stages 3–5).

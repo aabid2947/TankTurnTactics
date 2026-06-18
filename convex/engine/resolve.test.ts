@@ -7,7 +7,7 @@ function tank(id: string, x: number, y: number, over: Partial<EngineTank> = {}):
 }
 function mkState(tanks: EngineTank[], over: Partial<EngineState> = {}): EngineState {
   // apPerGrant defaults to 0 so AP assertions reflect spends, not the end-of-period grant.
-  return { width: 10, height: 10, originX: 0, originY: 0, tanks, caches: [], apPerGrant: 0, ...over };
+  return { width: 10, height: 10, originX: 0, originY: 0, tanks, caches: [], heartSpawns: [], shrinkStep: 0, apPerGrant: 0, ...over };
 }
 const get = (s: EngineState, id: string): EngineTank => {
   const t = s.tanks.find((x) => x.id === id);
@@ -98,17 +98,18 @@ describe("resolvePeriod — combat & death", () => {
   });
 
   it("a killed tank drops its AP as a cache; remaining queued actions are cancelled", () => {
+    // Centered so the end-of-period shrink (one death) doesn't reclaim the cache's cell.
     const queues: Queues = {
       A: [
-        { kind: "move", lockedAt: 1, to: { x: 0, y: 1 } },
-        { kind: "move", lockedAt: 1, to: { x: 0, y: 2 } }, // cancelled — A is dead
+        { kind: "move", lockedAt: 1, to: { x: 5, y: 6 } },
+        { kind: "move", lockedAt: 1, to: { x: 5, y: 7 } }, // cancelled — A is dead
       ],
-      B: [{ kind: "shoot", lockedAt: 1, target: { x: 0, y: 1 } }],
+      B: [{ kind: "shoot", lockedAt: 1, target: { x: 5, y: 6 } }],
     };
-    const { state, deaths } = resolvePeriod(mkState([tank("A", 0, 0, { hearts: 1, ap: 7 }), tank("B", 1, 0)]), queues);
+    const { state, deaths } = resolvePeriod(mkState([tank("A", 5, 5, { hearts: 1, ap: 7 }), tank("B", 6, 5)]), queues);
     expect(deaths).toContain("A");
-    expect(get(state, "A")).toMatchObject({ status: "dead", x: 0, y: 1 });
-    expect(state.caches).toContainEqual({ x: 0, y: 1, amount: 6 }); // 7 − 1 (move)
+    expect(get(state, "A")).toMatchObject({ status: "dead", x: 5, y: 6 });
+    expect(state.caches).toContainEqual({ x: 5, y: 6, amount: 6 }); // 7 − 1 (move)
   });
 });
 

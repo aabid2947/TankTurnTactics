@@ -43,8 +43,8 @@ detail & acceptance criteria in `Implementation.md §11`.
       CI — **complete** (Convex deployed, auth keys set, all gates green).
 - [x] **Stage 1 — Lobby & lifecycle:** create/join/joinByCode/leave, waiting room, config form,
       `startGame` with spawn placement, live read-only board — **complete** (design system applied).
-- [ ] **Stage 2 — Core engine (critical path):** pure slot-based resolver + full deterministic test
-      suite. No UI/Convex wiring yet.
+- [x] **Stage 2 — Core engine (critical path):** pure slot-based resolver + full deterministic test
+      suite (33 tests) — **complete**. Not yet wired to Convex/UI (that's Stage 3).
 - [ ] **Stage 3 — Action queue & loop:** persisted private queue (edit/cancel, affordability),
       scheduled `resolvePeriod`, AP grant, live countdown + resolution reveal, public history.
 - [ ] **Stage 4 — Full action set:** shoot/range/upgrade, self-heal, death→cache→collect, revival,
@@ -55,7 +55,8 @@ detail & acceptance criteria in `Implementation.md §11`.
       security/secrecy pass.
 - [ ] **Stage 7 — Beta & launch:** playtest, balance-tune the configurable knobs, polish, deploy.
 
-**Current status:** Stages 0 & 1 complete and merged to `main`. Convex is live (schema deployed,
-auth keys set, no email verification), and the neo-brutalist **design system is now on `main`**. All
-gates green (app + Convex typecheck, lint, 7 tests, build). **Next: Stage 2 — the pure slot-based
-engine, test-first.** Run `npm run dev` alongside `npx convex dev` to play lobby → waiting → board.
+**Current status:** Stages 0–2 complete and on `main`. Convex is live; the design system is applied;
+the pure slot-based **engine** (`convex/engine/`) is done & deterministically tested (33 tests). All
+gates green (app + Convex typecheck, lint, 33 tests, build). **Next: Stage 3 — action queue & the
+scheduled resolve loop** (persist a private per-period queue, wire `resolvePeriod` into a Convex
+scheduled function, AP grant, live countdown + resolution reveal, public history).
