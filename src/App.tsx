@@ -1,30 +1,31 @@
 import { Authenticated, AuthLoading, Unauthenticated } from "convex/react";
 import { Route, Routes } from "react-router-dom";
-import { AppLayout } from "@/components/layout/AppLayout";
-import { HomePage } from "@/routes/HomePage";
-import { SignInPage } from "@/routes/SignInPage";
+import { AppShell } from "@/components/layout/AppShell";
+import { CreateGameScreen } from "@/screens/CreateGameScreen";
+import { GameRoute } from "@/screens/GameRoute";
+import { LobbyScreen } from "@/screens/LobbyScreen";
+import { SignInScreen } from "@/screens/SignInScreen";
 
 export default function App() {
   return (
-    <Routes>
-      <Route element={<AppLayout />}>
-        <Route
-          index
-          element={
-            <>
-              <AuthLoading>
-                <p className="text-muted-foreground">Loading…</p>
-              </AuthLoading>
-              <Authenticated>
-                <HomePage />
-              </Authenticated>
-              <Unauthenticated>
-                <SignInPage />
-              </Unauthenticated>
-            </>
-          }
-        />
-      </Route>
-    </Routes>
+    <>
+      <AuthLoading>
+        <div className="grid min-h-screen place-items-center bg-background font-mono text-sm text-muted-foreground">
+          Loading…
+        </div>
+      </AuthLoading>
+      <Unauthenticated>
+        <SignInScreen />
+      </Unauthenticated>
+      <Authenticated>
+        <Routes>
+          <Route element={<AppShell />}>
+            <Route index element={<LobbyScreen />} />
+            <Route path="/create" element={<CreateGameScreen />} />
+            <Route path="/game/:gameId" element={<GameRoute />} />
+          </Route>
+        </Routes>
+      </Authenticated>
+    </>
   );
 }

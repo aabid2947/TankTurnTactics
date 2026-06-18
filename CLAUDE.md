@@ -39,11 +39,10 @@
 Build order de-risks the engine early; each stage ends with a demoable/testable artifact. Full
 detail & acceptance criteria in `Implementation.md §11`.
 
-- [~] **Stage 0 — Foundations:** scaffold Vite+React+TS+Tailwind+shadcn, Convex schema/auth/http,
-      routing, CI — **scaffolded & frontend-verified** (lint, typecheck, 3/3 tests, build all green).
-      Final close needs the one-time `npx convex dev` login (deploys schema + generates types).
-- [ ] **Stage 1 — Lobby & lifecycle:** create/join/leave, waiting room, config form, `startGame`
-      with spawn placement, read-only live board.
+- [x] **Stage 0 — Foundations:** Vite+React+TS+Tailwind+shadcn, Convex schema/auth/http, routing,
+      CI — **complete** (Convex deployed, auth keys set, all gates green).
+- [x] **Stage 1 — Lobby & lifecycle:** create/join/joinByCode/leave, waiting room, config form,
+      `startGame` with spawn placement, live read-only board — **complete** (design system applied).
 - [ ] **Stage 2 — Core engine (critical path):** pure slot-based resolver + full deterministic test
       suite. No UI/Convex wiring yet.
 - [ ] **Stage 3 — Action queue & loop:** persisted private queue (edit/cancel, affordability),
@@ -56,7 +55,7 @@ detail & acceptance criteria in `Implementation.md §11`.
       security/secrecy pass.
 - [ ] **Stage 7 — Beta & launch:** playtest, balance-tune the configurable knobs, polish, deploy.
 
-**Current status:** Stage 0 scaffolded and frontend-verified (lint, typecheck, 3/3 tests, and the
-production build all pass). **Pending to fully close Stage 0:** run `npx convex dev` (one-time
-interactive login — deploys the schema/auth and generates `convex/_generated/`) and `npx
-@convex-dev/auth` (sets the auth JWT keys), then `npm run dev`. After that, start Stage 1.
+**Current status:** Stages 0 & 1 complete and merged to `main`. Convex is live (schema deployed,
+auth keys set, no email verification), and the neo-brutalist **design system is now on `main`**. All
+gates green (app + Convex typecheck, lint, 7 tests, build). **Next: Stage 2 — the pure slot-based
+engine, test-first.** Run `npm run dev` alongside `npx convex dev` to play lobby → waiting → board.
