@@ -6,8 +6,7 @@ dist
 dist-ssr
 *.local
 
-# Convex (generated code + local state)
-convex/_generated
+# Convex local deployment cache (convex/_generated IS committed so CI typechecks without a deploy key)
 .convex
 
 # Environment
