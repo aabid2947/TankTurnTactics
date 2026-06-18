@@ -59,7 +59,7 @@ Range is measured as a **square** around you: range 1 = the 8 touching squares; 
 |---|---|---|
 | **Move** | 1 | Step to an adjacent square (including diagonals), if empty |
 | **Shoot** | 1 | Hit a square within range; a living tank there loses 1 heart |
-| **Upgrade range** | 3 | Increase your range by 1 |
+| **Upgrade range** | = new range | Increase your range by 1; costs the range you reach (1→2 = 2, 2→3 = 3, 3→4 = 4, …) |
 | **Add a heart** | 3 | Heal yourself by 1 heart (never above 3) |
 | **Collect AP** | 1 | Pick up the entire AP cache on your square |
 | **Trade** | 0 | Mutually agreed swap of AP and/or hearts with a player in range |

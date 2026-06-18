@@ -7,6 +7,7 @@
 - **`Implementation.md`** — the canonical technical blueprint **and ruleset** (§3 is authoritative
   if any doc disagrees). Architecture, Convex schema, the pure engine, testing, and the roadmap.
 - **`PRODUCT.md`** — player-facing game design & rules (clarified 2026-06-18).
+- **`design.md`** — design system (colors, typography, UI/UX) derived from `design-reference.jpeg`.
 - **`repo_structure.md`** — living index of every file/folder and what it does.
 
 ## Working rules (always follow)
@@ -38,8 +39,9 @@
 Build order de-risks the engine early; each stage ends with a demoable/testable artifact. Full
 detail & acceptance criteria in `Implementation.md §11`.
 
-- [ ] **Stage 0 — Foundations:** scaffold Vite+React+TS+Tailwind+shadcn, `convex init`, schema
-      stubs, Convex Auth, routing, CI.
+- [~] **Stage 0 — Foundations:** scaffold Vite+React+TS+Tailwind+shadcn, Convex schema/auth/http,
+      routing, CI — **scaffolded & frontend-verified** (lint, typecheck, 3/3 tests, build all green).
+      Final close needs the one-time `npx convex dev` login (deploys schema + generates types).
 - [ ] **Stage 1 — Lobby & lifecycle:** create/join/leave, waiting room, config form, `startGame`
       with spawn placement, read-only live board.
 - [ ] **Stage 2 — Core engine (critical path):** pure slot-based resolver + full deterministic test
@@ -54,5 +56,7 @@ detail & acceptance criteria in `Implementation.md §11`.
       security/secrecy pass.
 - [ ] **Stage 7 — Beta & launch:** playtest, balance-tune the configurable knobs, polish, deploy.
 
-**Current status:** Design complete (rules locked 2026-06-18); spec + docs written. **No code
-scaffolded yet — next up is Stage 0.** Update the checkboxes and this line as stages complete.
+**Current status:** Stage 0 scaffolded and frontend-verified (lint, typecheck, 3/3 tests, and the
+production build all pass). **Pending to fully close Stage 0:** run `npx convex dev` (one-time
+interactive login — deploys the schema/auth and generates `convex/_generated/`) and `npx
+@convex-dev/auth` (sets the auth JWT keys), then `npm run dev`. After that, start Stage 1.

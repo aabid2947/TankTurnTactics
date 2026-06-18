@@ -129,11 +129,16 @@ This section is the authoritative spec. Implement to *this*, not to prose elsewh
 |---|---|---|
 | Move | 1 | Step to an adjacent (8-dir) empty cell |
 | Shoot | 1 | Target a cell within range; living tank there loses 1 heart |
-| Upgrade range | 3 | Range +1 |
+| Upgrade range | **= new range** | Range +1; cost equals the range you reach — 1→2 costs 2, 2→3 costs 3, 3→4 costs 4, … |
 | Add heart (self-heal) | 3 | Own hearts +1 (cannot exceed 3) |
 | Collect AP | 1 | Grab the entire AP cache on your current cell |
 | Trade | 0 | Mutual-consent exchange of AP and/or hearts, within range |
 | Give heart / Revive | 0 | Give 1 of your hearts to a target in range (heal ally ≤3, or revive a body) |
+
+> **Range-upgrade cost scales:** an upgrade costs the range you're upgrading **to** (current range
+> + 1) — 1→2 costs 2 AP, 2→3 costs 3, 3→4 costs 4, and so on. Several upgrades queued in one period
+> resolve in separate slots, so their costs escalate (1→2→3 costs 2 then 3). Affordability is
+> validated against this escalating cost at queue time.
 
 ### 3.4 The period loop
 1. Admin sets **period length** (and other params, §3.15). A live countdown runs.
@@ -161,7 +166,7 @@ for slot in 0 .. maxLen-1:
         b = acts of this bucket type
         switch bucket:
           HEAL    : each: spend 3AP, hearts = min(3, hearts+1)
-          UPGRADE : each: spend 3AP, range += 1
+          UPGRADE : each: spend (range+1) AP, range += 1   # cost = the range you reach
           TRANSFER: process in lockedAt order:
                       trade  -> if partner accepted & in range: swap resources (0AP)
                       give   -> if target in range: ally hearts+1 (≤3),
@@ -275,7 +280,8 @@ produces **no public event**.
 
 ### 3.16 Invariants (assert in code & tests)
 - ≤ 1 living tank per cell. Hearts ∈ [0,3]. AP ≥ 0. Range ≥ 1.
-- A queued plan's total cost ≤ the player's AP at buzzer (validated on every queue edit).
+- A queued plan's total cost ≤ the player's AP at buzzer (validated on every queue edit),
+  accounting for the **escalating range-upgrade cost** (each upgrade costs current-range + 1).
 - Resolution is a **pure function** of `(state, queues, seededRNG)` — same inputs ⇒ same output.
 - Board window only shrinks, never grows; never below the floor.
 
@@ -418,7 +424,8 @@ isolation** (§11 Stage 2). Deterministic unit tests (seeded RNG) covering at mi
 - **Move-beats-shoot** dodge; **mutual kill**; **train succeeds / swap fails**.
 - Move contention → earliest `lockedAt` wins, loser **bounces and loses AP**.
 - Out-of-AP rejection at queue time; void-action refunds; death cancels remaining slots.
-- Board shrink edges/casualties/lost caches; revival resets range; heal cap at 3.
+- Board shrink edges/casualties/lost caches; revival resets range; heal cap at 3; **scaling
+  range-upgrade cost** (R→R+1 costs R+1, stacked upgrades escalate).
 - Jury tally / tie / haunt-skip; trade consent + range + heart cap; win at 3 / 4-player vote.
 Plus Convex integration tests (scheduling, secrecy of queries) and a few client E2E happy paths.
 
