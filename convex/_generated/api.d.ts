@@ -22,6 +22,7 @@ import type * as lib_jury from "../lib/jury.js";
 import type * as lib_rng from "../lib/rng.js";
 import type * as lib_spawn from "../lib/spawn.js";
 import type * as resolve from "../resolve.js";
+import type * as trade from "../trade.js";
 import type * as users from "../users.js";
 
 import type {
@@ -45,6 +46,7 @@ declare const fullApi: ApiFromModules<{
   "lib/rng": typeof lib_rng;
   "lib/spawn": typeof lib_spawn;
   resolve: typeof resolve;
+  trade: typeof trade;
   users: typeof users;
 }>;
 

@@ -104,4 +104,23 @@ export default defineSchema({
   })
     .index("by_game", ["gameId"])
     .index("by_game_voter", ["gameId", "voterId"]),
+
+  // Mutual trade handshake for the current period. Amounts flow from→to (give*) and to→from
+  // (receive*). Accepted offers are injected into resolution as engine `trade` actions, then cleared.
+  tradeOffers: defineTable({
+    gameId: v.id("games"),
+    periodNumber: v.number(),
+    fromPlayerId: v.id("players"),
+    toPlayerId: v.id("players"),
+    giveAp: v.number(),
+    giveHearts: v.number(),
+    receiveAp: v.number(),
+    receiveHearts: v.number(),
+    status: v.union(v.literal("pending"), v.literal("accepted"), v.literal("declined")),
+    lockedAt: v.number(),
+    acceptedAt: v.optional(v.number()),
+  })
+    .index("by_game_period", ["gameId", "periodNumber"])
+    .index("by_to_player_period", ["toPlayerId", "periodNumber"])
+    .index("by_from_player_period", ["fromPlayerId", "periodNumber"]),
 });

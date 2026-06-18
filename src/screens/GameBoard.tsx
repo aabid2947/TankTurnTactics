@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { ActionQueue } from "@/components/game/ActionQueue";
 import { HistoryPanel } from "@/components/game/HistoryPanel";
 import { JuryPanel } from "@/components/game/JuryPanel";
+import { TradePanel } from "@/components/game/TradePanel";
 import { HudChip } from "@/components/game/HudChip";
 import { InGameBoard } from "@/components/game/InGameBoard";
 import { fmtTime, useCountdown } from "@/lib/useCountdown";
@@ -136,6 +137,11 @@ export function GameBoard({ game, meId }: { game: GameDetail; meId?: Id<"users">
                   ? "Click a wounded ally or a fallen tank in range to give a heart / revive."
                   : "Pick Move, Shoot, or Give, then click the board. Everything resolves at the buzzer."}
           </p>
+          {amAlive && (
+            <div className="mt-3">
+              <TradePanel gameId={game._id} me={me ?? undefined} players={game.players} />
+            </div>
+          )}
         </div>
         <div className="order-3 h-[560px] lg:order-3">
           <HistoryPanel players={game.players} events={events} />

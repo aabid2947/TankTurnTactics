@@ -48,17 +48,17 @@ detail & acceptance criteria in `Implementation.md §11`.
 - [x] **Stage 3 — Action queue & loop:** private queue (queue/cancel/clear, affordability), scheduled
       `resolvePeriod` + host `forceResolve`, AP grant, live countdown, interactive board, public
       history — **complete**. (Playwright E2E still pending — needs a `CONVEX_DEPLOY_KEY` CI secret.)
-- [ ] **Stage 4 — Full action set:** shoot/range/upgrade, self-heal, death→cache→collect, revival,
-      board shrink, heart spawns, trade handshake, jury & haunting.
+- [x] **Stage 4 — Full action set:** give/revive, jury & haunting, and the trade handshake surfaced
+      through the queue/UI (engine already had shoot/upgrade/heal/collect/shrink/heart-spawn) — **complete**.
 - [ ] **Stage 5 — Social & endgame:** global + 1:1 chat, alliance/betrayal UX, win detection,
       4-player vote, results screen, stats/match history.
 - [ ] **Stage 6 — Async hardening:** notifications, offline/reconnect, presence, rate limiting,
       security/secrecy pass.
 - [ ] **Stage 7 — Beta & launch:** playtest, balance-tune the configurable knobs, polish, deploy.
 
-**Current status:** Stages 0–3 complete and on `main`. The **period loop is live**: queue actions →
-buzzer (scheduled `resolvePeriod`, or host `forceResolve`) → the pure engine resolves → board &
-history update reactively. All gates green (app + Convex typecheck, lint, 37 tests, build). **Next:
-Stage 4 — full action set surfacing** (trade handshake + give/revive UI, jury & haunting, death→cache
-→collect/revival UX) and **Playwright E2E in CI**. Run `npx convex dev` + `npm run dev`, create a
-game (min players 1, short period) and use **Resolve now** to watch the loop.
+**Current status:** Stages 0–4 complete and on `main`. The full action set is playable: queue
+move/shoot/heal/upgrade/collect/give, propose/accept trades, and (when dead) sit on the jury — all
+resolved by the pure engine at the buzzer (or host `forceResolve`). All gates green (app + Convex
+typecheck, lint, 41 tests, build). **Next: Stage 5 — social & endgame** (global + 1:1 chat,
+alliance/betrayal UX, win detection + 4-player vote, results screen, stats) and **Playwright E2E in
+CI**. Run `npx convex dev` + `npm run dev`; create a game (min players 1, short period) + Resolve now.

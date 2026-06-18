@@ -58,6 +58,23 @@ async function doResolve(ctx: MutationCtx, gameId: Id<"games">): Promise<void> {
   for (const row of queuedRows) {
     (queues[row.playerId] ??= []).push({ ...row.action, lockedAt: row.lockedAt } as QueuedAction);
   }
+  // Inject accepted trades (the handshake) as engine `trade` actions on each initiator.
+  const offerRows = await ctx.db
+    .query("tradeOffers")
+    .withIndex("by_game_period", (q) => q.eq("gameId", gameId).eq("periodNumber", period))
+    .collect();
+  for (const o of offerRows) {
+    if (o.status !== "accepted") continue;
+    (queues[o.fromPlayerId] ??= []).push({
+      kind: "trade",
+      lockedAt: o.acceptedAt ?? o.lockedAt,
+      partnerId: o.toPlayerId,
+      giveAp: o.giveAp,
+      giveHearts: o.giveHearts,
+      receiveAp: o.receiveAp,
+      receiveHearts: o.receiveHearts,
+    } as QueuedAction);
+  }
   for (const id of Object.keys(queues)) queues[id].sort((a, b) => a.lockedAt - b.lockedAt);
 
   const heartEvery = game.config.heartSpawnEveryPeriods;
@@ -104,6 +121,7 @@ async function doResolve(ctx: MutationCtx, gameId: Id<"games">): Promise<void> {
   );
   await Promise.all(queuedRows.map((row) => ctx.db.delete(row._id)));
   await Promise.all(voteRows.map((row) => ctx.db.delete(row._id)));
+  await Promise.all(offerRows.map((row) => ctx.db.delete(row._id)));
 
   const board = {
     originX: result.state.originX,

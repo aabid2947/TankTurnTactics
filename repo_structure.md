@@ -5,7 +5,7 @@
 > the same change (see `CLAUDE.md`, rules 1 & 2). Organize code **by feature** so this index stays
 > meaningful.
 >
-> Last updated: 2026-06-18 (Stage 4 in progress — give/revive + jury done; trade next)
+> Last updated: 2026-06-18 (Stage 4 complete — full action set, merged to `main`)
 
 ## Root — docs & config
 
@@ -48,6 +48,7 @@ convex/
 ├── resolve.ts         Scheduled resolvePeriod() wires the pure engine into Convex; forceResolve (host,
 │                      testing); getHistory. Writes state back, logs events, reschedules next period.
 ├── jury.ts            castJuryVote (dead players) + getJuryState; tally wired into the resolve loop.
+├── trade.ts           propose/respond/cancel trade + getMyTradeOffers; accepted offers injected at resolve.
 ├── lib/
 │   ├── geometry.ts    Chebyshev distance (pure, shared backend geometry).
 │   ├── rng.ts         Seeded PRNG (mulberry32) for deterministic spawn + tests.
@@ -97,6 +98,7 @@ src/
 │       ├── ActionQueue.tsx   Queue panel: AP meter, queued actions, move/shoot/give/heal/upgrade/collect, cancel/clear.
 │       ├── HistoryPanel.tsx  Public event log grouped by period.
 │       ├── JuryPanel.tsx     Eliminated players vote to haunt/gift a living tank.
+│       ├── TradePanel.tsx    Propose mutual trades + accept/decline incoming offers (living players).
 │       └── HudChip.tsx       Mono data chip with icon (AP, range, hearts, players…).
 └── screens/
     ├── SignInScreen.tsx      Email+password sign-in / sign-up (Convex Auth, no verification).
