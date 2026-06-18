@@ -86,8 +86,10 @@ async function doResolve(ctx: MutationCtx, gameId: Id<"games">): Promise<void> {
   const voteRows = voteDue
     ? await ctx.db.query("juryVotes").withIndex("by_game", (q) => q.eq("gameId", gameId)).collect()
     : [];
+  // Only ballots from players still on the jury (dead) count — a juror revived before the tally is dropped.
+  const stillDead = new Set(players.filter((p) => p.status === "dead").map((p) => p._id as string));
   const juryResult = voteDue
-    ? tallyJury(voteRows.map((r) => ({ effect: r.effect, targetId: r.targetId })))
+    ? tallyJury(voteRows.filter((r) => stillDead.has(r.voterId)).map((r) => ({ effect: r.effect, targetId: r.targetId })))
     : null;
 
   const result = engineResolve(buildEngineState(game, players), queues, {

@@ -11,6 +11,7 @@ async function requireAlivePlayer(ctx: QueryCtx, gameId: Doc<"games">["_id"]): P
     .withIndex("by_game_user", (q) => q.eq("gameId", gameId).eq("userId", userId))
     .unique();
   if (!player) throw new Error("You're not in this game");
+  if (player.status !== "alive") throw new Error("Eliminated players can't trade");
   return player;
 }
 

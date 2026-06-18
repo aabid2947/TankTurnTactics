@@ -62,6 +62,16 @@ describe("transfers — give & revive", () => {
     expect(get(state, "B")).toMatchObject({ status: "alive", hearts: 1, ap: 0, range: 1 });
     expect(get(state, "A").hearts).toBe(1);
   });
+
+  it("revival is blocked when a living tank occupies the body's cell (≤1 living per cell)", () => {
+    const a = tank("A", 5, 4, { hearts: 2, range: 2 });
+    const b = tank("B", 5, 5, { status: "dead", hearts: 0, ap: 0 });
+    const c = tank("C", 5, 5, { hearts: 3 }); // a living tank sits on the body's cell
+    const { state } = resolvePeriod(mkState([a, b, c]), { A: [{ kind: "give", lockedAt: 1, targetId: "B" }] });
+    expect(get(state, "B").status).toBe("dead"); // not revived
+    expect(get(state, "A").hearts).toBe(2); // giver kept the heart
+    expect(get(state, "C").hearts).toBe(3); // untouched
+  });
 });
 
 describe("board shrink", () => {

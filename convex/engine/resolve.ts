@@ -158,6 +158,10 @@ export function resolvePeriod(
               continue;
             }
             if (target.status === "dead") {
+              if (livingAt({ x: target.x, y: target.y })) {
+                skip(tank.id, "revive-blocked"); // a living tank occupies the body's cell
+                continue;
+              }
               target.status = "alive";
               target.hearts = 1;
               target.ap = 0;
