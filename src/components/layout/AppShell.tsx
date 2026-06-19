@@ -5,12 +5,15 @@ import { useQuery } from "convex/react";
 import { Crosshair, LogOut, Moon, Sun } from "lucide-react";
 import { api } from "@convex/_generated/api";
 import { Button } from "@/components/ui/button";
+import { NotificationBell } from "@/components/layout/NotificationBell";
 import { monogram } from "@/lib/board";
+import { useIsConnected } from "@/lib/useConnectionState";
 
 export function AppShell() {
   const { signOut } = useAuthActions();
   const viewer = useQuery(api.users.viewer);
   const [dark, setDark] = useState(false);
+  const connected = useIsConnected();
   const name = viewer?.name ?? viewer?.email ?? "You";
 
   return (
@@ -37,6 +40,7 @@ export function AppShell() {
             >
               {dark ? <Sun className="size-4" /> : <Moon className="size-4" />}
             </button>
+            <NotificationBell />
             <Link
               to="/profile"
               className="grid size-9 place-items-center rounded-full border-2 border-foreground font-mono text-xs font-bold text-ink shadow-brutal-sm"
@@ -52,6 +56,11 @@ export function AppShell() {
           </div>
         </div>
       </header>
+      {!connected && (
+        <div className="sticky top-16 z-10 border-b-2 border-foreground bg-destructive px-4 py-1.5 text-center font-mono text-xs font-bold text-destructive-foreground">
+          Reconnecting… your changes will sync when you're back online.
+        </div>
+      )}
       <main className="mx-auto w-full max-w-6xl px-4 py-6">
         <Outlet />
       </main>

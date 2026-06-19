@@ -5,7 +5,7 @@
 > the same change (see `CLAUDE.md`, rules 1 & 2). Organize code **by feature** so this index stays
 > meaningful.
 >
-> Last updated: 2026-06-19 (Stage 5 complete — social & endgame: chat, win/ranking, 4-player vote, results, stats)
+> Last updated: 2026-06-19 (Stage 6 — async hardening: rate-limiting, presence, offline banner, in-app notifications)
 
 ## Root — docs & config
 
@@ -37,22 +37,25 @@ TankTurnTactics/
 
 ```
 convex/
-├── schema.ts          Schema: auth + games + players (incl. deathOrder/placement) + queuedActions +
-│                      events + juryVotes + tradeOffers + chatMessages + endgameProposals.
+├── schema.ts          Schema: auth + games + players (deathOrder/placement/lastSeenAt) + queuedActions +
+│                      events + juryVotes + tradeOffers + chatMessages + endgameProposals + rateLimits + notifications.
 ├── auth.ts            Convex Auth setup (email+password provider).
 ├── auth.config.ts     Auth provider domain config for the deployment.
 ├── http.ts            HTTP router; registers Convex Auth endpoints.
 ├── users.ts           `viewer` (current user) + `myProfile` (derived stats + match history, by_user).
 ├── games.ts           Lifecycle: create/join/joinByCode/leave/startGame + listOpen/getGame/getMyPlayer.
-│                      Public projection omits secret ap/range, exposes kills/deathOrder/placement.
-├── actions.ts         Private queue: queueAction (affordability-checked) / cancel / clear / getMyQueue.
+│                      Public projection omits secret ap/range, exposes kills/placement/lastSeenAt; joinByCode rate-limited.
+├── actions.ts         Private queue: queueAction (affordability + rate-limit + length cap) / cancel / clear / getMyQueue.
 ├── resolve.ts         Scheduled resolvePeriod() wires the pure engine into Convex; forceResolve (host,
 │                      testing); getHistory. Writes state back (kills/deathOrder), logs events, reschedules;
-│                      at game end assigns final placements + finalizes the unanimous 4-player endgame vote.
+│                      assigns final placements + finalizes the 4-player vote; enqueues in-app notifications.
 ├── jury.ts            castJuryVote (dead players) + getJuryState; tally wired into the resolve loop.
 ├── trade.ts           propose/respond/cancel trade + getMyTradeOffers; accepted offers injected at resolve.
-├── chat.ts            sendChat + getChat (global feed + only the caller's own DMs — secrecy at the query).
+├── chat.ts            sendChat (rate-limited) + getChat (global feed + only the caller's own DMs — secrecy).
 ├── endgame.ts         4-player negotiation: propose/respond ranking + getEndgameState (finalize in resolve.ts).
+├── presence.ts        heartbeat mutation — marks the caller present in a game (Stage 6 presence).
+├── notifications.ts   getMyNotifications + markRead/markAllRead (in-app notification center, Stage 6).
+├── rateLimit.ts       enforceRateLimit(ctx, key, max, windowMs) — fixed-window anti-abuse (Stage 6).
 ├── lib/
 │   ├── geometry.ts    Chebyshev distance (pure, shared backend geometry).
 │   ├── rng.ts         Seeded PRNG (mulberry32) for deterministic spawn + tests.
@@ -63,7 +66,11 @@ convex/
 │   ├── jury.ts        Jury tally (top (effect,target) wins; ties → null).
 │   ├── jury.test.ts   Vitest unit tests for the jury tally.
 │   ├── ranking.ts     Pure final-placement ranking (survivors tiebreak; eliminated by death order).
-│   └── ranking.test.ts Vitest unit tests for placement ranking.
+│   ├── ranking.test.ts Vitest unit tests for placement ranking.
+│   ├── rateLimit.ts   Pure fixed-window rate-limit decision (decideRateLimit).
+│   ├── rateLimit.test.ts Vitest unit tests for the rate-limit window.
+│   ├── notify.ts      Pure event→notification mapping (notificationForEvent) for in-app alerts.
+│   └── notify.test.ts Vitest unit tests for the notification mapping.
 ├── engine/            PURE slot-based resolver (no Convex/IO) — the full Stage 2 ruleset, test-first.
 │   ├── types.ts       Engine model: EngineState, EngineTank (incl. kills), QueuedAction, GameEvent.
 │   ├── resolve.ts     resolvePeriod(): slots × phases (heal/upgrade/transfer/collect/move/shoot),
@@ -90,17 +97,21 @@ src/
 │   ├── board.ts              Player colors, display-name + monogram helpers.
 │   ├── gameTypes.ts          Shared types from queries (GameDetail, MyPlayer, QueueRow).
 │   ├── useCountdown.ts       Live period countdown hook + time formatter.
-│   └── events.ts             Maps resolution events to readable history labels (killer-aware deaths).
+│   ├── events.ts             Maps resolution events to readable history labels (killer-aware deaths).
+│   ├── presence.ts           isOnline(lastSeenAt) helper + presence window (Stage 6).
+│   ├── usePresenceHeartbeat.ts  Pings presence every ~15s while in a game (Stage 6).
+│   └── useConnectionState.ts Polls the Convex socket to drive the offline banner (Stage 6).
 ├── test/setup.ts             Vitest setup (jest-dom matchers).
 ├── components/
 │   ├── ui/                   Brutalist primitives: button, input, card, badge, stepper, progress, tabs.
 │   ├── layout/
-│   │   ├── AppShell.tsx      Header (logo + theme + avatar→profile + sign-out) + routed <Outlet/>.
-│   │   └── AuthShell.tsx     Centered auth card on lavender backdrop + `Field` helper.
+│   │   ├── AppShell.tsx      Header (logo + theme + notif bell + avatar→profile + sign-out) + offline banner + <Outlet/>.
+│   │   ├── AuthShell.tsx     Centered auth card on lavender backdrop + `Field` helper.
+│   │   └── NotificationBell.tsx  Bell + unread badge + dropdown; optional desktop notifications (Stage 6).
 │   └── game/
-│       ├── TankToken.tsx     Circular bordered tank token (monogram, hearts, leader/dead markers).
+│       ├── TankToken.tsx     Circular tank token (monogram, hearts, leader/dead/online markers).
 │       ├── BoardGrid.tsx     Read-only board (Stage 1 waiting/spectate).
-│       ├── InGameBoard.tsx   Interactive board: click to queue moves/shots (origin-aware, range highlights).
+│       ├── InGameBoard.tsx   Interactive board: click to queue moves/shots; range highlights + online dots.
 │       ├── ActionQueue.tsx   Queue panel: AP meter, queued actions, move/shoot/give/heal/upgrade/collect, cancel/clear.
 │       ├── HistoryPanel.tsx  Public event log grouped by period.
 │       ├── JuryPanel.tsx     Eliminated players vote to haunt/gift a living tank.
@@ -113,8 +124,8 @@ src/
     ├── LobbyScreen.tsx       Open games (listOpen) + create + join-by-code.
     ├── CreateGameScreen.tsx  Config form (period, AP, intervals, board, players) → createGame.
     ├── GameRoute.tsx         Routes /game/:id → WaitingRoom (lobby) / GameBoard (active) / ResultsScreen (done).
-    ├── WaitingRoom.tsx       Live roster + invite code + host start (startGame).
-    ├── GameBoard.tsx         In-game: board + queue + countdown + resolve-now + History|Chat tabs + endgame vote.
+    ├── WaitingRoom.tsx       Live roster (with online dots) + invite code + host start (startGame).
+    ├── GameBoard.tsx         In-game: board + queue + countdown + History|Chat tabs + endgame vote + presence/heartbeat.
     ├── ResultsScreen.tsx     Final podium + standings for a completed game.
     └── ProfileScreen.tsx     Your derived stats + match history (users.myProfile).
 ```
@@ -129,6 +140,5 @@ src/
 ## Planned (upcoming stages — not yet created)
 
 - Playwright E2E in CI (signup→create→start→queue→resolve), gated on a `CONVEX_DEPLOY_KEY` secret.
-- `convex/notify.ts` — push/email notifications (Stage 6).
-- Offline/reconnect polish, presence, rate limiting, security/secrecy pass (Stage 6).
+- Optional web-push / email notifications (needs VAPID or an email-provider key) — extends the in-app layer.
 - More `src/components/ui/*` primitives (dialog, …) as screens need them.

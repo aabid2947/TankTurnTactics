@@ -10,6 +10,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { HudChip } from "@/components/game/HudChip";
 import { TankToken } from "@/components/game/TankToken";
 import { colorForIndex } from "@/lib/board";
+import { isOnline } from "@/lib/presence";
+import { usePresenceHeartbeat } from "@/lib/usePresenceHeartbeat";
 import type { GameDetail } from "@/lib/gameTypes";
 
 export function WaitingRoom({ game, meId }: { game: GameDetail; meId?: Id<"users"> }) {
@@ -17,6 +19,7 @@ export function WaitingRoom({ game, meId }: { game: GameDetail; meId?: Id<"users
   const leaveGame = useMutation(api.games.leaveGame);
   const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
+  usePresenceHeartbeat(game._id);
 
   const isHost = meId !== undefined && game.createdBy === meId;
   const canStart = game.players.length >= game.config.minPlayers;
@@ -71,7 +74,16 @@ export function WaitingRoom({ game, meId }: { game: GameDetail; meId?: Id<"users
         <CardContent>
           <div className="flex flex-wrap gap-5">
             {game.players.map((p, i) => (
-              <TankToken key={p._id} name={p.name} color={colorForIndex(i)} hearts={3} isYou={p.userId === meId} showName size={52} />
+              <TankToken
+                key={p._id}
+                name={p.name}
+                color={colorForIndex(i)}
+                hearts={3}
+                isYou={p.userId === meId}
+                isOnline={isOnline(p.lastSeenAt)}
+                showName
+                size={52}
+              />
             ))}
           </div>
         </CardContent>

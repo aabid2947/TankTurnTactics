@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useMutation, useQuery } from "convex/react";
-import { Coins, Crosshair, Heart, Skull, Users, Zap } from "lucide-react";
+import { Coins, Crosshair, Heart, Skull, Users, Wifi, Zap } from "lucide-react";
 import { api } from "@convex/_generated/api";
 import type { Id } from "@convex/_generated/dataModel";
 import { Button } from "@/components/ui/button";
@@ -14,6 +14,8 @@ import { TradePanel } from "@/components/game/TradePanel";
 import { HudChip } from "@/components/game/HudChip";
 import { InGameBoard } from "@/components/game/InGameBoard";
 import { fmtTime, useCountdown } from "@/lib/useCountdown";
+import { isOnline } from "@/lib/presence";
+import { usePresenceHeartbeat } from "@/lib/usePresenceHeartbeat";
 import { cn } from "@/lib/utils";
 import type { GameDetail } from "@/lib/gameTypes";
 
@@ -38,9 +40,11 @@ export function GameBoard({ game, meId }: { game: GameDetail; meId?: Id<"users">
   const [mode, setMode] = useState<"move" | "shoot" | "give" | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [rightTab, setRightTab] = useState<"history" | "chat">("history");
+  usePresenceHeartbeat(game._id);
 
   const secsLeft = useCountdown(game.currentPeriodEndsAt);
   const alive = game.players.filter((p) => p.status === "alive").length;
+  const onlineIds = new Set(game.players.filter((p) => isOnline(p.lastSeenAt)).map((p) => p._id));
   const isHost = meId !== undefined && game.createdBy === meId;
   const amAlive = me?.status === "alive";
   const nameOf = (id: string) => game.players.find((p) => p._id === id)?.name ?? "a tank";
@@ -81,7 +85,11 @@ export function GameBoard({ game, meId }: { game: GameDetail; meId?: Id<"users">
             <p className="font-mono text-[11px] uppercase tracking-wide text-muted-foreground">
               {game.name} · period {game.periodNumber ?? 0}
             </p>
-            <p className="font-display text-sm font-bold">Queue your moves before the buzzer</p>
+            <p className="font-display text-sm font-bold">
+              {amAlive && secsLeft > 0 && secsLeft <= 10
+                ? "Window closing — lock in your moves!"
+                : "Queue your moves before the buzzer"}
+            </p>
           </div>
         </div>
         <div className="flex flex-wrap items-center gap-2 lg:ml-auto">
@@ -89,6 +97,7 @@ export function GameBoard({ game, meId }: { game: GameDetail; meId?: Id<"users">
           {me && <HudChip icon={Crosshair} label="Range" value={me.range} tone="range" />}
           {me && <HudChip icon={Heart} label="Hearts" value={`${me.hearts}/3`} tone="heart" />}
           <HudChip icon={Users} label="Alive" value={`${alive}/${game.players.length}`} />
+          <HudChip icon={Wifi} label="Online" value={onlineIds.size} />
           {isHost && (
             <Button size="sm" variant="accent" onClick={() => void forceResolve({ gameId: game._id })}>
               <Zap className="size-4" />
@@ -133,6 +142,7 @@ export function GameBoard({ game, meId }: { game: GameDetail; meId?: Id<"users">
             meUserId={meId}
             mode={amAlive ? mode : null}
             onPick={onPick}
+            onlineIds={onlineIds}
           />
           <p className="mt-2 text-center font-mono text-[11px] text-muted-foreground">
             {mode === "move"

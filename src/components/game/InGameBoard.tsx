@@ -11,9 +11,10 @@ interface Props {
   meUserId?: string;
   mode: "move" | "shoot" | "give" | null;
   onPick: (cell: { x: number; y: number }) => void;
+  onlineIds?: Set<string>;
 }
 
-export function InGameBoard({ game, me, meUserId, mode, onPick }: Props) {
+export function InGameBoard({ game, me, meUserId, mode, onPick, onlineIds }: Props) {
   const board = game.board ?? {
     originX: 0,
     originY: 0,
@@ -82,6 +83,7 @@ export function InGameBoard({ game, me, meUserId, mode, onPick }: Props) {
                   hearts={tank.hearts}
                   dead={tank.status === "dead"}
                   isYou={tank.userId === meUserId}
+                  isOnline={onlineIds?.has(tank._id) ?? false}
                   size={tokenSize}
                 />
               )}

@@ -5,6 +5,7 @@ import { internal } from "./_generated/api";
 import { type MutationCtx, mutation, query } from "./_generated/server";
 import { configValidator } from "./schema";
 import { placeSpawns } from "./lib/spawn";
+import { enforceRateLimit } from "./rateLimit";
 
 const DEFAULT_CONFIG = {
   periodSeconds: 600,
@@ -38,6 +39,7 @@ function publicPlayer(p: Doc<"players">) {
     kills: p.kills,
     deathOrder: p.deathOrder,
     placement: p.placement,
+    lastSeenAt: p.lastSeenAt,
   };
 }
 
@@ -173,6 +175,7 @@ export const joinByCode = mutation({
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
     if (!userId) throw new Error("Not signed in");
+    await enforceRateLimit(ctx, `join:${userId}`, 10, 60_000, "Too many join attempts — wait a minute.");
     const game = await ctx.db
       .query("games")
       .withIndex("by_code", (q) => q.eq("code", args.code.trim().toUpperCase()))

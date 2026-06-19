@@ -4,6 +4,7 @@ import type { Doc } from "./_generated/dataModel";
 import { mutation, query, type QueryCtx } from "./_generated/server";
 import { actionValidator } from "./schema";
 import { queueCost, type QueuedKind } from "./lib/cost";
+import { enforceRateLimit } from "./rateLimit";
 
 async function requireMyPlayer(ctx: QueryCtx, gameId: Doc<"games">["_id"]): Promise<Doc<"players">> {
   const userId = await getAuthUserId(ctx);
@@ -24,6 +25,7 @@ export const queueAction = mutation({
     const game = await ctx.db.get(gameId);
     if (!game || game.status !== "active") throw new Error("Game is not active");
     if (player.status !== "alive") throw new Error("You're not alive");
+    await enforceRateLimit(ctx, `queue:${player._id}`, 40, 10_000);
     const period = game.periodNumber ?? 0;
 
     const existing = await ctx.db
@@ -31,6 +33,7 @@ export const queueAction = mutation({
       .withIndex("by_player_period", (q) => q.eq("playerId", player._id).eq("periodNumber", period))
       .collect();
     existing.sort((a, b) => a.lockedAt - b.lockedAt);
+    if (existing.length >= 64) throw new Error("That's the max actions for one period");
 
     const kinds = [...existing.map((e) => e.action.kind), action.kind] as QueuedKind[];
     if (queueCost(kinds, player.range) > player.ap) {

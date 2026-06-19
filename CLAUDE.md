@@ -53,15 +53,18 @@ detail & acceptance criteria in `Implementation.md §11`.
 - [x] **Stage 5 — Social & endgame:** global + 1:1 chat, win detection + final ranking, 4-player
       negotiation vote, results screen, derived stats/match history — **complete**. (Alliances/betrayals
       stay emergent via chat + trade — no formal system, per `PRODUCT.md` §9.)
-- [ ] **Stage 6 — Async hardening:** notifications, offline/reconnect, presence, rate limiting,
-      security/secrecy pass.
+- [x] **Stage 6 — Async hardening:** in-app notifications, offline/reconnect banner, presence,
+      rate limiting, security/secrecy pass — **complete**. (Secrecy audit clean; web-push/email
+      deferred — they need keys. Notifications are in-app + optional desktop alerts.)
 - [ ] **Stage 7 — Beta & launch:** playtest, balance-tune the configurable knobs, polish, deploy.
 
-**Current status:** Stages 0–5 complete and on `main`. A full game plays start→finish: queue
-move/shoot/heal/upgrade/collect/give, propose/accept trades, jury (when dead), global + 1:1 chat,
-and at the final 4 an early-end ranking vote — all resolved by the pure engine at the buzzer (or host
-`forceResolve`). Win detection ranks survivors (hearts→kills→AP→spawn) and the eliminated (by death
-order) into a results screen; the profile shows derived stats/match history. All gates green (app +
-Convex typecheck, lint, 51 tests, build). **Next: Stage 6 — async hardening** (notifications,
-offline/reconnect, presence, rate limiting, security/secrecy pass) and **Playwright E2E in CI**. Run
-`npx convex dev` + `npm run dev`; create a game (min players 1, short period) + Resolve now.
+**Current status:** Stages 0–6 complete and on `main`. A full game plays start→finish (queue actions,
+trades, jury, global + 1:1 chat, the final-4 ranking vote) resolved by the pure engine at the buzzer;
+win detection ranks survivors + the eliminated into a results screen; profiles show derived stats.
+Async-hardening is in: presence (online dots), an offline/reconnect banner, fixed-window rate-limits
+on chat/queue/joinByCode, and in-app notifications (bell + optional desktop alerts) for
+hits/revives/jury/game-over. The secrecy audit came back clean. All gates green (app + Convex
+typecheck, lint, 60 tests, build). **Next: Stage 7 — beta & launch** (playtest, balance-tune the
+configurable knobs, accessibility & mobile polish, deploy) and **Playwright E2E in CI**; optional
+web-push/email notifications still need keys. Run `npx convex dev` + `npm run dev`; create a game
+(min players 1, short period) + Resolve now.

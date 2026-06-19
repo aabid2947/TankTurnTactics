@@ -472,6 +472,11 @@ rate-limiting & notifications are deferred to Stage 6.
 Notifications; offline/reconnect polish; presence; rate limiting; a focused security/integrity
 pass (secrecy, validation, anti-abuse). **Done when:** an hours-long game survives clients being
 closed and notifies players appropriately.
+**✅ Complete (2026-06-19):** secrecy audit clean (no leaks); fixed-window rate-limits
+(`convex/rateLimit.ts` + `lib/rateLimit.ts`) on chat/queue/joinByCode; presence heartbeat
+(`convex/presence.ts`) + online dots; an offline banner via the Convex connection state; in-app
+notifications (`notifications` table + `lib/notify.ts`, header bell + optional desktop alerts) for
+being hit/revived, jury outcomes, and game-over. Web-push/email deferred (need VAPID / provider keys).
 
 ### Stage 7 — Beta & launch
 Playtest; tune the configurable knobs (§3.15) for balance; accessibility & mobile polish; deploy.

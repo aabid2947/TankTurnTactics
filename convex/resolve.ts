@@ -7,6 +7,7 @@ import { resolvePeriod as engineResolve } from "./engine";
 import type { EngineState, GameEvent, QueuedAction, Queues } from "./engine/types";
 import { tallyJury } from "./lib/jury";
 import { computeFinalPlacements } from "./lib/ranking";
+import { notificationForEvent } from "./lib/notify";
 import { makeRng } from "./lib/rng";
 
 function buildEngineState(game: Doc<"games">, players: Doc<"players">[]): EngineState {
@@ -95,6 +96,23 @@ async function tryFinalizeByVote(
   await Promise.all(proposal.ranking.map((id, i) => ctx.db.patch(id, { placement: i + 1 })));
   await Promise.all(
     elimOrder.map((id, i) => ctx.db.patch(id as Id<"players">, { placement: proposal.ranking.length + i + 1 })),
+  );
+  const placementById = new Map<string, number>();
+  proposal.ranking.forEach((id, i) => placementById.set(id as string, i + 1));
+  elimOrder.forEach((id, i) => placementById.set(id, proposal.ranking.length + i + 1));
+  await Promise.all(
+    players.map((p) => {
+      const place = placementById.get(p._id as string);
+      return place !== undefined
+        ? ctx.db.insert("notifications", {
+            userId: p.userId,
+            gameId: game._id,
+            type: "gameover",
+            body: `Game over — you placed #${place} of ${placementById.size}.`,
+            createdAt: Date.now(),
+          })
+        : Promise.resolve();
+    }),
   );
 
   await clearPeriodRows(ctx, game._id, period);
@@ -205,6 +223,25 @@ async function doResolve(ctx: MutationCtx, gameId: Id<"games">): Promise<void> {
       ctx.db.insert("events", { gameId, periodNumber: period, index, event }),
     ),
   );
+
+  // In-app notifications for events that target a specific player (Stage 6).
+  const nameById = new Map(players.map((p) => [p._id as string, p.name]));
+  await Promise.all(
+    result.events.flatMap((event) => {
+      const spec = notificationForEvent(event, (id) => nameById.get(id) ?? "a tank");
+      const target = spec ? byId.get(spec.targetTankId) : undefined;
+      if (!spec || !target) return [];
+      return [
+        ctx.db.insert("notifications", {
+          userId: target.userId,
+          gameId,
+          type: spec.type,
+          body: spec.body,
+          createdAt: Date.now(),
+        }),
+      ];
+    }),
+  );
   await Promise.all(queuedRows.map((row) => ctx.db.delete(row._id)));
   await Promise.all(voteRows.map((row) => ctx.db.delete(row._id)));
   await Promise.all(offerRows.map((row) => ctx.db.delete(row._id)));
@@ -235,6 +272,21 @@ async function doResolve(ctx: MutationCtx, gameId: Id<"games">): Promise<void> {
       })),
     );
     await Promise.all(order.map((id, i) => ctx.db.patch(id as Id<"players">, { placement: i + 1 })));
+    const userById = new Map(ranked.map((p) => [p._id as string, p.userId]));
+    await Promise.all(
+      order.map((id, i) => {
+        const uid = userById.get(id);
+        return uid
+          ? ctx.db.insert("notifications", {
+              userId: uid,
+              gameId,
+              type: "gameover",
+              body: `Game over — you placed #${i + 1} of ${order.length}.`,
+              createdAt: Date.now(),
+            })
+          : Promise.resolve();
+      }),
+    );
     await ctx.db.patch(gameId, {
       status: "completed",
       endedAt: Date.now(),

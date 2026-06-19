@@ -2,6 +2,7 @@ import { getAuthUserId } from "@convex-dev/auth/server";
 import { v } from "convex/values";
 import type { Doc } from "./_generated/dataModel";
 import { mutation, query, type QueryCtx } from "./_generated/server";
+import { enforceRateLimit } from "./rateLimit";
 
 const MAX_CHAT_LEN = 500;
 
@@ -35,6 +36,7 @@ export const sendChat = mutation({
     const content = args.content.trim();
     if (!content) throw new Error("Message is empty");
     if (content.length > MAX_CHAT_LEN) throw new Error(`Keep it under ${MAX_CHAT_LEN} characters`);
+    await enforceRateLimit(ctx, `chat:${me._id}`, 5, 10_000, "You're sending messages too fast.");
 
     if (args.scope === "dm") {
       if (!args.toPlayerId) throw new Error("Pick someone to DM");

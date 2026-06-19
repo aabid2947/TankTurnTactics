@@ -12,6 +12,7 @@ interface TankTokenProps {
   size?: number;
   showHearts?: boolean;
   showName?: boolean;
+  isOnline?: boolean;
 }
 
 /** A circular bordered tank token (monogram, hearts, leader/dead markers). Presentational. */
@@ -25,6 +26,7 @@ export function TankToken({
   size = 44,
   showHearts = false,
   showName = false,
+  isOnline = false,
 }: TankTokenProps) {
   const circle = (
     <span
@@ -38,6 +40,12 @@ export function TankToken({
     >
       {dead ? <Skull className="size-1/2" /> : monogram(name)}
       {isLeader && !dead && <Crown className="absolute -right-1.5 -top-2 size-4 fill-secondary text-foreground" />}
+      {isOnline && (
+        <span
+          className="absolute -bottom-0.5 -right-0.5 size-2 rounded-full border border-foreground bg-accent"
+          title="Online"
+        />
+      )}
     </span>
   );
 

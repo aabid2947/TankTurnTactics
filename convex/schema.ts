@@ -71,6 +71,7 @@ export default defineSchema({
     placement: v.optional(v.number()), // final 1..N rank, set once at game end (Stage 5)
     hauntedNextGrant: v.optional(v.boolean()),
     joinedAt: v.number(),
+    lastSeenAt: v.optional(v.number()), // presence heartbeat (Stage 6)
   })
     .index("by_game", ["gameId"])
     .index("by_game_user", ["gameId", "userId"])
@@ -149,4 +150,22 @@ export default defineSchema({
     accepts: v.array(v.id("players")),
     createdAt: v.number(),
   }).index("by_game", ["gameId"]),
+
+  // Fixed-window rate-limit counters (Stage 6 anti-abuse). `key` namespaces the limit + subject,
+  // e.g. `chat:<playerId>`, `queue:<playerId>`, `join:<userId>`.
+  rateLimits: defineTable({
+    key: v.string(),
+    count: v.number(),
+    windowStart: v.number(),
+  }).index("by_key", ["key"]),
+
+  // Per-user in-app notifications (Stage 6): enqueued at resolution for events that target you.
+  notifications: defineTable({
+    userId: v.id("users"),
+    gameId: v.optional(v.id("games")),
+    type: v.string(),
+    body: v.string(),
+    createdAt: v.number(),
+    readAt: v.optional(v.number()),
+  }).index("by_user", ["userId"]),
 });
