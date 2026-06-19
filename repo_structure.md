@@ -111,7 +111,7 @@ src/
 │   └── game/
 │       ├── TankToken.tsx     Circular tank token (monogram, hearts, leader/dead/online markers).
 │       ├── BoardGrid.tsx     Read-only board (Stage 1 waiting/spectate).
-│       ├── InGameBoard.tsx   Interactive board: click to queue moves/shots; range highlights + online dots.
+│       ├── InGameBoard.tsx   Interactive board: click to queue moves/shots; range highlights + online dots + zoom.
 │       ├── ActionQueue.tsx   Queue panel: AP meter, queued actions, move/shoot/give/heal/upgrade/collect, cancel/clear.
 │       ├── HistoryPanel.tsx  Public event log grouped by period.
 │       ├── JuryPanel.tsx     Eliminated players vote to haunt/gift a living tank.
