@@ -89,7 +89,7 @@ convex/
 src/
 ├── main.tsx                  Entry: ConvexAuthProvider + ConvexReactClient + Router.
 ├── App.tsx                   Auth-gated routes: SignIn (out) vs AppShell → lobby/create/profile/game.
-├── index.css                 Neo-brutalist design tokens (light/dark) + game tokens.
+├── index.css                 Neo-brutalist design tokens (light/dark) + game tokens + a11y base (focus ring, reduced-motion).
 ├── vite-env.d.ts             Vite client types.
 ├── lib/
 │   ├── utils.ts              `cn()` className merge.

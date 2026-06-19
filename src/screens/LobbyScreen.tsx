@@ -54,6 +54,7 @@ export function LobbyScreen() {
 
       <div className="flex flex-wrap items-center gap-2">
         <Input
+          aria-label="Game code"
           placeholder="Enter code, e.g. TANK-7F3K"
           value={code}
           onChange={(e) => setCode(e.target.value)}

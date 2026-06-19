@@ -68,3 +68,9 @@ typecheck, lint, 60 tests, build). **Next: Stage 7 — beta & launch** (playtest
 configurable knobs, accessibility & mobile polish, deploy) and **Playwright E2E in CI**; optional
 web-push/email notifications still need keys. Run `npx convex dev` + `npm run dev`; create a game
 (min players 1, short period) + Resolve now.
+
+**Stage 7 polish (in progress):** the accessibility & mobile pass landed — `prefers-reduced-motion`
+handling + a global focus-visible ring (`index.css`), ARIA labels (board cells, period pills,
+steppers, code/name inputs, icon buttons), `aria-pressed`/`role="group"` on toggles, and responsive
+touches (icon-only sign-out on mobile, bigger tab/pill touch targets). Still open in Stage 7: deploy,
+playtest, balance-tuning, Playwright E2E — and the dense 20×20 board needs a mobile zoom/pan pass.

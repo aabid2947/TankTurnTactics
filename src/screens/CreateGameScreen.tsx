@@ -67,16 +67,18 @@ export function CreateGameScreen() {
           </CardHeader>
           <CardContent className="flex flex-col">
             <Row label="Game name">
-              <Input value={name} onChange={(e) => setName(e.target.value)} className="max-w-[240px] font-sans" />
+              <Input aria-label="Game name" value={name} onChange={(e) => setName(e.target.value)} className="max-w-[240px] font-sans" />
             </Row>
             <Row label="Period length" hint="Planning + chat window">
-              <div className="flex flex-wrap justify-end gap-1.5">
+              <div className="flex flex-wrap justify-end gap-1.5" role="group" aria-label="Period length">
                 {PERIODS.map((p) => (
                   <button
                     key={p.seconds}
+                    type="button"
+                    aria-pressed={periodSeconds === p.seconds}
                     onClick={() => setPeriodSeconds(p.seconds)}
                     className={cn(
-                      "rounded-full border-2 border-foreground px-2.5 py-1 font-mono text-[11px] font-bold",
+                      "rounded-full border-2 border-foreground px-2.5 py-1.5 font-mono text-[11px] font-bold",
                       periodSeconds === p.seconds ? "bg-primary text-primary-foreground" : "bg-card",
                     )}
                   >
@@ -86,22 +88,22 @@ export function CreateGameScreen() {
               </div>
             </Row>
             <Row label="AP per period">
-              <Stepper value={apPerGrant} onChange={setApPerGrant} min={1} max={5} />
+              <Stepper value={apPerGrant} onChange={setApPerGrant} min={1} max={5} label="AP per period" />
             </Row>
             <Row label="Heart spawn (periods)">
-              <Stepper value={heart} onChange={setHeart} min={1} max={20} />
+              <Stepper value={heart} onChange={setHeart} min={1} max={20} label="Heart spawn periods" />
             </Row>
             <Row label="Jury vote (periods)">
-              <Stepper value={jury} onChange={setJury} min={1} max={20} />
+              <Stepper value={jury} onChange={setJury} min={1} max={20} label="Jury vote periods" />
             </Row>
             <Row label="Board size">
-              <Stepper value={board} onChange={setBoard} min={10} max={24} />
+              <Stepper value={board} onChange={setBoard} min={10} max={24} label="Board size" />
             </Row>
             <Row label="Min players">
-              <Stepper value={minP} onChange={setMinP} min={1} max={maxP} />
+              <Stepper value={minP} onChange={setMinP} min={1} max={maxP} label="Min players" />
             </Row>
             <Row label="Max players">
-              <Stepper value={maxP} onChange={setMaxP} min={minP} max={17} />
+              <Stepper value={maxP} onChange={setMaxP} min={minP} max={17} label="Max players" />
             </Row>
           </CardContent>
         </Card>

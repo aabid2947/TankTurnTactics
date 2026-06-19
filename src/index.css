@@ -75,6 +75,24 @@
   body {
     @apply bg-background text-foreground font-sans antialiased;
   }
+
+  /* Always-visible keyboard focus ring on every interactive element (design §10 accessibility). */
+  :where(a, button, input, select, textarea, summary, [tabindex]:not([tabindex="-1"])):focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+  }
+
+  /* Respect reduced-motion: collapse transitions/animations (design §10). */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    ::before,
+    ::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
 }
 
 @layer utilities {

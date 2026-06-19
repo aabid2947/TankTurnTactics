@@ -46,12 +46,13 @@ export function AppShell() {
               className="grid size-9 place-items-center rounded-full border-2 border-foreground font-mono text-xs font-bold text-ink shadow-brutal-sm"
               style={{ backgroundColor: "#8B5CF6" }}
               title={`${name} — your profile & stats`}
+              aria-label={`${name} — your profile & stats`}
             >
               {monogram(name)}
             </Link>
-            <Button variant="outline" size="sm" onClick={() => void signOut()}>
+            <Button variant="outline" size="sm" onClick={() => void signOut()} aria-label="Sign out">
               <LogOut className="size-4" />
-              Sign out
+              <span className="hidden sm:inline">Sign out</span>
             </Button>
           </div>
         </div>

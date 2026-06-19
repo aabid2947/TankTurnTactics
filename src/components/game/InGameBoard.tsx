@@ -61,6 +61,7 @@ export function InGameBoard({ game, me, meUserId, mode, onPick, onlineIds }: Pro
             <button
               key={key}
               type="button"
+              aria-label={`Cell ${x}, ${y}`}
               disabled={!isValid}
               onClick={() => onPick({ x, y })}
               className={cn(

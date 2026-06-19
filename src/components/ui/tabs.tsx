@@ -23,7 +23,7 @@ export function Tabs<T extends string>({
           type="button"
           onClick={() => onChange(it.value)}
           className={cn(
-            "rounded-full px-3 py-1 font-mono text-[11px] font-bold uppercase tracking-wide transition-colors",
+            "rounded-full px-3 py-1.5 font-mono text-[11px] font-bold uppercase tracking-wide transition-colors",
             value === it.value
               ? "border-2 border-foreground bg-primary text-primary-foreground shadow-brutal-sm"
               : "border-2 border-transparent text-muted-foreground hover:text-foreground",
