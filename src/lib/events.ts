@@ -18,7 +18,12 @@ export function eventLabel(event: GameEvent, nameOf: (id: string) => string): Ev
         : { label: `${nameOf(event.tankId)} fired — missed`, tone: "text-muted-foreground" };
     case "death":
       return {
-        label: `${nameOf(event.tankId)} was destroyed${event.cause === "shrink" ? " (board shrink)" : ""}`,
+        label:
+          event.cause === "shrink"
+            ? `${nameOf(event.tankId)} was destroyed (board shrink)`
+            : event.killerId
+              ? `${nameOf(event.killerId)} destroyed ${nameOf(event.tankId)}`
+              : `${nameOf(event.tankId)} was destroyed`,
         tone: "text-destructive",
       };
     case "heal":

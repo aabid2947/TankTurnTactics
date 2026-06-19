@@ -6,6 +6,7 @@ import { internalMutation, mutation, query, type MutationCtx } from "./_generate
 import { resolvePeriod as engineResolve } from "./engine";
 import type { EngineState, GameEvent, QueuedAction, Queues } from "./engine/types";
 import { tallyJury } from "./lib/jury";
+import { computeFinalPlacements } from "./lib/ranking";
 import { makeRng } from "./lib/rng";
 
 function buildEngineState(game: Doc<"games">, players: Doc<"players">[]): EngineState {
@@ -26,6 +27,7 @@ function buildEngineState(game: Doc<"games">, players: Doc<"players">[]): Engine
       hearts: p.hearts,
       ap: p.ap,
       range: p.range,
+      kills: p.kills,
       status: p.status,
       hauntedNextGrant: p.hauntedNextGrant ?? false,
     })),
@@ -39,6 +41,73 @@ function hashSeed(gameId: string, period: number): number {
   return h >>> 0;
 }
 
+/** Delete the queued actions, trade offers, and jury votes left over for a finished period. */
+async function clearPeriodRows(ctx: MutationCtx, gameId: Id<"games">, period: number): Promise<void> {
+  const [queued, offers, votes] = await Promise.all([
+    ctx.db.query("queuedActions").withIndex("by_game_period", (q) => q.eq("gameId", gameId).eq("periodNumber", period)).collect(),
+    ctx.db.query("tradeOffers").withIndex("by_game_period", (q) => q.eq("gameId", gameId).eq("periodNumber", period)).collect(),
+    ctx.db.query("juryVotes").withIndex("by_game", (q) => q.eq("gameId", gameId)).collect(),
+  ]);
+  await Promise.all([...queued, ...offers, ...votes].map((r) => ctx.db.delete(r._id)));
+}
+
+/**
+ * Endgame negotiation (Implementation.md §3.13/§3.18): if exactly 4 players are alive and they have
+ * unanimously accepted a proposed 1→4 ranking, end the game now with that ranking (eliminated players
+ * ranked below by death order). Resolves at the period boundary. Returns true if the game was ended.
+ */
+async function tryFinalizeByVote(
+  ctx: MutationCtx,
+  game: Doc<"games">,
+  players: Doc<"players">[],
+  period: number,
+): Promise<boolean> {
+  const living = players.filter((p) => p.status === "alive");
+  if (living.length !== 4) return false;
+  const proposal = await ctx.db
+    .query("endgameProposals")
+    .withIndex("by_game", (q) => q.eq("gameId", game._id))
+    .first();
+  if (!proposal) return false;
+
+  const livingIds = new Set(living.map((p) => p._id as string));
+  const rankingValid =
+    proposal.ranking.length === 4 &&
+    new Set(proposal.ranking.map((id) => id as string)).size === 4 &&
+    proposal.ranking.every((id) => livingIds.has(id as string));
+  const unanimous = rankingValid && living.every((p) => proposal.accepts.some((a) => a === p._id));
+  if (!unanimous) return false;
+
+  // Placements: 1..4 from the agreed ranking; eliminated players below, ordered by death order.
+  const elimOrder = computeFinalPlacements(
+    players
+      .filter((p) => p.status !== "alive")
+      .map((p) => ({
+        id: p._id as string,
+        status: p.status,
+        hearts: p.hearts,
+        kills: p.kills,
+        ap: p.ap,
+        spawnOrder: p.spawnOrder,
+        deathOrder: p.deathOrder,
+      })),
+  );
+  await Promise.all(proposal.ranking.map((id, i) => ctx.db.patch(id, { placement: i + 1 })));
+  await Promise.all(
+    elimOrder.map((id, i) => ctx.db.patch(id as Id<"players">, { placement: proposal.ranking.length + i + 1 })),
+  );
+
+  await clearPeriodRows(ctx, game._id, period);
+  await ctx.db.delete(proposal._id);
+  await ctx.db.patch(game._id, {
+    status: "completed",
+    endedAt: Date.now(),
+    currentPeriodEndsAt: undefined,
+    nextResolveId: undefined,
+  });
+  return true;
+}
+
 /** Core resolution: run the pure engine, write results back, log events, reschedule the next period. */
 async function doResolve(ctx: MutationCtx, gameId: Id<"games">): Promise<void> {
   const game = await ctx.db.get(gameId);
@@ -49,6 +118,9 @@ async function doResolve(ctx: MutationCtx, gameId: Id<"games">): Promise<void> {
     .query("players")
     .withIndex("by_game", (q) => q.eq("gameId", gameId))
     .collect();
+
+  // Endgame negotiation takes precedence: a unanimous 4-player ranking ends the game at this buzzer.
+  if (await tryFinalizeByVote(ctx, game, players, period)) return;
 
   const queuedRows = await ctx.db
     .query("queuedActions")
@@ -99,20 +171,32 @@ async function doResolve(ctx: MutationCtx, gameId: Id<"games">): Promise<void> {
   });
 
   const byId = new Map(players.map((p) => [p._id as string, p]));
+
+  // Global deathOrder for tanks eliminated this period (later death ranks higher); cleared on revival.
+  let nextDeathOrder = Math.max(0, ...players.map((p) => p.deathOrder ?? 0));
+  const newDeathOrder = new Map<string, number>();
+  for (const id of result.deaths) newDeathOrder.set(id, (nextDeathOrder += 1));
+
   await Promise.all(
     result.state.tanks.map((t) => {
       const p = byId.get(t.id);
-      return p
-        ? ctx.db.patch(p._id, {
-            x: t.x,
-            y: t.y,
-            hearts: t.hearts,
-            ap: t.ap,
-            range: t.range,
-            status: t.status,
-            hauntedNextGrant: t.hauntedNextGrant ?? false,
-          })
-        : Promise.resolve();
+      if (!p) return Promise.resolve();
+      const deathOrder = newDeathOrder.has(t.id)
+        ? newDeathOrder.get(t.id)
+        : p.status === "dead" && t.status === "alive"
+          ? undefined
+          : p.deathOrder;
+      return ctx.db.patch(p._id, {
+        x: t.x,
+        y: t.y,
+        hearts: t.hearts,
+        ap: t.ap,
+        range: t.range,
+        kills: t.kills,
+        status: t.status,
+        hauntedNextGrant: t.hauntedNextGrant ?? false,
+        deathOrder,
+      });
     }),
   );
 
@@ -134,6 +218,23 @@ async function doResolve(ctx: MutationCtx, gameId: Id<"games">): Promise<void> {
   };
 
   if (result.gameOver) {
+    // Final placements: survivors by tiebreak, eliminated by death order (Implementation.md §3.13).
+    const ranked = await ctx.db
+      .query("players")
+      .withIndex("by_game", (q) => q.eq("gameId", gameId))
+      .collect();
+    const order = computeFinalPlacements(
+      ranked.map((p) => ({
+        id: p._id as string,
+        status: p.status,
+        hearts: p.hearts,
+        kills: p.kills,
+        ap: p.ap,
+        spawnOrder: p.spawnOrder,
+        deathOrder: p.deathOrder,
+      })),
+    );
+    await Promise.all(order.map((id, i) => ctx.db.patch(id as Id<"players">, { placement: i + 1 })));
     await ctx.db.patch(gameId, {
       status: "completed",
       endedAt: Date.now(),

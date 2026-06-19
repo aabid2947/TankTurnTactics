@@ -63,6 +63,10 @@ export function resolvePeriod(
 
   const skip = (tankId: string, reason: string) => events.push({ type: "skip", tankId, reason });
 
+  // Shooters that hit each victim during the current slot's shoot phase (reset each slot), used to
+  // attribute a kill to the earliest lock-in shooter when the victim dies.
+  let slotHitters = new Map<string, { shooterId: string; lockedAt: number }[]>();
+
   const registerCombatDeaths = () => {
     for (const t of state.tanks) {
       if (t.status === "alive" && t.hearts <= 0) {
@@ -70,13 +74,25 @@ export function resolvePeriod(
         t.hearts = 0;
         const amount = t.ap;
         t.ap = 0;
+        // Kill credit: the earliest lock-in shooter that hit this victim this slot (tie → lowest id,
+        // for determinism). Total kills stays equal to the number of combat deaths.
+        let killerId: string | undefined;
+        const hitters = slotHitters.get(t.id);
+        if (hitters && hitters.length > 0) {
+          const best = hitters.reduce((a, b) =>
+            b.lockedAt < a.lockedAt || (b.lockedAt === a.lockedAt && b.shooterId < a.shooterId) ? b : a,
+          );
+          killerId = best.shooterId;
+          const killer = byId.get(killerId);
+          if (killer) killer.kills += 1;
+        }
         if (amount > 0) {
           const existing = state.caches.find((c) => c.x === t.x && c.y === t.y);
           if (existing) existing.amount += amount;
           else state.caches.push({ x: t.x, y: t.y, amount });
         }
         deaths.push(t.id);
-        events.push({ type: "death", tankId: t.id, at: { x: t.x, y: t.y }, cache: amount, cause: "combat" });
+        events.push({ type: "death", tankId: t.id, at: { x: t.x, y: t.y }, cache: amount, cause: "combat", killerId });
       }
     }
   };
@@ -87,6 +103,7 @@ export function resolvePeriod(
   );
 
   for (let slot = 0; slot < maxLen; slot++) {
+    slotHitters = new Map();
     const slotActions = state.tanks
       .filter((t) => t.status === "alive" && queues[t.id]?.[slot])
       .map((t) => ({ tank: t, action: queues[t.id]![slot] }));
@@ -231,7 +248,12 @@ export function resolvePeriod(
           const inReach = inBounds(target) && dist(tank, target) <= tank.range;
           const victim = inReach ? livingAt(target, tank.id) : undefined;
           events.push({ type: "shoot", tankId: tank.id, target, hit: Boolean(victim) });
-          if (victim) hits.set(victim.id, (hits.get(victim.id) ?? 0) + 1);
+          if (victim) {
+            hits.set(victim.id, (hits.get(victim.id) ?? 0) + 1);
+            const list = slotHitters.get(victim.id) ?? [];
+            list.push({ shooterId: tank.id, lockedAt: action.lockedAt });
+            slotHitters.set(victim.id, list);
+          }
         }
         for (const [vid, dmg] of hits) {
           const v = byId.get(vid);

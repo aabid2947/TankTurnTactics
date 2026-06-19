@@ -3,7 +3,7 @@ import { resolvePeriod } from "./resolve";
 import type { EngineState, EngineTank, Queues } from "./types";
 
 function tank(id: string, x: number, y: number, over: Partial<EngineTank> = {}): EngineTank {
-  return { id, x, y, hearts: 3, ap: 5, range: 1, status: "alive", ...over };
+  return { id, x, y, hearts: 3, ap: 5, range: 1, kills: 0, status: "alive", ...over };
 }
 function mkState(tanks: EngineTank[], over: Partial<EngineState> = {}): EngineState {
   // apPerGrant defaults to 0 so AP assertions reflect spends, not the end-of-period grant.

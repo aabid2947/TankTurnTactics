@@ -10,6 +10,8 @@
 
 import type * as actions from "../actions.js";
 import type * as auth from "../auth.js";
+import type * as chat from "../chat.js";
+import type * as endgame from "../endgame.js";
 import type * as engine_index from "../engine/index.js";
 import type * as engine_resolve from "../engine/resolve.js";
 import type * as engine_types from "../engine/types.js";
@@ -19,6 +21,7 @@ import type * as jury from "../jury.js";
 import type * as lib_cost from "../lib/cost.js";
 import type * as lib_geometry from "../lib/geometry.js";
 import type * as lib_jury from "../lib/jury.js";
+import type * as lib_ranking from "../lib/ranking.js";
 import type * as lib_rng from "../lib/rng.js";
 import type * as lib_spawn from "../lib/spawn.js";
 import type * as resolve from "../resolve.js";
@@ -34,6 +37,8 @@ import type {
 declare const fullApi: ApiFromModules<{
   actions: typeof actions;
   auth: typeof auth;
+  chat: typeof chat;
+  endgame: typeof endgame;
   "engine/index": typeof engine_index;
   "engine/resolve": typeof engine_resolve;
   "engine/types": typeof engine_types;
@@ -43,6 +48,7 @@ declare const fullApi: ApiFromModules<{
   "lib/cost": typeof lib_cost;
   "lib/geometry": typeof lib_geometry;
   "lib/jury": typeof lib_jury;
+  "lib/ranking": typeof lib_ranking;
   "lib/rng": typeof lib_rng;
   "lib/spawn": typeof lib_spawn;
   resolve: typeof resolve;

@@ -3,7 +3,7 @@ import { resolvePeriod } from "./resolve";
 import type { EngineState, EngineTank, Queues } from "./types";
 
 function tank(id: string, x: number, y: number, over: Partial<EngineTank> = {}): EngineTank {
-  return { id, x, y, hearts: 3, ap: 5, range: 1, status: "alive", ...over };
+  return { id, x, y, hearts: 3, ap: 5, range: 1, kills: 0, status: "alive", ...over };
 }
 function mkState(tanks: EngineTank[], over: Partial<EngineState> = {}): EngineState {
   return { width: 10, height: 10, originX: 0, originY: 0, tanks, caches: [], heartSpawns: [], shrinkStep: 0, apPerGrant: 0, ...over };
@@ -136,5 +136,62 @@ describe("jury & win", () => {
     expect(resolvePeriod(mkState(three), {}).gameOver).toBe(true);
     const four = [tank("A", 0, 0), tank("B", 1, 0), tank("C", 2, 0), tank("D", 3, 0)];
     expect(resolvePeriod(mkState(four), {}).gameOver).toBe(false);
+  });
+});
+
+describe("kill attribution", () => {
+  it("credits the earliest lock-in shooter when two hit the same lethal slot", () => {
+    const q: Queues = {
+      A: [{ kind: "shoot", lockedAt: 5, target: { x: 3, y: 3 } }],
+      B: [{ kind: "shoot", lockedAt: 2, target: { x: 3, y: 3 } }], // locked earlier → gets the kill
+    };
+    const { state } = resolvePeriod(
+      mkState([tank("A", 2, 3, { range: 2 }), tank("B", 4, 3, { range: 2 }), tank("V", 3, 3, { hearts: 1 })]),
+      q,
+    );
+    expect(get(state, "V").status).toBe("dead");
+    expect(get(state, "B").kills).toBe(1);
+    expect(get(state, "A").kills).toBe(0);
+  });
+
+  it("a mutual kill credits both shooters", () => {
+    const q: Queues = {
+      A: [{ kind: "shoot", lockedAt: 1, target: { x: 1, y: 0 } }],
+      B: [{ kind: "shoot", lockedAt: 1, target: { x: 0, y: 0 } }],
+    };
+    const { state } = resolvePeriod(mkState([tank("A", 0, 0, { hearts: 1 }), tank("B", 1, 0, { hearts: 1 })]), q);
+    expect(get(state, "A").kills).toBe(1);
+    expect(get(state, "B").kills).toBe(1);
+  });
+
+  it("credits the slot the victim dies in, not earlier chip damage", () => {
+    const q: Queues = {
+      A: [{ kind: "shoot", lockedAt: 1, target: { x: 3, y: 3 } }], // slot 0: chips V 2→1
+      B: [
+        { kind: "shoot", lockedAt: 5, target: { x: 9, y: 9 } }, // slot 0: out-of-range miss
+        { kind: "shoot", lockedAt: 5, target: { x: 3, y: 3 } }, // slot 1: lethal
+      ],
+    };
+    const { state } = resolvePeriod(
+      mkState([tank("A", 2, 3, { range: 2 }), tank("B", 4, 3, { range: 2 }), tank("V", 3, 3, { hearts: 2 })]),
+      q,
+    );
+    expect(get(state, "V").status).toBe("dead");
+    expect(get(state, "B").kills).toBe(1);
+    expect(get(state, "A").kills).toBe(0);
+  });
+
+  it("a shrink death has no killer and is not credited", () => {
+    // A kills B (1 combat death → board shrinks one ring from top-left); C on the removed top row
+    // dies to the shrink — no shooter, so no credit.
+    const { state, events } = resolvePeriod(
+      mkState([tank("A", 5, 5, { range: 1 }), tank("B", 5, 6, { hearts: 1 }), tank("C", 5, 0)]),
+      { A: [{ kind: "shoot", lockedAt: 1, target: { x: 5, y: 6 } }] },
+    );
+    expect(get(state, "C").status).toBe("dead");
+    expect(get(state, "A").kills).toBe(1); // credited for B only
+    const cDeath = events.find((e) => e.type === "death" && e.tankId === "C");
+    expect(cDeath).toBeDefined();
+    if (cDeath && cDeath.type === "death") expect(cDeath.killerId).toBeUndefined();
   });
 });

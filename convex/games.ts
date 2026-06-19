@@ -35,6 +35,9 @@ function publicPlayer(p: Doc<"players">) {
     hearts: p.hearts,
     status: p.status,
     spawnOrder: p.spawnOrder,
+    kills: p.kills,
+    deathOrder: p.deathOrder,
+    placement: p.placement,
   };
 }
 

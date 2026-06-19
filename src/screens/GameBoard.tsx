@@ -4,7 +4,10 @@ import { Coins, Crosshair, Heart, Skull, Users, Zap } from "lucide-react";
 import { api } from "@convex/_generated/api";
 import type { Id } from "@convex/_generated/dataModel";
 import { Button } from "@/components/ui/button";
+import { Tabs } from "@/components/ui/tabs";
 import { ActionQueue } from "@/components/game/ActionQueue";
+import { ChatPanel } from "@/components/game/ChatPanel";
+import { EndgameVotePanel } from "@/components/game/EndgameVotePanel";
 import { HistoryPanel } from "@/components/game/HistoryPanel";
 import { JuryPanel } from "@/components/game/JuryPanel";
 import { TradePanel } from "@/components/game/TradePanel";
@@ -34,6 +37,7 @@ export function GameBoard({ game, meId }: { game: GameDetail; meId?: Id<"users">
 
   const [mode, setMode] = useState<"move" | "shoot" | "give" | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [rightTab, setRightTab] = useState<"history" | "chat">("history");
 
   const secsLeft = useCountdown(game.currentPeriodEndsAt);
   const alive = game.players.filter((p) => p.status === "alive").length;
@@ -102,6 +106,8 @@ export function GameBoard({ game, meId }: { game: GameDetail; meId?: Id<"users">
         </div>
       )}
 
+      {alive === 4 && <EndgameVotePanel gameId={game._id} mePlayerId={me?._id} />}
+
       <div className="grid gap-4 lg:grid-cols-[300px_minmax(0,1fr)_300px]">
         <div className="order-2 lg:order-1 lg:h-[560px]">
           {amAlive ? (
@@ -143,8 +149,23 @@ export function GameBoard({ game, meId }: { game: GameDetail; meId?: Id<"users">
             </div>
           )}
         </div>
-        <div className="order-3 h-[560px] lg:order-3">
-          <HistoryPanel players={game.players} events={events} />
+        <div className="order-3 flex h-[560px] flex-col gap-2 lg:order-3">
+          <Tabs
+            value={rightTab}
+            onChange={setRightTab}
+            items={[
+              { value: "history", label: "History" },
+              { value: "chat", label: "Chat" },
+            ]}
+            className="self-start"
+          />
+          <div className="min-h-0 flex-1">
+            {rightTab === "history" ? (
+              <HistoryPanel players={game.players} events={events} />
+            ) : (
+              <ChatPanel gameId={game._id} me={me ?? undefined} players={game.players} />
+            )}
+          </div>
         </div>
       </div>
     </div>

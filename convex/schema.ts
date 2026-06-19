@@ -67,6 +67,8 @@ export default defineSchema({
     range: v.number(), // SECRET
     kills: v.number(),
     spawnOrder: v.number(),
+    deathOrder: v.optional(v.number()), // global elimination counter, set when the tank dies (Stage 5)
+    placement: v.optional(v.number()), // final 1..N rank, set once at game end (Stage 5)
     hauntedNextGrant: v.optional(v.boolean()),
     joinedAt: v.number(),
   })
@@ -123,4 +125,28 @@ export default defineSchema({
     .index("by_game_period", ["gameId", "periodNumber"])
     .index("by_to_player_period", ["toPlayerId", "periodNumber"])
     .index("by_from_player_period", ["fromPlayerId", "periodNumber"]),
+
+  // Chat: global broadcast + 1:1 DMs. DMs carry a canonical `pairKey` (sorted player ids) so a thread
+  // can be fetched directly; getChat returns global + only the caller's own DMs (secrecy at the query).
+  chatMessages: defineTable({
+    gameId: v.id("games"),
+    scope: v.union(v.literal("global"), v.literal("dm")),
+    fromPlayerId: v.id("players"),
+    toPlayerId: v.optional(v.id("players")),
+    pairKey: v.optional(v.string()),
+    content: v.string(),
+    createdAt: v.number(),
+  })
+    .index("by_game_scope", ["gameId", "scope", "createdAt"])
+    .index("by_game_pair", ["gameId", "pairKey", "createdAt"]),
+
+  // 4-player endgame negotiation (Implementation.md §3.13/§3.18). One active proposal per game; a
+  // unanimous accept among the four living players ends the game early at the next buzzer.
+  endgameProposals: defineTable({
+    gameId: v.id("games"),
+    proposerId: v.id("players"),
+    ranking: v.array(v.id("players")), // length 4, 1st → 4th
+    accepts: v.array(v.id("players")),
+    createdAt: v.number(),
+  }).index("by_game", ["gameId"]),
 });

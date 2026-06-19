@@ -4,6 +4,7 @@ import { useQuery } from "convex/react";
 import { api } from "@convex/_generated/api";
 import type { Id } from "@convex/_generated/dataModel";
 import { GameBoard } from "./GameBoard";
+import { ResultsScreen } from "./ResultsScreen";
 import { WaitingRoom } from "./WaitingRoom";
 
 /** Routes a game id to the waiting room (lobby) or the live board (active). */
@@ -17,11 +18,9 @@ export function GameRoute() {
   if (game === undefined) return <Msg>Loading…</Msg>;
   if (game === null) return <Msg>Game not found.</Msg>;
 
-  return game.status === "lobby" ? (
-    <WaitingRoom game={game} meId={viewer?._id} />
-  ) : (
-    <GameBoard game={game} meId={viewer?._id} />
-  );
+  if (game.status === "lobby") return <WaitingRoom game={game} meId={viewer?._id} />;
+  if (game.status === "completed") return <ResultsScreen game={game} meId={viewer?._id} />;
+  return <GameBoard game={game} meId={viewer?._id} />;
 }
 
 function Msg({ children }: { children: ReactNode }) {

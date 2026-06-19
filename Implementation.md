@@ -462,6 +462,11 @@ trade handshake; jury & haunting. **Done when:** all §3 mechanics are live and 
 Global + 1:1 chat (WhatsApp-style); alliance/betrayal UX; win detection, **3-left ranking** &
 **4-player negotiation vote**; results screen; user stats/match history. **Done when:** a full
 game can be played start→finish with chat and a real winner.
+**✅ Complete (2026-06-19):** pure kill-attribution (earliest lock-in) + `convex/lib/ranking.ts`,
+`deathOrder`/`placement` on players, chat (global + secret DMs; eliminated players may chat), the
+4-player vote finalized at the buzzer (`resolve.ts` → `endgame.ts`), `ResultsScreen`, and derived
+profile stats/match history (`users.myProfile`). Alliances stay emergent (chat + trade);
+rate-limiting & notifications are deferred to Stage 6.
 
 ### Stage 6 — Async hardening
 Notifications; offline/reconnect polish; presence; rate limiting; a focused security/integrity

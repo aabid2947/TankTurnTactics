@@ -37,13 +37,14 @@ export function AppShell() {
             >
               {dark ? <Sun className="size-4" /> : <Moon className="size-4" />}
             </button>
-            <span
-              className="grid size-9 place-items-center rounded-full border-2 border-foreground font-mono text-xs font-bold text-ink"
+            <Link
+              to="/profile"
+              className="grid size-9 place-items-center rounded-full border-2 border-foreground font-mono text-xs font-bold text-ink shadow-brutal-sm"
               style={{ backgroundColor: "#8B5CF6" }}
-              title={name}
+              title={`${name} — your profile & stats`}
             >
               {monogram(name)}
-            </span>
+            </Link>
             <Button variant="outline" size="sm" onClick={() => void signOut()}>
               <LogOut className="size-4" />
               Sign out

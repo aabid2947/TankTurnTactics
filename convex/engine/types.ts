@@ -17,6 +17,8 @@ export interface EngineTank {
   hearts: number; // 0..3
   ap: number;
   range: number; // Chebyshev radius
+  /** Combat kills — tiebreak for final placement & player stats. */
+  kills: number;
   status: TankStatus;
   /** When set, the tank skips its next AP grant (jury haunt), then the flag clears. */
   hauntedNextGrant?: boolean;
@@ -93,7 +95,7 @@ export type GameEvent =
   | { type: "bounce"; tankId: string; at: Cell; attempted: Cell }
   | { type: "heartPickup"; tankId: string; at: Cell }
   | { type: "shoot"; tankId: string; target: Cell; hit: boolean }
-  | { type: "death"; tankId: string; at: Cell; cache: number; cause: "combat" | "shrink" }
+  | { type: "death"; tankId: string; at: Cell; cache: number; cause: "combat" | "shrink"; killerId?: string }
   | { type: "shrink"; width: number; height: number; originX: number; originY: number }
   | { type: "heartSpawn"; at: Cell }
   | { type: "jury"; effect: "haunt" | "gift"; targetId: string }

@@ -4,6 +4,7 @@ import { AppShell } from "@/components/layout/AppShell";
 import { CreateGameScreen } from "@/screens/CreateGameScreen";
 import { GameRoute } from "@/screens/GameRoute";
 import { LobbyScreen } from "@/screens/LobbyScreen";
+import { ProfileScreen } from "@/screens/ProfileScreen";
 import { SignInScreen } from "@/screens/SignInScreen";
 
 export default function App() {
@@ -22,6 +23,7 @@ export default function App() {
           <Route element={<AppShell />}>
             <Route index element={<LobbyScreen />} />
             <Route path="/create" element={<CreateGameScreen />} />
+            <Route path="/profile" element={<ProfileScreen />} />
             <Route path="/game/:gameId" element={<GameRoute />} />
           </Route>
         </Routes>
