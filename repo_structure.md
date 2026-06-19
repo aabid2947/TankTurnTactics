@@ -25,6 +25,7 @@ TankTurnTactics/
 ├── components.json        shadcn/ui config (style, aliases, base color).
 ├── index.html             Vite HTML entry; loads Space Grotesk + Space Mono (Google Fonts).
 ├── vite.config.ts         Vite config: React plugin, `@`→src & `@convex`→convex aliases, Vitest.
+├── playwright.config.ts   Playwright E2E config: boots `npm run dev` (or BASE_URL), Chromium, e2e/ tests.
 ├── eslint.config.js       ESLint flat config (lints src/; react-refresh off for components/ui).
 ├── postcss.config.js      PostCSS pipeline: tailwindcss + autoprefixer.
 ├── tailwind.config.ts     Tailwind theme: Space Grotesk/Mono fonts, brand+game colors, brutal shadows.
@@ -130,15 +131,25 @@ src/
     └── ProfileScreen.tsx     Your derived stats + match history (users.myProfile).
 ```
 
+## `e2e/` — Playwright end-to-end tests
+
+```
+e2e/
+├── helpers.ts          uniqueCredentials() + signUp() — real Convex Auth sign-up to the lobby.
+├── smoke.spec.ts       App loads the sign-in screen; asserts no missing-Convex-function errors.
+├── auth.spec.ts        Sign up → lobby → sign out.
+└── create-game.spec.ts Sign up → create a game with default config → land in /game/:id.
+```
+
 ## `.github/` · `.claude/`
 
 ```
 .github/workflows/ci.yml      CI: npm ci → lint → typecheck (app + convex) → test → build.
+.github/workflows/e2e.yml     CI: npm ci → (deploy Convex if key) → Playwright Chromium → upload report.
 .claude/settings.local.json   Claude Code local permissions (gitignored).
 ```
 
 ## Planned (upcoming stages — not yet created)
 
-- Playwright E2E in CI (signup→create→start→queue→resolve), gated on a `CONVEX_DEPLOY_KEY` secret.
 - Optional web-push / email notifications (needs VAPID or an email-provider key) — extends the in-app layer.
 - More `src/components/ui/*` primitives (dialog, …) as screens need them.

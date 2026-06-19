@@ -1,0 +1,52 @@
+name: e2e
+
+# Playwright end-to-end tests. Boots the local Vite dev server (which connects to
+# a real Convex deployment) and drives Chromium through sign-up / lobby / create-game.
+#
+# Required repository secrets (Settings → Secrets and variables → Actions):
+#   CONVEX_DEPLOY_KEY     – a Convex deploy key (Dashboard → project → Settings → Deploy Keys)
+#   VITE_CONVEX_URL       – the deployment's .convex.cloud URL the frontend talks to
+#   VITE_CONVEX_SITE_URL  – the deployment's .convex.site URL
+#
+# Without CONVEX_DEPLOY_KEY the job skips the function-push step and still runs the
+# tests against whatever VITE_CONVEX_URL points at (e.g. an already-deployed backend).
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    env:
+      VITE_CONVEX_URL: ${{ secrets.VITE_CONVEX_URL }}
+      VITE_CONVEX_SITE_URL: ${{ secrets.VITE_CONVEX_SITE_URL }}
+      CONVEX_DEPLOY_KEY: ${{ secrets.CONVEX_DEPLOY_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - name: Push Convex functions
+        if: ${{ env.CONVEX_DEPLOY_KEY != '' }}
+        run: npx convex deploy
+
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
+
+      - name: Run E2E tests
+        run: npm run e2e
+
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 14

@@ -6,6 +6,12 @@ dist
 dist-ssr
 *.local
 
+# Playwright
+/test-results
+/playwright-report
+/blob-report
+/playwright/.cache
+
 # Convex local deployment cache (convex/_generated IS committed so CI typechecks without a deploy key)
 .convex
 
