@@ -1,9 +1,18 @@
-import { expect, type Page } from "@playwright/test";
+import { expect, type Locator, type Page } from "@playwright/test";
 
 /** A fresh, unique credential per call so each test gets its own account. */
 export function uniqueCredentials() {
   const stamp = `${Date.now()}-${Math.floor(Math.random() * 1e6)}`;
   return { email: `e2e+${stamp}@example.com`, password: "test-password-123" };
+}
+
+/**
+ * The value of an in-game HUD chip, located by its label (e.g. "AP", "Range",
+ * "Hearts"). In a HudChip the value <span> is the sibling right after the label
+ * <span>, so this returns that value node for `.toHaveText(...)` assertions.
+ */
+export function hudChipValue(scope: Page, label: string): Locator {
+  return scope.getByText(label, { exact: true }).locator("xpath=following-sibling::span[1]");
 }
 
 /**

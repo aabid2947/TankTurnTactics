@@ -135,10 +135,12 @@ src/
 
 ```
 e2e/
-├── helpers.ts          uniqueCredentials() + signUp() — real Convex Auth sign-up to the lobby.
+├── helpers.ts          uniqueCredentials() + signUp() (real Convex Auth) + hudChipValue() reader.
 ├── smoke.spec.ts       App loads the sign-in screen; asserts no missing-Convex-function errors.
 ├── auth.spec.ts        Sign up → lobby → sign out.
-└── create-game.spec.ts Sign up → create a game with default config → land in /game/:id.
+├── create-game.spec.ts Sign up → create a game with default config → land in /game/:id.
+└── game-flow.spec.ts   5 players (host + 4) join/start/queue/force-resolve two periods; asserts
+                        AP-grant, move + upgrade (range 1→2) rules, queue-clear, and cross-client reactivity.
 ```
 
 ## `.github/` · `.claude/`
