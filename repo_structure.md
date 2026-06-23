@@ -5,13 +5,16 @@
 > the same change (see `CLAUDE.md`, rules 1 & 2). Organize code **by feature** so this index stays
 > meaningful.
 >
-> Last updated: 2026-06-19 (Stage 6 — async hardening: rate-limiting, presence, offline banner, in-app notifications)
+> Last updated: 2026-06-24 (Stage 7 — added RULEBOOK.md: player-facing rule book derived from the locked spec)
 
 ## Root — docs & config
 
 ```
 TankTurnTactics/
 ├── PRODUCT.md             Player-facing game design & rules (clarified 2026-06-18).
+├── RULEBOOK.md            Player-facing RULE BOOK: tidied, example-driven rules derived from PRODUCT.md + Implementation.md §3 (authoritative). How to play, turn/resolution order, actions, combat, jury, winning, quick-ref + glossary.
+├── PLAYTEST.md            Stage 7 playtest log: dated sessions, triaged findings (bug/UX/balance/design), host decisions.
+├── combat-design.md       Game-mechanics design notes on fixing the F1 move-resolver problem (EXPLORATION, pending host call); distinct from design.md (visual).
 ├── Implementation.md      CANONICAL technical blueprint + ruleset (§3) + staged roadmap (§11).
 ├── CLAUDE.md              Auto-loaded project guide: working rules, locked decisions, phases.
 ├── repo_structure.md      THIS file — living index of the repo.
