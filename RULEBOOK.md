@@ -137,9 +137,9 @@ These are everything you can queue. Costs are in **AP**.
 
 | Action | Cost | What it does |
 |---|---|---|
-| **Move** | **1** | Step to one **adjacent** cell (including diagonals), if it's empty. |
+| **Move** | **1, 2, 3, 5, 7, …** | Step to one **adjacent** cell (including diagonals), if it's empty. The *n*-th move of a period costs the *n*-th rung (see below). |
 | **Shoot** | **1** | Fire at a cell **within your range**; a living tank there loses **1 heart**. |
-| **Upgrade range** | **= your new range** | Raise your range by 1. The cost is the range you reach: 1→2 costs **2**, 2→3 costs **3**, 3→4 costs **4**, … |
+| **Upgrade range** | **2, 3, 5, 7, 11, …** | Raise your range by 1. The *n*-th upgrade costs the *n*-th prime: 1→2 = **2**, 2→3 = **3**, 3→4 = **5**, 4→5 = **7**, … |
 | **Add heart** (self-heal) | **3** | Heal yourself **+1 heart** (never above 3). |
 | **Collect AP** | **1** | Pick up the **entire** AP cache sitting on your current cell. |
 | **Trade** | **0** | A mutually-agreed swap of AP and/or hearts with a player in range (§11). |
@@ -147,12 +147,16 @@ These are everything you can queue. Costs are in **AP**.
 
 A few things worth internalising:
 
-- **You can queue many actions per period** — as many as your AP affords. With 5 AP you could
-  queue five moves, or a move + a shot + an upgrade, etc. More AP means a longer, more reactive
-  plan (see §6).
-- **Range upgrades get expensive fast,** and if you queue several in one period their costs
-  stack: queuing 1→2→3 in a period costs **2 then 3 = 5 AP**.
-- **Moving is one step at a time.** To cross three cells you queue three Moves.
+- **You can queue many actions per period** — as many as your AP affords. A longer plan means more
+  slots and more reactivity later in resolution (see §6) — but moves and range-upgrades both get
+  pricier the more you stack into one period.
+- **Range upgrades get expensive fast,** and follow the primes — 1→2 = 2, 2→3 = 3, 3→4 = 5, 4→5 = 7,
+  5→6 = 11, … Range is permanent, so this **stacks across the whole game**; queuing 1→2→3 in one
+  period costs **2 then 3 = 5 AP**.
+- **Moves get expensive fast too.** The first move of a period costs **1 AP**; each further move
+  costs the next prime — **1, 2, 3, 5, 7, 11, …** The ladder **resets every period**, so a single
+  step is always cheap, but crossing three cells in one period costs **1 + 2 + 3 = 6 AP**. (A move
+  that **bounces** is charged its current rung but doesn't climb the ladder.)
 - **Bonus hearts are grabbed by moving onto them** (free, automatic). **AP caches are *not*** —
   you must stand on the cache and use **Collect** (§8, §10).
 
@@ -162,7 +166,7 @@ you're refunded if there was *nothing to attempt*:**
 
 | Outcome | AP? |
 |---|---|
-| A **move that bounces** (the cell was taken or off-board) | **Spent** — you tried to move. |
+| A **move that bounces** (the cell was taken or off-board) | **Spent** (its current rung) — you tried to move; a bounce doesn't advance the move ladder. |
 | A **shot that misses** (nobody there) | **Spent** — you pulled the trigger. |
 | A **trade** the partner never accepted | **Refunded** — nothing happened. |
 | A **revive/give** with no valid target on the cell | **Refunded.** |
@@ -246,7 +250,7 @@ drops an AP cache where they fell.
   1 AP spent. **Nobody moves; both paid.** Two tanks can't swap.
 
 ### Example D — More AP = the last word
-- **B** (1 AP) queues `[Move]`. **A** (3 AP) queues `[Move, Move, Shoot]`.
+- **B** (1 AP) queues `[Move]`. **A** (4 AP) queues `[Move, Move, Shoot]` — her two moves cost 1 + 2 and the shot 1 (4 AP total).
 - **Slot 1:** both move.
 - **Slot 2:** only A has an action — A moves again, now reacting to where B ended up.
 - **Slot 3:** only A acts — A shoots, aiming at B's *final* position.
@@ -385,9 +389,9 @@ The information war is half the game. Here's exactly who knows what.
 **Action costs**
 | Action | AP |
 |---|---|
-| Move | 1 |
+| Move | 1, 2, 3, 5, 7, … (n-th move of the period) |
 | Shoot | 1 |
-| Upgrade range | = new range (1→2 = 2, 2→3 = 3, …) |
+| Upgrade range | n-th prime (1→2 = 2, 2→3 = 3, 3→4 = 5, 4→5 = 7, …) |
 | Add heart (self-heal) | 3 |
 | Collect AP | 1 |
 | Trade | 0 |
@@ -432,7 +436,7 @@ Ties broken by **earliest lock-in**.
 - **Range** — your secret square reach for shooting/trading/giving (Chebyshev distance).
 - **Cache** — dropped AP left where a tank died; grabbed with **Collect**.
 - **Body** — a dead tank still on the board; non-blocking and revivable until lost to a shrink.
-- **Bounce** — a move that fails (cell taken or off-board); you still spend the AP.
+- **Bounce** — a move that fails (cell taken or off-board); you still spend the AP for that rung, but it doesn't advance the move-cost ladder.
 - **Train** — a chain of moves where each tank follows into the cell the one ahead just vacated.
 - **Haunt / Gift** — the jury's two powers: skip a player's next AP grant, or give them +1 AP.
 - **Jury** — all dead players, voting periodically to haunt or gift the living.

@@ -5,9 +5,11 @@ import { api } from "@convex/_generated/api";
 import type { Id } from "@convex/_generated/dataModel";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { chebyshev } from "@/lib/geometry";
 import type { GamePlayer, MyPlayer } from "@/lib/gameTypes";
+import type { Cell } from "@/lib/planning";
 
-export function TradePanel({ gameId, me, players }: { gameId: Id<"games">; me?: MyPlayer; players: GamePlayer[] }) {
+export function TradePanel({ gameId, me, players, origin }: { gameId: Id<"games">; me?: MyPlayer; players: GamePlayer[]; origin?: Cell }) {
   const offers = useQuery(api.trade.getMyTradeOffers, { gameId }) ?? { incoming: [], outgoing: [] };
   const propose = useMutation(api.trade.proposeTrade);
   const respond = useMutation(api.trade.respondTrade);
@@ -21,7 +23,13 @@ export function TradePanel({ gameId, me, players }: { gameId: Id<"games">; me?: 
   const [error, setError] = useState<string | null>(null);
 
   const nameOf = (id: string) => players.find((p) => p._id === id)?.name ?? "a tank";
-  const others = players.filter((p) => p.status === "alive" && p._id !== me?._id);
+  // Trade reaches the same distance as a shot: living players within your range (Chebyshev) of
+  // where you'll be after your queued moves — a trade resolves after those moves, like a shot.
+  const range = me?.range ?? 1;
+  const from: Cell | undefined = origin ?? (me ? { x: me.x, y: me.y } : undefined);
+  const others = players.filter(
+    (p) => p.status === "alive" && p._id !== me?._id && from !== undefined && p.x >= 0 && chebyshev(from, { x: p.x, y: p.y }) <= range,
+  );
   const incoming = offers.incoming.filter((o) => o.status === "pending");
 
   const doPropose = async () => {
@@ -71,7 +79,7 @@ export function TradePanel({ gameId, me, players }: { gameId: Id<"games">; me?: 
           onChange={(e) => setTarget(e.target.value)}
           className="h-9 rounded-[10px] border-2 border-foreground bg-card px-2 font-mono text-xs"
         >
-          <option value="">Propose to…</option>
+          <option value="">{others.length ? "Propose to…" : "No one in range"}</option>
           {others.map((p) => (
             <option key={p._id} value={p._id}>
               {p.name}
@@ -84,13 +92,14 @@ export function TradePanel({ gameId, me, players }: { gameId: Id<"games">; me?: 
           <NumField label="You get AP" value={getAp} onChange={setGetAp} max={99} />
           <NumField label="You get ♥" value={getHearts} onChange={setGetHearts} max={3} />
         </div>
-        <Button size="sm" disabled={!target} onClick={() => void doPropose()}>
+        <Button size="sm" disabled={!target || !others.some((p) => p._id === target)} onClick={() => void doPropose()}>
           <Send className="size-3.5" />
           Send offer
         </Button>
         {error && <p className="text-xs text-destructive">{error}</p>}
         <p className="font-mono text-[10px] leading-snug text-muted-foreground">
-          Executes at the buzzer only if they accept and you're in range.
+          Only players within your range ({range}) are listed — a trade reaches as far as your shot.
+          Executes at the buzzer if they accept and you're both still in range.
         </p>
       </div>
 

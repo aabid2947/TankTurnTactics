@@ -31,7 +31,9 @@
   action, then 2nd…), bucketed by type in priority order
   **(heal → upgrade → trade/give → collect → move → shoot)**, with **lock-in time** breaking
   contention. Moves dodge shots; mutual kills possible; trains work, swaps fail; a bounced move
-  still spends AP.
+  still spends AP. **Move cost escalates per period** (prime ladder 1, 2, 3, 5, 7, …; first move 1,
+  then primes; resets each period; a bounce is charged but doesn't advance it). **Range-upgrade cost**
+  = the n-th prime (2, 3, 5, 7, 11, …; n = current range; permanent — stacks across the game).
 - **Health = 3 hearts** (1 dmg/shot). **Win = top-3** (play to final 3; optional 4-player unanimous
   vote). Old MERN + Socket.io build is **abandoned** — do not restore it.
 

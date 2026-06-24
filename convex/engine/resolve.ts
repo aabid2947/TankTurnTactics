@@ -1,4 +1,5 @@
 import { chebyshev } from "../lib/geometry";
+import { moveCost, upgradeCost } from "../lib/cost";
 import type {
   Cell,
   EngineState,
@@ -14,7 +15,6 @@ const PHASES = ["heal", "upgrade", "transfer", "collect", "move", "shoot"] as co
 
 const HEAL_COST = 3;
 const COLLECT_COST = 1;
-const MOVE_COST = 1;
 const SHOOT_COST = 1;
 const MAX_HEARTS = 3;
 const BOARD_FLOOR = 3; // never shrink below 3×3
@@ -31,7 +31,8 @@ function cloneState(s: EngineState): EngineState {
 /**
  * Resolve one period via the slot-based simultaneous model (Implementation.md §3.5):
  * slot-by-slot, each slot bucketed by type and run in PHASES order; moves resolve sequentially by
- * lock-in time (trains work, swaps fail, a bounce still spends AP), shots resolve simultaneously
+ * lock-in time (trains work, swaps fail), the n-th move of a period costs the escalating ladder
+ * 1, 2, 3, 5, 7, … (§3.3) and a bounce still spends its rung's AP, shots resolve simultaneously
  * (mutual kills). After the slots: board shrink (per death, alternating edges), AP grant
  * (haunt-aware), heart spawn (if due), jury effect (if any), win check.
  *
@@ -46,6 +47,9 @@ export function resolvePeriod(
   const events: GameEvent[] = [];
   const deaths: string[] = [];
   const byId = new Map<string, EngineTank>(state.tanks.map((t) => [t.id, t]));
+  // Per-period count of each tank's SUCCESSFUL moves, driving the escalating move cost
+  // (1, 2, 3, 5, 7, … — Implementation.md §3.3). A bounce is charged but does not advance it.
+  const movesMade = new Map<string, number>();
 
   const inBounds = (c: Cell) =>
     c.x >= state.originX &&
@@ -123,7 +127,7 @@ export function resolvePeriod(
       } else if (phase === "upgrade") {
         for (const { tank, action } of slotActions) {
           if (action.kind !== "upgrade" || tank.status !== "alive") continue;
-          const cost = tank.range + 1; // scaling: cost = the range you reach
+          const cost = upgradeCost(tank.range); // cost = the (current range)-th prime: 2, 3, 5, 7, 11, …
           if (tank.ap < cost) skip(tank.id, "ap");
           else {
             tank.ap -= cost;
@@ -213,16 +217,19 @@ export function resolvePeriod(
           .sort((a, b) => a.action.lockedAt - b.action.lockedAt);
         for (const { tank, action } of moves) {
           if (action.kind !== "move") continue;
-          if (tank.ap < MOVE_COST) {
+          const moveStep = (movesMade.get(tank.id) ?? 0) + 1;
+          const cost = moveCost(moveStep); // 1, 2, 3, 5, 7, … per period
+          if (tank.ap < cost) {
             skip(tank.id, "ap");
             continue;
           }
-          tank.ap -= MOVE_COST; // spent even on a bounce
+          tank.ap -= cost; // spent even on a bounce (charged this rung, but a bounce does not advance it)
           const from = { x: tank.x, y: tank.y };
           const dest = action.to;
           if (inBounds(dest) && chebyshev(from, dest) === 1 && !livingAt(dest, tank.id)) {
             tank.x = dest.x;
             tank.y = dest.y;
+            movesMade.set(tank.id, moveStep); // advance the move-cost ladder only on a successful move
             events.push({ type: "move", tankId: tank.id, from, to: dest });
             const heart = state.heartSpawns.find((h) => h.x === dest.x && h.y === dest.y);
             if (heart && tank.hearts < MAX_HEARTS) {
@@ -247,7 +254,7 @@ export function resolvePeriod(
           const target = action.target;
           const inReach = inBounds(target) && dist(tank, target) <= tank.range;
           const victim = inReach ? livingAt(target, tank.id) : undefined;
-          events.push({ type: "shoot", tankId: tank.id, target, hit: Boolean(victim) });
+          events.push({ type: "shoot", tankId: tank.id, target, hit: Boolean(victim), victimId: victim?.id });
           if (victim) {
             hits.set(victim.id, (hits.get(victim.id) ?? 0) + 1);
             const list = slotHitters.get(victim.id) ?? [];

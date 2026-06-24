@@ -127,18 +127,25 @@ This section is the authoritative spec. Implement to *this*, not to prose elsewh
 ### 3.3 Actions & AP costs
 | Action | Cost | Effect |
 |---|---|---|
-| Move | 1 | Step to an adjacent (8-dir) empty cell |
+| Move | **1, 2, 3, 5, 7, …** | Step to an adjacent (8-dir) empty cell; the *n*-th move of a period costs the *n*-th rung (callout below) |
 | Shoot | 1 | Target a cell within range; living tank there loses 1 heart |
-| Upgrade range | **= new range** | Range +1; cost equals the range you reach — 1→2 costs 2, 2→3 costs 3, 3→4 costs 4, … |
+| Upgrade range | **2, 3, 5, 7, 11, …** | Range +1; the *n*-th upgrade costs the *n*-th prime (n = current range) — 1→2 costs 2, 2→3 costs 3, 3→4 costs 5, 4→5 costs 7, … (callout) |
 | Add heart (self-heal) | 3 | Own hearts +1 (cannot exceed 3) |
 | Collect AP | 1 | Grab the entire AP cache on your current cell |
 | Trade | 0 | Mutual-consent exchange of AP and/or hearts, within range |
 | Give heart / Revive | 0 | Give 1 of your hearts to a target in range (heal ally ≤3, or revive a body) |
 
-> **Range-upgrade cost scales:** an upgrade costs the range you're upgrading **to** (current range
-> + 1) — 1→2 costs 2 AP, 2→3 costs 3, 3→4 costs 4, and so on. Several upgrades queued in one period
-> resolve in separate slots, so their costs escalate (1→2→3 costs 2 then 3). Affordability is
-> validated against this escalating cost at queue time.
+> **Range-upgrade cost is the n-th prime:** the n-th upgrade (n = your current range) costs the
+> n-th prime — 1→2 = 2 AP, 2→3 = 3, 3→4 = 5, 4→5 = 7, 5→6 = 11, … Range is **permanent**, so this
+> **stacks across the whole game** (no per-period reset). Several upgrades queued in one period
+> resolve in separate slots, so their costs escalate together (1→2→3 costs 2 then 3). Affordability
+> is validated against this escalating cost at queue time.
+
+> **Move cost scales per period:** the **first move of a period costs 1 AP**; each further move
+> costs the next prime — **1, 2, 3, 5, 7, 11, …** The ladder **resets every period** (it counts a
+> tank's moves *this* period). A **bounced** move is charged its current rung but does **not
+> advance** the ladder, so a blocked move retries at the same price next slot. Affordability is
+> validated assuming every queued move advances (the maximum cost), so a plan that bounces only costs less.
 
 ### 3.4 The period loop
 1. Admin sets **period length** (and other params, §3.15). A live countdown runs.
@@ -166,7 +173,7 @@ for slot in 0 .. maxLen-1:
         b = acts of this bucket type
         switch bucket:
           HEAL    : each: spend 3AP, hearts = min(3, hearts+1)
-          UPGRADE : each: spend (range+1) AP, range += 1   # cost = the range you reach
+          UPGRADE : each: spend nthPrime(range) AP, range += 1   # cost = the (current range)-th prime: 2,3,5,7,11,…
           TRANSFER: process in lockedAt order:
                       trade  -> if partner accepted & in range: swap resources (0AP)
                       give   -> if target in range: ally hearts+1 (≤3),
@@ -174,10 +181,11 @@ for slot in 0 .. maxLen-1:
           COLLECT : each: if cache on my cell: spend 1AP, gain cache amount, clear cache
                           else: void -> refund
           MOVE    : process in lockedAt order, each vs LIVE board:
-                      spend 1AP (always, even on bounce)        # per decision 2b
-                      if dest in-bounds AND no living tank there: move there
+                      cost = moveCost(successful moves this period + 1)  # ladder 1,2,3,5,7,…
+                      spend cost AP (always, even on bounce)    # per decision 2b; a bounce ≠ advance
+                      if dest in-bounds AND no living tank there: move there; advance the ladder
                           (auto-pickup heart spawn if present, ≤3)
-                      else: bounce (stay put)
+                      else: bounce (stay put; ladder unchanged)
           SHOOT   : snapshot positions; each: spend 1AP
                       tally hit if target cell is in range (snapshot) AND holds a living tank
                       apply all hits simultaneously (−1 heart each)  # mutual kills possible
@@ -281,7 +289,8 @@ produces **no public event**.
 ### 3.16 Invariants (assert in code & tests)
 - ≤ 1 living tank per cell. Hearts ∈ [0,3]. AP ≥ 0. Range ≥ 1.
 - A queued plan's total cost ≤ the player's AP at buzzer (validated on every queue edit),
-  accounting for the **escalating range-upgrade cost** (each upgrade costs current-range + 1).
+  accounting for the **prime range-upgrade cost** (the n-th upgrade costs the n-th prime, n = current range) and
+  the **escalating per-period move cost** (1, 2, 3, 5, 7, …; validated assuming every move advances).
 - Resolution is a **pure function** of `(state, queues, seededRNG)` — same inputs ⇒ same output.
 - Board window only shrinks, never grows; never below the floor.
 
@@ -294,7 +303,9 @@ relaxed-but-valid placement if the cap is hit. (256 inner cells easily fit 17 ta
 - **Lock-in timestamp** = the time an action was *last edited*; **no explicit "Lock" button** in V1.
 - **AP consumption:** an *attempted* move (incl. bounce) and shot (incl. miss) **consume** AP;
   structurally **void** actions (trade not accepted, revive of a non-body, collect with no cache)
-  are **refunded**. *(Bounce-consumes-AP is per your decision 2b; the void-refund is my consistent extension.)*
+  are **refunded**. The **per-period move cost escalates** along the prime ladder (1, 2, 3, 5, 7, …;
+  §3.3) — a bounce is charged its current rung but **does not advance** it. *(Bounce-consumes-AP is
+  per your decision 2b; the prime move-ladder is host-confirmed; the void-refund is a consistent extension.)*
 - **Trade range** = within the **initiator's** range, checked at the trade bucket.
 - **Final-3 tiebreak** = hearts → kills → total AP → earlier spawn order.
 - **Shrink:** `D` deaths ⇒ remove `D` rows + `D` cols; no cascade; floor 3×3 / sized to survivors.
@@ -424,8 +435,9 @@ isolation** (§11 Stage 2). Deterministic unit tests (seeded RNG) covering at mi
 - **Move-beats-shoot** dodge; **mutual kill**; **train succeeds / swap fails**.
 - Move contention → earliest `lockedAt` wins, loser **bounces and loses AP**.
 - Out-of-AP rejection at queue time; void-action refunds; death cancels remaining slots.
-- Board shrink edges/casualties/lost caches; revival resets range; heal cap at 3; **scaling
-  range-upgrade cost** (R→R+1 costs R+1, stacked upgrades escalate).
+- Board shrink edges/casualties/lost caches; revival resets range; heal cap at 3; **prime
+  range-upgrade cost** (n-th upgrade = n-th prime: 2,3,5,7,11,…; stacks across the game); **escalating per-period move
+  cost** (1, 2, 3, 5, 7, …; a bounce charges its rung but doesn't advance it).
 - Jury tally / tie / haunt-skip; trade consent + range + heart cap; win at 3 / 4-player vote.
 Plus Convex integration tests (scheduling, secrecy of queries) and a few client E2E happy paths.
 

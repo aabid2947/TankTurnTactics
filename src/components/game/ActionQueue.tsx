@@ -2,9 +2,10 @@ import type { LucideIcon } from "lucide-react";
 import { ChevronsUp, Coins, Crosshair, Gift, Heart, Lock, Move, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { queueCost, type QueuedKind } from "@convex/lib/cost";
+import { queueCostBreakdown, type QueuedKind } from "@convex/lib/cost";
 import type { Id } from "@convex/_generated/dataModel";
 import type { MyPlayer, QueueRow } from "@/lib/gameTypes";
+import { moveOrigins, type Cell } from "@/lib/planning";
 
 type Mode = "move" | "shoot" | "give" | null;
 
@@ -17,11 +18,13 @@ const KIND_ICON: Record<string, LucideIcon> = {
   give: Gift,
 };
 
-function actionLabel(row: QueueRow, nameOf: (id: string) => string): string {
+function actionLabel(row: QueueRow, nameOf: (id: string) => string, from?: Cell): string {
   const a = row.action;
   switch (a.kind) {
     case "move":
-      return `Move → (${a.to.x}, ${a.to.y})`;
+      return from
+        ? `Move (${from.x}, ${from.y}) → (${a.to.x}, ${a.to.y})`
+        : `Move → (${a.to.x}, ${a.to.y})`;
     case "shoot":
       return `Shoot ⌖ (${a.target.x}, ${a.target.y})`;
     case "heal":
@@ -50,8 +53,11 @@ interface Props {
 export function ActionQueue({ me, queue, mode, setMode, disabled, nameOf, onSimple, onCancel, onClear }: Props) {
   const ap = me?.ap ?? 0;
   const range = me?.range ?? 1;
-  const spent = queueCost(queue.map((r) => r.action.kind) as QueuedKind[], range);
+  const costs = queueCostBreakdown(queue.map((r) => r.action.kind) as QueuedKind[], range);
+  const spent = costs.reduce((sum, c) => sum + c, 0);
   const remaining = ap - spent;
+  // Chained move origins: move #2 starts where move #1 ends, so labels read "Y → X", not "Z → X".
+  const moveFrom = me ? moveOrigins(me, queue) : new Map<string, Cell>();
   const toggle = (m: "move" | "shoot" | "give") => setMode(mode === m ? null : m);
 
   return (
@@ -75,7 +81,11 @@ export function ActionQueue({ me, queue, mode, setMode, disabled, nameOf, onSimp
                   {idx + 1}
                 </span>
                 <Icon className="size-4 shrink-0" />
-                <span className="flex-1 truncate font-mono text-xs">{actionLabel(row, nameOf)}</span>
+                <span className="flex-1 truncate font-mono text-xs">{actionLabel(row, nameOf, moveFrom.get(row._id))}</span>
+                <span className="inline-flex shrink-0 items-center gap-0.5 font-mono text-[11px] font-bold tabular-nums text-muted-foreground" title="AP cost">
+                  {costs[idx]}
+                  <Coins className="size-3" />
+                </span>
                 <button onClick={() => onCancel(row._id)} className="text-muted-foreground hover:text-destructive" aria-label="Cancel action">
                   <Trash2 className="size-4" />
                 </button>
@@ -122,7 +132,7 @@ export function ActionQueue({ me, queue, mode, setMode, disabled, nameOf, onSimp
 
         <div className="mt-auto flex items-center gap-2 rounded-[10px] border-2 border-foreground bg-muted px-3 py-2 font-mono text-[10px] leading-snug text-muted-foreground">
           <Lock className="size-3.5 shrink-0" />
-          Locks at the buzzer · heal → upgrade → give → collect → move → shoot, ties by who queued first.
+          Locks at the buzzer · heal → upgrade → give → collect → move → shoot, ties by who queued first. Each extra move this period costs more (1, 2, 3, 5, 7…).
         </div>
       </div>
     </Card>

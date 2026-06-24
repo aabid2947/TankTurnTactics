@@ -5,7 +5,7 @@
 > the same change (see `CLAUDE.md`, rules 1 & 2). Organize code **by feature** so this index stays
 > meaningful.
 >
-> Last updated: 2026-06-24 (Stage 7 — added RULEBOOK.md: player-facing rule book derived from the locked spec)
+> Last updated: 2026-06-24 (history now names shot victims — "A hit B"; trade limited to shot range; prime-ladder move + range-upgrade costs; projected-origin move chaining)
 
 ## Root — docs & config
 
@@ -65,8 +65,8 @@ convex/
 │   ├── rng.ts         Seeded PRNG (mulberry32) for deterministic spawn + tests.
 │   ├── spawn.ts       Spawn placement: inner region, pairwise Chebyshev ≥ 2 (Implementation.md §3.17).
 │   ├── spawn.test.ts  Vitest unit tests for spawn placement.
-│   ├── cost.ts        AP cost model (mirrors the engine) for queue affordability.
-│   ├── cost.test.ts   Vitest unit tests for queue cost (scaling upgrades).
+│   ├── cost.ts        AP cost model — single source of truth for action costs (per-period prime move ladder + prime range-upgrade ladder, both via nthPrime); imported by the engine AND queue affordability so they can't drift.
+│   ├── cost.test.ts   Vitest unit tests for queue cost (prime move ladder + prime upgrade ladder).
 │   ├── jury.ts        Jury tally (top (effect,target) wins; ties → null).
 │   ├── jury.test.ts   Vitest unit tests for the jury tally.
 │   ├── ranking.ts     Pure final-placement ranking (survivors tiebreak; eliminated by death order).
@@ -78,7 +78,7 @@ convex/
 ├── engine/            PURE slot-based resolver (no Convex/IO) — the full Stage 2 ruleset, test-first.
 │   ├── types.ts       Engine model: EngineState, EngineTank (incl. kills), QueuedAction, GameEvent.
 │   ├── resolve.ts     resolvePeriod(): slots × phases (heal/upgrade/transfer/collect/move/shoot),
-│   │                  lock-in move tiebreak, simultaneous shots, trade/give/revive, board shrink,
+│   │                  lock-in move tiebreak, per-period prime move-cost ladder, simultaneous shots, trade/give/revive, board shrink,
 │   │                  heart spawn, jury, AP grant, win check, earliest-lock kill credit. Pure & deterministic.
 │   ├── resolve.test.ts         Core resolver tests (14).
 │   ├── resolve.systems.test.ts Transfers, shrink, heart-spawn, jury, win, kill-attribution tests (16).
@@ -99,9 +99,10 @@ src/
 │   ├── utils.ts              `cn()` className merge.
 │   ├── geometry.ts           Chebyshev / adjacency helpers (shared) + geometry.test.ts.
 │   ├── board.ts              Player colors, display-name + monogram helpers.
+│   ├── planning.ts           Queue projection: projectedPosition (where you'll stand after queued moves) + moveOrigins/plannedMoveCells, so chained moves/shots use the right origin, not the live cell.
 │   ├── gameTypes.ts          Shared types from queries (GameDetail, MyPlayer, QueueRow).
 │   ├── useCountdown.ts       Live period countdown hook + time formatter.
-│   ├── events.ts             Maps resolution events to readable history labels (killer-aware deaths).
+│   ├── events.ts             Maps resolution events to readable history labels (names shot victims "A hit B", killer-aware deaths, two-party trades/gives/revives).
 │   ├── presence.ts           isOnline(lastSeenAt) helper + presence window (Stage 6).
 │   ├── usePresenceHeartbeat.ts  Pings presence every ~15s while in a game (Stage 6).
 │   └── useConnectionState.ts Polls the Convex socket to drive the offline banner (Stage 6).
@@ -115,11 +116,11 @@ src/
 │   └── game/
 │       ├── TankToken.tsx     Circular tank token (monogram, hearts, leader/dead/online markers).
 │       ├── BoardGrid.tsx     Read-only board (Stage 1 waiting/spectate).
-│       ├── InGameBoard.tsx   Interactive board: click to queue moves/shots; range highlights + online dots + zoom.
-│       ├── ActionQueue.tsx   Queue panel: AP meter, queued actions, move/shoot/give/heal/upgrade/collect, cancel/clear.
+│       ├── InGameBoard.tsx   Interactive board: click to queue moves/shots; highlights from the projected origin (chained moves) + planned-path overlay + online dots + zoom.
+│       ├── ActionQueue.tsx   Queue panel: AP meter, per-action AP cost, queued actions (chained move "from → to"), move/shoot/give/heal/upgrade/collect, cancel/clear.
 │       ├── HistoryPanel.tsx  Public event log grouped by period.
 │       ├── JuryPanel.tsx     Eliminated players vote to haunt/gift a living tank.
-│       ├── TradePanel.tsx    Propose mutual trades + accept/decline incoming offers (living players).
+│       ├── TradePanel.tsx    Propose mutual trades + accept/decline incoming offers (living players within your range — same reach as a shot, measured from your projected position).
 │       ├── ChatPanel.tsx     WhatsApp-style chat: global feed + 1:1 DMs (Global/Direct tabs); dead may chat.
 │       ├── EndgameVotePanel.tsx  At 4 alive: propose/agree a 1–4 ranking to end the game early.
 │       └── HudChip.tsx       Mono data chip with icon (AP, range, hearts, players…).

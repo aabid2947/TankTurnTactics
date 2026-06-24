@@ -57,9 +57,9 @@ Range is measured as a **square** around you: range 1 = the 8 touching squares; 
 ## 5. Actions & their cost
 | Action | AP cost | What it does |
 |---|---|---|
-| **Move** | 1 | Step to an adjacent square (including diagonals), if empty |
+| **Move** | 1, 2, 3, 5, 7… | Step to an adjacent square (incl. diagonals), if empty. The *n*-th move in a period costs the *n*-th rung — first move 1, then primes; the ladder resets each period |
 | **Shoot** | 1 | Hit a square within range; a living tank there loses 1 heart |
-| **Upgrade range** | = new range | Increase your range by 1; costs the range you reach (1→2 = 2, 2→3 = 3, 3→4 = 4, …) |
+| **Upgrade range** | 2, 3, 5, 7, 11… | Increase your range by 1; the *n*-th upgrade costs the *n*-th prime (1→2 = 2, 2→3 = 3, 3→4 = 5, 4→5 = 7, …). Permanent — stacks across the whole game |
 | **Add a heart** | 3 | Heal yourself by 1 heart (never above 3) |
 | **Collect AP** | 1 | Pick up the entire AP cache on your square |
 | **Trade** | 0 | Mutually agreed swap of AP and/or hearts with a player in range |
@@ -83,7 +83,8 @@ This produces the intended feel:
 - **Trains, not swaps:** if an earlier-locked tank vacates a square, a later-locked tank can follow
   into it; two tanks cannot swap places.
 - **Committing costs you:** if your move is blocked (you lost the square to someone faster, or it's
-  occupied), you still **spend the AP** — plan carefully.
+  occupied), you still **spend the AP** — at its current rung, though a bounce doesn't advance the
+  move-cost ladder. Plan carefully.
 - **Death stops you mid-turn:** if you're killed partway through resolution, your remaining queued
   actions are cancelled.
 

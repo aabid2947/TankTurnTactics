@@ -75,6 +75,33 @@ describe("resolvePeriod — movement", () => {
     });
     expect(get(state, "A")).toMatchObject({ x: 0, y: 0, ap: 4 });
   });
+
+  it("the n-th move of a period costs the escalating ladder 1, 2, 3, 5, …", () => {
+    // three moves in a line (separate slots): 1 + 2 + 3 = 6 AP from 10 → 4 left.
+    const queues: Queues = {
+      A: [
+        { kind: "move", lockedAt: 1, to: { x: 1, y: 0 } },
+        { kind: "move", lockedAt: 1, to: { x: 2, y: 0 } },
+        { kind: "move", lockedAt: 1, to: { x: 3, y: 0 } },
+      ],
+    };
+    const { state } = resolvePeriod(mkState([tank("A", 0, 0, { ap: 10 })]), queues);
+    expect(get(state, "A")).toMatchObject({ x: 3, y: 0, ap: 4 });
+  });
+
+  it("a bounced move is charged its current rung but does NOT advance the ladder", () => {
+    // move#1 ok (rung 1 = 1); move#2 bounces off B (charged rung 2 = 2, no advance); the next
+    // move is rung 2 again and succeeds (2). Total 1 + 2 + 2 = 5 from 10 → 5 left.
+    const queues: Queues = {
+      A: [
+        { kind: "move", lockedAt: 1, to: { x: 1, y: 0 } },
+        { kind: "move", lockedAt: 1, to: { x: 2, y: 0 } }, // blocked by B → bounce
+        { kind: "move", lockedAt: 1, to: { x: 1, y: 1 } },
+      ],
+    };
+    const { state } = resolvePeriod(mkState([tank("A", 0, 0, { ap: 10 }), tank("B", 2, 0, { hearts: 3 })]), queues);
+    expect(get(state, "A")).toMatchObject({ x: 1, y: 1, ap: 5 });
+  });
 });
 
 describe("resolvePeriod — combat & death", () => {
@@ -97,6 +124,14 @@ describe("resolvePeriod — combat & death", () => {
     expect(get(state, "A").ap).toBe(4);
   });
 
+  it("a landed shot records the victim id on the shoot event (for the history log)", () => {
+    const { events } = resolvePeriod(mkState([tank("A", 0, 0, { range: 1 }), tank("B", 1, 0, { hearts: 2 })]), {
+      A: [{ kind: "shoot", lockedAt: 1, target: { x: 1, y: 0 } }],
+    });
+    const shot = events.find((e) => e.type === "shoot");
+    expect(shot).toMatchObject({ type: "shoot", tankId: "A", hit: true, victimId: "B" });
+  });
+
   it("a killed tank drops its AP as a cache; remaining queued actions are cancelled", () => {
     // Centered so the end-of-period shrink (one death) doesn't reclaim the cache's cell.
     const queues: Queues = {
@@ -114,7 +149,7 @@ describe("resolvePeriod — combat & death", () => {
 });
 
 describe("resolvePeriod — economy", () => {
-  it("range upgrades cost the range reached; healing caps at 3 hearts", () => {
+  it("range upgrades cost the prime ladder; healing caps at 3 hearts", () => {
     const queues: Queues = {
       A: [
         { kind: "upgrade", lockedAt: 1 }, // 1→2 costs 2
@@ -124,6 +159,13 @@ describe("resolvePeriod — economy", () => {
     };
     const { state } = resolvePeriod(mkState([tank("A", 0, 0, { range: 1, ap: 10, hearts: 3 })]), queues);
     expect(get(state, "A")).toMatchObject({ range: 3, hearts: 3, ap: 5 }); // 10 − 2 − 3
+  });
+
+  it("upgrade cost follows the primes at higher range (3→4 costs 5, not 4)", () => {
+    const { state } = resolvePeriod(mkState([tank("A", 0, 0, { range: 3, ap: 10 })]), {
+      A: [{ kind: "upgrade", lockedAt: 1 }],
+    });
+    expect(get(state, "A")).toMatchObject({ range: 4, ap: 5 }); // 10 − 5 (3rd prime)
   });
 
   it("collect grabs the AP cache on the tank's cell", () => {

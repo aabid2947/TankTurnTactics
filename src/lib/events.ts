@@ -14,7 +14,7 @@ export function eventLabel(event: GameEvent, nameOf: (id: string) => string): Ev
       return { label: `${nameOf(event.tankId)} bumped — move blocked`, tone: "text-muted-foreground" };
     case "shoot":
       return event.hit
-        ? { label: `${nameOf(event.tankId)} landed a shot`, tone: "text-destructive" }
+        ? { label: `${nameOf(event.tankId)} hit ${event.victimId ? nameOf(event.victimId) : "a tank"}`, tone: "text-destructive" }
         : { label: `${nameOf(event.tankId)} fired — missed`, tone: "text-muted-foreground" };
     case "death":
       return {

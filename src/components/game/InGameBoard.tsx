@@ -13,9 +13,14 @@ interface Props {
   mode: "move" | "shoot" | "give" | null;
   onPick: (cell: { x: number; y: number }) => void;
   onlineIds?: Set<string>;
+  /** Where the tank will stand after its already-queued moves resolve — the origin for the next
+   *  queued action, so chained moves/shots highlight from the right cell, not the live position. */
+  origin?: { x: number; y: number };
+  /** Ordered destination cells of the queued moves, for drawing the planned path. */
+  plannedMoves?: { x: number; y: number }[];
 }
 
-export function InGameBoard({ game, me, meUserId, mode, onPick, onlineIds }: Props) {
+export function InGameBoard({ game, me, meUserId, mode, onPick, onlineIds, origin, plannedMoves }: Props) {
   // Zoom 1 = fit-to-width (the desktop default); zooming in enlarges cells and scrolls the board,
   // which makes the dense 20×20 grid tappable on small/touch screens (Stage 7).
   const [zoom, setZoom] = useState(1);
@@ -38,14 +43,27 @@ export function InGameBoard({ game, me, meUserId, mode, onPick, onlineIds }: Pro
 
   const valid = (x: number, y: number): boolean => {
     if (!me || me.status !== "alive" || !mode) return false;
-    const d = chebyshev({ x: me.x, y: me.y }, { x, y });
-    if (mode === "move") return d === 1 && !livingAt.has(`${x},${y}`);
+    // Reference cell = where the tank will be after its queued moves resolve. The engine resolves
+    // the chain from the live position, so the next queued action starts there, not at me.x/me.y.
+    const ref = origin ?? { x: me.x, y: me.y };
+    const d = chebyshev(ref, { x, y });
+    if (mode === "move") {
+      const occ = livingAt.get(`${x},${y}`);
+      // Adjacent + empty; your own cell counts as empty since you'll have vacated it by then.
+      return d === 1 && (!occ || occ._id === me._id);
+    }
     if (mode === "shoot") return d >= 1 && d <= me.range;
     // give: a tank in range that's a fallen body or a wounded ally (not me)
     if (d < 1 || d > me.range) return false;
     const target = livingAt.get(`${x},${y}`) ?? deadAt.get(`${x},${y}`);
     return !!target && target._id !== me._id && (target.status === "dead" || target.hearts < 3);
   };
+
+  // Planned-move overlay: a step number per queued destination + the projected origin (the next
+  // "base" cell), so the chain is visible and it's clear the origin advances as you queue moves.
+  const plannedStep = new Map<string, number>();
+  (plannedMoves ?? []).forEach((c, i) => plannedStep.set(`${c.x},${c.y}`, i + 1));
+  const hasPlan = (plannedMoves?.length ?? 0) > 0;
 
   const tokenSize = Math.max(14, Math.floor((560 / Math.max(width, height)) * zoom));
   const zoomBtn =
@@ -99,6 +117,17 @@ export function InGameBoard({ game, me, meUserId, mode, onPick, onlineIds }: Pro
                   isValid && mode === "give" && "cursor-pointer bg-primary/25 hover:bg-primary/40",
                 )}
               >
+                {plannedStep.has(key) && (
+                  <span
+                    aria-hidden
+                    className="pointer-events-none absolute right-0.5 top-0.5 z-10 grid size-3.5 place-items-center rounded-full border border-foreground bg-primary font-mono text-[8px] font-bold leading-none text-primary-foreground"
+                  >
+                    {plannedStep.get(key)}
+                  </span>
+                )}
+                {hasPlan && origin && origin.x === x && origin.y === y && (
+                  <span aria-hidden className="pointer-events-none absolute inset-0.5 z-10 rounded-sm border-2 border-dashed border-primary" />
+                )}
                 {!tank && cacheAt.has(key) && (
                   <span className="grid size-4 place-items-center rounded-full border-2 border-foreground bg-ap">
                     <Coins className="size-2.5 text-ink" />

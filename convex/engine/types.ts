@@ -94,7 +94,7 @@ export type GameEvent =
   | { type: "move"; tankId: string; from: Cell; to: Cell }
   | { type: "bounce"; tankId: string; at: Cell; attempted: Cell }
   | { type: "heartPickup"; tankId: string; at: Cell }
-  | { type: "shoot"; tankId: string; target: Cell; hit: boolean }
+  | { type: "shoot"; tankId: string; target: Cell; hit: boolean; victimId?: string }
   | { type: "death"; tankId: string; at: Cell; cache: number; cause: "combat" | "shrink"; killerId?: string }
   | { type: "shrink"; width: number; height: number; originX: number; originY: number }
   | { type: "heartSpawn"; at: Cell }

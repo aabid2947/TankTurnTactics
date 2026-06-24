@@ -15,6 +15,7 @@ import { HudChip } from "@/components/game/HudChip";
 import { InGameBoard } from "@/components/game/InGameBoard";
 import { fmtTime, useCountdown } from "@/lib/useCountdown";
 import { isOnline } from "@/lib/presence";
+import { plannedMoveCells, projectedPosition } from "@/lib/planning";
 import { usePresenceHeartbeat } from "@/lib/usePresenceHeartbeat";
 import { cn } from "@/lib/utils";
 import type { GameDetail } from "@/lib/gameTypes";
@@ -48,6 +49,10 @@ export function GameBoard({ game, meId }: { game: GameDetail; meId?: Id<"users">
   const isHost = meId !== undefined && game.createdBy === meId;
   const amAlive = me?.status === "alive";
   const nameOf = (id: string) => game.players.find((p) => p._id === id)?.name ?? "a tank";
+  // Chain queued moves so the board/queue use the projected position (after queued moves) as the
+  // origin for the next action, instead of the tank's live cell.
+  const projected = me ? projectedPosition(me, queue) : undefined;
+  const plannedMoves = plannedMoveCells(queue);
 
   const tryQueue = async (action: ActionInput) => {
     setError(null);
@@ -143,6 +148,8 @@ export function GameBoard({ game, meId }: { game: GameDetail; meId?: Id<"users">
             mode={amAlive ? mode : null}
             onPick={onPick}
             onlineIds={onlineIds}
+            origin={projected}
+            plannedMoves={plannedMoves}
           />
           <p className="mt-2 text-center font-mono text-[11px] text-muted-foreground">
             {mode === "move"
@@ -155,7 +162,7 @@ export function GameBoard({ game, meId }: { game: GameDetail; meId?: Id<"users">
           </p>
           {amAlive && (
             <div className="mt-3">
-              <TradePanel gameId={game._id} me={me ?? undefined} players={game.players} />
+              <TradePanel gameId={game._id} me={me ?? undefined} players={game.players} origin={projected} />
             </div>
           )}
         </div>
