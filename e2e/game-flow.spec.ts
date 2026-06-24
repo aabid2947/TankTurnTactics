@@ -83,7 +83,7 @@ test("five players play two periods: join, start, queue, resolve, rules apply", 
     const moveTarget = host.locator('button[aria-label^="Cell"]:not([disabled])').first();
     await expect(moveTarget).toBeVisible();
     await moveTarget.click();
-    await expect(host.getByText(/Move → \(/)).toBeVisible();
+    await expect(host.getByText(/Move \(\d+, \d+\) → \(/)).toBeVisible();
 
     // --- Queue an upgrade (range 1 → 2, costs 2 AP). ---
     await host.getByRole("button", { name: /^upgrade$/i }).click();
