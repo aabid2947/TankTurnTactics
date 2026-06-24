@@ -35,6 +35,9 @@
     --haunted: 262 30% 55%;
     --grid-line: 0 0% 8%;
     --lavender: 256 55% 83%;
+    /* Board checkerboard — two warm cream tones so squares read by color, not just borders. */
+    --board-light: 45 33% 97%;
+    --board-dark: 40 26% 87%;
   }
 
   .dark {
@@ -86,4 +89,43 @@
       linear-gradient(to right, hsl(var(--grid-line) / 0.1) 1px, transparent 1px),
       linear-gradient(to bottom, hsl(var(--grid-line) / 0.1) 1px, transparent 1px);
   }
+}
+
+/* ───────────────────────────────────────────────────────────────────────────
+   Game-board feedback & animation: queued-move ghost, queued-shot reticle, and
+   the tank-shot resolution sequence. DOM/CSS/SVG only (the board is a CSS grid,
+   no canvas). Every looping / overshoot animation is disabled under
+   prefers-reduced-motion so the planning feedback stays legible without motion.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+@keyframes ttt-ghost-pulse   { 0%, 100% { opacity: 0.4; } 50% { opacity: 0.66; } }
+@keyframes ttt-dash-march    { to { stroke-dashoffset: -1; } }
+@keyframes ttt-reticle-spin  { to { transform: rotate(360deg); } }
+@keyframes ttt-reticle-pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.12); } }
+@keyframes ttt-stamp         { 0% { transform: scale(0.55); } 60% { transform: scale(1.09); } 100% { transform: scale(1); } }
+@keyframes ttt-muzzle        { 0% { transform: scale(0.2); opacity: 0; } 25% { transform: scale(1.25); opacity: 1; } 100% { transform: scale(1.9); opacity: 0; } }
+@keyframes ttt-tracer-trail  { 0% { opacity: 0; } 12% { opacity: 0.5; } 100% { opacity: 0; } }
+@keyframes ttt-tracer-round  { 0% { stroke-dashoffset: 0.2; opacity: 1; } 88% { opacity: 1; } 100% { stroke-dashoffset: -1; opacity: 0.85; } }
+@keyframes ttt-impact        { 0% { transform: scale(0.2); opacity: 0.95; } 100% { transform: scale(2.4); opacity: 0; } }
+@keyframes ttt-recoil        { 0%, 100% { transform: translate(0, 0); } 25% { transform: translate(2px, -1px); } 50% { transform: translate(-2px, 1px); } 75% { transform: translate(1px, 1px); } }
+@keyframes ttt-hit-flash     { 0%, 100% { box-shadow: 0 0 0 0 hsl(var(--destructive) / 0); } 30% { box-shadow: 0 0 0 5px hsl(var(--destructive) / 0.65); } }
+
+.ttt-ghost        { animation: ttt-ghost-pulse 1.7s ease-in-out infinite; }
+.ttt-connector    { animation: ttt-dash-march 0.7s linear infinite; }
+.ttt-reticle      { transform-box: fill-box; transform-origin: center; animation: ttt-reticle-pulse 1.2s ease-in-out infinite; }
+.ttt-reticle-ring { transform-box: fill-box; transform-origin: center; animation: ttt-reticle-spin 7s linear infinite; }
+.ttt-stamp        { animation: ttt-stamp 0.34s cubic-bezier(0.2, 1.4, 0.5, 1) both; }
+.ttt-muzzle       { transform-box: fill-box; transform-origin: center; animation: ttt-muzzle 0.4s ease-out forwards; }
+.ttt-tracer-trail { animation: ttt-tracer-trail 0.5s ease-out forwards; }
+.ttt-tracer-round { animation: ttt-tracer-round 0.42s ease-in forwards; }
+.ttt-impact       { transform-box: fill-box; transform-origin: center; animation: ttt-impact 0.5s ease-out 0.34s forwards; }
+.ttt-recoil       { animation: ttt-recoil 0.42s ease-in-out 0.34s; }
+.ttt-hit-flash    { animation: ttt-hit-flash 0.55s ease-out 0.34s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .ttt-ghost, .ttt-connector, .ttt-reticle, .ttt-reticle-ring, .ttt-stamp,
+  .ttt-muzzle, .ttt-tracer-trail, .ttt-tracer-round, .ttt-impact, .ttt-recoil, .ttt-hit-flash {
+    animation: none !important;
+  }
+  .ttt-ghost { opacity: 0.52; }
 }

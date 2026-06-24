@@ -12,7 +12,7 @@ import {
   Users,
 } from "lucide-react";
 import { ActionQueuePanel } from "@/components/game/ActionQueuePanel";
-import { BoardGrid } from "@/components/game/BoardGrid";
+import { BoardScene3D } from "@/components/game/BoardScene3D";
 import { ChatPanel } from "@/components/game/ChatPanel";
 import { Drawer } from "@/components/game/Drawer";
 import { HudChip } from "@/components/game/HudChip";
@@ -102,7 +102,7 @@ export function GameScreen() {
 
           {/* Board as the maximized centerpiece; panels slide over its edges. */}
           <div className="relative min-h-0 flex-1 p-3">
-            <BoardGrid fill />
+            <BoardScene3D fill />
 
             <Drawer
               open={queueOpen}
@@ -185,7 +185,7 @@ export function GameScreen() {
             <div className="hidden lg:block lg:h-[560px]">
               <ActionQueuePanel className="h-full" onProposeTrade={proposeTrade} />
             </div>
-            <BoardGrid />
+            <BoardScene3D />
             <div className="hidden lg:block lg:h-[560px]">
               <ChatPanel className="h-full" tab={chatTab} onTabChange={setChatTab} />
             </div>

@@ -1,7 +1,8 @@
 {
   "ci": {
     "collect": {
-      "url": ["http://localhost:5173/game"],
+      "startServerCommand": "npm run preview",
+      "url": ["http://localhost:4173/game"],
       "numberOfRuns": 3,
       "settings": { "preset": "desktop" }
     },

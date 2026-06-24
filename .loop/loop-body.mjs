@@ -68,11 +68,11 @@ function profileFor(goal) {
   const g = goal || "";
   let name, plan;
   if (PROFILE_HINTS.audit.test(g))                                 { name = "audit";    plan = ["frame", "review"]; }
-  else if (PROFILE_HINTS.question.test(g) && !BUILD_VERBS.test(g)) { name = "research"; plan = ["frame", "research", "decide"]; }
+  else if (PROFILE_HINTS.question.test(g) && !BUILD_VERBS.test(g)) { name = "research"; plan = ["frame", "research", "debate", "commit"]; }
   else if (PROFILE_HINTS.bugfix.test(g))                           { name = "bugfix";   plan = ["frame", "build", "verify", "review"]; }
-  else if (PROFILE_HINTS.ui.test(g))                               { name = "ui";       plan = RESEARCH_HINTS.test(g) ? ["frame", "research", "decide", "build", "review"] : ["frame", "build", "review"]; }
+  else if (PROFILE_HINTS.ui.test(g))                               { name = "ui";       plan = RESEARCH_HINTS.test(g) ? ["frame", "research", "debate", "commit", "build", "review"] : ["frame", "build", "review"]; }
   else if (PROFILE_HINTS.refactor.test(g))                         { name = "refactor"; plan = ["frame", "build", "review"]; }
-  else                                                             { name = "feature";  plan = RESEARCH_HINTS.test(g) ? ["frame", "research", "decide", "build", "verify", "review"] : ["frame", "decide", "build", "verify", "review"]; }
+  else                                                             { name = "feature";  plan = RESEARCH_HINTS.test(g) ? ["frame", "research", "debate", "commit", "build", "verify", "review"] : ["frame", "debate", "commit", "build", "verify", "review"]; }
 
   // ─── SAFETY FLOOR — shaping may never drop a load-bearing gate (the price of keeping the honesty oracle) ──
   const hasBuild = plan.includes("build");
@@ -89,8 +89,8 @@ function isLastPhase(b, phase) { return b.plan.indexOf(phase) === b.plan.length 
 
 // the GATE phases — each produces a fresh classified verdict the Body must see PASS before advancing past it.
 // (non-gate phases — frame / decide / build — just advance when Claude calls next.)
-const GATE_ORGAN = { research: "senses", build: "hands", verify: "eyes", review: "immune" };
-const GATE_PASS  = { research: "senses GROUNDED", build: "code BUILT", verify: "eyes VERIFIED", review: "immune CLEAN" };
+const GATE_ORGAN = { research: "senses", commit: "decide", build: "hands", verify: "eyes", review: "immune" };
+const GATE_PASS  = { research: "senses GROUNDED", commit: "decision COMMITTED", build: "code BUILT", verify: "eyes VERIFIED", review: "immune CLEAN" };
 function gatesSummary(b) {
   const gates = b.plan.filter((p) => GATE_ORGAN[p]).map((p) => GATE_PASS[p]);
   let s = gates.length ? gates.join(" + ") : "no machine gate (advisory profile)";
@@ -165,6 +165,23 @@ function advance(state, b) {
   if (gateOrgan) {
     const res = freshResult(state, aw.organ, aw.sinceTs);
     if (!res) { emit(state, "RUN", aw.organ, b.goal, `No fresh /${aw.organ} verdict on the spine yet. Run /${aw.organ} on the target (prefer a subagent), let it write back (with --verdict), then: loop-body next.`); process.exit(0); }
+    // commit gate (/decide) speaks COMMITTED|DEFERRED, not pass|fail — DEFERRED means "hand to human", never rebuild
+    if (aw.phase === "commit") {
+      const dv = (res.verdict || "").toLowerCase();
+      let committed;
+      if (dv === "committed" || dv === "pass") committed = true;
+      else if (dv === "deferred") committed = false;
+      else committed = /\bCOMMITTED\b/.test((res.summary || "").toUpperCase()) && !/\bDEFER/.test((res.summary || "").toUpperCase());
+      b.history.push({ ph: aw.phase, organ: aw.organ, verdict: committed ? "committed" : "deferred", summary: res.summary, ts: res.ts });
+      b.awaiting = null;
+      if (!committed) {
+        b.phase = "blocked";
+        b.blockedReason = `/decide DEFERRED — ${res.summary || "no decision"}. The Body won't build on an uncommitted decision (UNGROUNDED findings / no verdict / refuted basis / no rollback). Hand to the human.`;
+        save(state); emit(state, "BLOCKED", "-", b.goal, b.blockedReason); process.exit(0);
+      }
+      if (isLastPhase(b, aw.phase)) { b.phase = "done"; save(state); emit(state, "DONE", "-", b.goal, `Oracle GREEN (${b.profile}): ${gatesSummary(b)}. ${res.summary}`); process.exit(0); }
+      b.phase = nextPlannedAfter(b, aw.phase); save(state); return;
+    }
     const v = verdictOf(res);
     b.history.push({ ph: aw.phase, organ: aw.organ, verdict: v, summary: res.summary, ts: res.ts });
     b.awaiting = null;
@@ -206,9 +223,12 @@ function dispatch(state, b) {
     case "research":
       b.awaiting = { organ: "senses", phase: "research", sinceTs: ts }; setNext("research"); save(state);
       emit(state, "RUN", "senses", b.goal, `Gather the external facts the decision needs. Run /senses (prefer a subagent); it writes GROUNDED/UNGROUNDED to the spine. Then: loop-body next.${dg}`); break;
-    case "decide":
-      b.awaiting = { organ: "council", phase: "decide", sinceTs: ts }; save(state);
-      emit(state, "RUN", "council", b.goal, `Settle the approach. Run /council (or /council-deep for architectural calls — heavier); it records the decision to the spine. Then: loop-body next.${dg}`); break;
+    case "debate":
+      b.awaiting = { organ: "council", phase: "debate", sinceTs: ts }; save(state);
+      emit(state, "RUN", "council", b.goal, `Debate the approach (advisory — picks NO winner). Run /council, or /council-deep for architectural/hard calls (heavier; it emits a verdict.json the commit step reads). It records the debate to the spine. Then: loop-body next.${dg}`); break;
+    case "commit":
+      b.awaiting = { organ: "decide", phase: "commit", sinceTs: ts }; setNext("commit"); save(state);
+      emit(state, "RUN", "decide", b.goal, `Commit the approach. Run /decide — it weighs the debate verdict against the /senses findings and either COMMITS (pick · alternatives · confidence · flipFact · rollback) or DEFERS. It writes --verdict committed|deferred to the spine. DEFERRED → the Body BLOCKS (it won't build on a non-decision). Then: loop-body next.${dg}`); break;
     case "build": {
       b.awaiting = { organ: "hands", phase: "build", sinceTs: ts };
       const why = b._retryReason ? ` Fix the prior gate first — ${b._retryReason}.` : "";

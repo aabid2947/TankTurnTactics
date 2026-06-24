@@ -1,17 +1,17 @@
 {
   "schemaVersion": 1,
   "project": "",
-  "updatedAt": "2026-06-23T20:35:56.849Z",
+  "updatedAt": "2026-06-24T16:31:00.953Z",
   "currentGoal": null,
   "next": null,
   "budget": null,
   "body": null,
   "latest": {
     "ui-refine": {
-      "id": "12b722bc",
-      "ts": "2026-06-23T20:35:56.849Z",
+      "id": "e88c9093",
+      "ts": "2026-06-24T16:31:00.953Z",
       "type": "lesson",
-      "summary": "axe color-contrast flags text that overflows its box or tiny text glyphs even at 12:1 (the 04:12 chip clipped a fixed-square; the text arrow). Fix the layout (auto-width) or swap the glyph for an SVG icon -- don't chase the ratio, find why axe can't read the bg"
+      "summary": "3D battlefield terrain (Stage 3): replaced the placeholder cream checker with a dusty khaki WAR-TORN checker (CanvasTexture = checker + grime speckles + scorch radial-gradients + cracks), set the playable grid as a raised dark PLATFORM inside a larger tiling-dirt battlefield plane, scattered craters (dark disc + scorch ring) + rubble boxes OFF the grid, and swapped the flat lavender bg for a dusk gradient (scene.background via useThree) + warm low-angle key light (long shadows) + dim cool ambient + dust fog. Static geometry screenshots fine (unlike RAF-animated FX); cells stay readable because the checker contrast survives the grime."
     }
   },
   "log": [
@@ -63,6 +63,118 @@
       "organ": "ui-refine",
       "type": "lesson",
       "summary": "axe color-contrast flags text that overflows its box or tiny text glyphs even at 12:1 (the 04:12 chip clipped a fixed-square; the text arrow). Fix the layout (auto-width) or swap the glyph for an SVG icon -- don't chase the ratio, find why axe can't read the bg"
+    },
+    {
+      "id": "d4c25904",
+      "ts": "2026-06-24T13:32:22.542Z",
+      "organ": "ui-refine",
+      "type": "gate",
+      "summary": "Loop A: render PASS; a11y FAIL = 7 pre-existing tank-token color-contrast only (categorical player palette + brand violet, documented host-token decision) - the new move-ghost/shot-reticle/tank-shot UI added 0 a11y violations. A-3D na (pure-DOM board); A-Mobile na (no device); perf deferred to CI (Windows lhci EBUSY)"
+    },
+    {
+      "id": "3a05ff99",
+      "ts": "2026-06-24T13:32:22.759Z",
+      "organ": "ui-refine",
+      "type": "lesson",
+      "summary": "Board-feedback animation pattern: queued-move shadow ghost + dashed connector, queued-shot coral reticle, and tank-shot tracer/muzzle/impact+recoil built as DOM/SVG over the CSS-grid board. Overlay <svg viewBox='0 0 N N'> maps 1 unit = 1 cell; ghost/reticle render in-cell; keyframes live in index.css and are all disabled under prefers-reduced-motion"
+    },
+    {
+      "id": "d7ef9691",
+      "ts": "2026-06-24T13:32:22.989Z",
+      "organ": "ui-refine",
+      "type": "lesson",
+      "summary": "Puppeteer-driving the /game board: ActionQueuePanel renders its own Move/Shoot buttons earlier in the DOM, so a plain text match clicks the wrong one - scope board-control clicks to the parent bar of the unique Resolve button"
+    },
+    {
+      "id": "2f30cc1b",
+      "ts": "2026-06-24T13:38:57.720Z",
+      "organ": "ui-refine",
+      "type": "gate",
+      "summary": "Loop A GREEN on prod build: render PASS; perf PASS (96-99, rep 98; LCP 823ms, FCP 823ms, CLS 0.001, TBT 0) via vite preview :4173. a11y FAIL = 7 pre-existing tank-token color-contrast only (categorical palette + violet, host-token decision); new move-ghost/shot-reticle/tank-shot UI added 0 a11y violations. Supersedes the earlier 'perf deferred' entry."
+    },
+    {
+      "id": "4eadde49",
+      "ts": "2026-06-24T13:38:57.928Z",
+      "organ": "ui-refine",
+      "type": "lesson",
+      "summary": "lighthouserc.json was pointed at the DEV server (:5173) -> unbundled-ESM false LCP/FCP fails. Fixed: startServerCommand 'npm run preview' + url :4173 (prod build) -> perf 96-99. Encodes the prod-vs-dev perf lesson into the gate config so it stops false-failing."
+    },
+    {
+      "id": "8299a808",
+      "ts": "2026-06-24T14:11:36.597Z",
+      "organ": "ui-refine",
+      "type": "gate",
+      "summary": "Loop A FULLY GREEN after board redesign: render PASS; a11y PASS (0 violations, down from 7); perf PASS (rep 99, LCP 814ms, CLS 0.002, TBT 0). Board reworked to a checkerboard with uniform squares."
+    },
+    {
+      "id": "6a6424f9",
+      "ts": "2026-06-24T14:11:36.890Z",
+      "organ": "ui-refine",
+      "type": "lesson",
+      "summary": "Solid checkerboard cell backgrounds FIXED the long-standing tank-token color-contrast failures (7 -> 0): axe couldn't read the token's effective bg over transparent/border-only cells; a solid cell bg lets it compute contrast. A production fix that also closed the a11y gap - confirms lesson #1 (fix why axe can't read the bg, don't chase the ratio)."
+    },
+    {
+      "id": "5d49471a",
+      "ts": "2026-06-24T14:11:37.141Z",
+      "organ": "ui-refine",
+      "type": "lesson",
+      "summary": "Coordinate labels at text-[8px] inside cells add ~21 axe tiny-glyph contrast violations even when aria-hidden. Board coord labels belong in full-size edge gutters, not tiny inside cells."
+    },
+    {
+      "id": "910a4f64",
+      "ts": "2026-06-24T14:11:37.648Z",
+      "organ": "ui-refine",
+      "type": "standard",
+      "summary": "Board UI = checkerboard: two cream tones (--board-light 45 33% 97% / --board-dark 40 26% 87%), uniform squares via grid-template-columns+rows repeat(N,minmax(0,1fr)), per-cell highlights as absolute z-0 overlays under z-10 content so the checker texture shows through."
+    },
+    {
+      "id": "722fc234",
+      "ts": "2026-06-24T14:32:12.009Z",
+      "organ": "ui-refine",
+      "type": "lesson",
+      "summary": "Demo move-stacking: plannedMoves[] chain, each step extends from the projected end (neighbors of the last cell, excluding the path + other tanks), capped by the prime AP ladder (1,2,3,5,7 - 7 AP allows 3 moves). Rendered as a dashed SVG polyline + violet waypoint DOTS (shapes, not numbers - dodges the tiny-text axe trap) + a ghost at the chain end. Step-through resolve re-mounts the token per hop so the stamp replays X->Y->Z."
+    },
+    {
+      "id": "f5636737",
+      "ts": "2026-06-24T14:42:58.033Z",
+      "organ": "ui-refine",
+      "type": "gate",
+      "summary": "Move-stacking gate: render PASS; a11y 1/1 PASS (0 violations); perf PASS (lhci assertions met; rep-run display 0.88 / runs 72-92 reflect machine contention from the concurrent dev server, not the code - CLS 0.002, bundle flat, logic-only change). Loop A green."
+    },
+    {
+      "id": "93876d44",
+      "ts": "2026-06-24T15:27:08.521Z",
+      "organ": "ui-refine",
+      "type": "lesson",
+      "summary": "3D board interactivity (R3F/three): cell-picking via raycast on the ground plane (e.point -> round(x+HALF) to cell); the control bar stays DOM (accessible) and the scene reads shared React state; tanks lerp toward their target cell in useFrame for smooth glides through a stacked chain; shot FX = useFrame-driven projectile + muzzle + impact ring. Move-stacking/reticle/resolve ported 1:1 from the DOM board. CAVEAT: cell-picking is mouse-only on the canvas - keyboard/AT fallback still required (Stage 4), and the three.js bundle (+~900KB) needs code-splitting before the DOM-shell perf gate can pass."
+    },
+    {
+      "id": "10e48175",
+      "ts": "2026-06-24T16:00:15.452Z",
+      "organ": "ui-refine",
+      "type": "gate",
+      "summary": "3D shot/turret/reticle refinement: render PASS; 3D asset gate N/A (procedural geometry, no GLB/textures to budget); FPS + canvas a11y = human checks (SIGNOFF); DOM-shell perf still regressed by the three.js bundle (code-split pending, Stage 4)."
+    },
+    {
+      "id": "67d1fccd",
+      "ts": "2026-06-24T16:00:15.652Z",
+      "organ": "ui-refine",
+      "type": "lesson",
+      "summary": "Headless screenshots CANNOT capture R3F sub-second animations: the RAF loop throttles/freezes in headless Chrome (even with --disable-background-timer-throttling/--disable-renderer-backgrounding + bringToFront) after the first frames, so the scene freezes mid-FX (6 burst frames came back pixel-identical). Verify timed 3D FX (muzzle/tracer/impact) LIVE; static states (turret aim, floating reticle, tile highlights) DO capture fine."
+    },
+    {
+      "id": "56310ac5",
+      "ts": "2026-06-24T16:00:15.924Z",
+      "organ": "ui-refine",
+      "type": "lesson",
+      "summary": "3D tank-shot polish: aim the turret by rotating a turret sub-group to atan2(dx,dz) (dt-lerped) so the barrel tracks the target, and originate the muzzle flash/tracer from the barrel tip; render the lock-on reticle ABOVE the cell with depthTest:false + high renderOrder so a targeted tank never occludes it; flash pointLights at muzzle + impact give the biggest perceived 'punch' per effort in 3D."
+    },
+    {
+      "id": "e88c9093",
+      "ts": "2026-06-24T16:31:00.953Z",
+      "organ": "ui-refine",
+      "type": "lesson",
+      "summary": "3D battlefield terrain (Stage 3): replaced the placeholder cream checker with a dusty khaki WAR-TORN checker (CanvasTexture = checker + grime speckles + scorch radial-gradients + cracks), set the playable grid as a raised dark PLATFORM inside a larger tiling-dirt battlefield plane, scattered craters (dark disc + scorch ring) + rubble boxes OFF the grid, and swapped the flat lavender bg for a dusk gradient (scene.background via useThree) + warm low-angle key light (long shadows) + dim cool ambient + dust fog. Static geometry screenshots fine (unlike RAF-animated FX); cells stay readable because the checker contrast survives the grime."
     }
   ]
 }
