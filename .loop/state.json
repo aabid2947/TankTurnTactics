@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "project": "",
+  "updatedAt": "2026-06-23T20:35:56.849Z",
+  "currentGoal": null,
+  "next": null,
+  "budget": null,
+  "body": null,
+  "latest": {
+    "ui-refine": {
+      "id": "12b722bc",
+      "ts": "2026-06-23T20:35:56.849Z",
+      "type": "lesson",
+      "summary": "axe color-contrast flags text that overflows its box or tiny text glyphs even at 12:1 (the 04:12 chip clipped a fixed-square; the text arrow). Fix the layout (auto-width) or swap the glyph for an SVG icon -- don't chase the ratio, find why axe can't read the bg"
+    }
+  },
+  "log": [
+    {
+      "id": "419afc60",
+      "ts": "2026-06-23T20:13:27.670Z",
+      "organ": "ui-refine",
+      "type": "gate",
+      "summary": "Loop A on /game: render PASS; perf PASS 99/100 on prod preview (LCP 0.7s, TBT 0ms, CLS 0.001); a11y 16 errors, ALL pre-existing brand-violet contrast (4.32-4.35:1 vs AA 4.5); A-3D n/a (pure DOM board)"
+    },
+    {
+      "id": "ffd39e62",
+      "ts": "2026-06-23T20:13:27.801Z",
+      "organ": "ui-refine",
+      "type": "standard",
+      "summary": "Reference exemplar = design.md + design-reference.jpeg (neo-brutalist tactical-arcade). Stack: React+Vite+TS+Tailwind+shadcn; board is pure DOM CSS-grid (no WebGL, skip A-3D gate)"
+    },
+    {
+      "id": "4d040307",
+      "ts": "2026-06-23T20:13:27.924Z",
+      "organ": "ui-refine",
+      "type": "lesson",
+      "summary": "Measure perf against the PROD build (vite preview :4173), not the Vite dev server: dev serves unbundled ESM so FCP/LCP run ~2-3s and fail budgets, while the prod build scores 99/100"
+    },
+    {
+      "id": "265889cb",
+      "ts": "2026-06-23T20:13:28.053Z",
+      "organ": "ui-refine",
+      "type": "lesson",
+      "summary": "Windows: lhci/chrome-launcher crashes cleaning the temp Chrome profile (EBUSY unlink). Workaround: run lighthouse with --chrome-flags=--user-data-dir=<persistent dir>, or run the perf gate in CI (Linux)"
+    },
+    {
+      "id": "ef8c7d8a",
+      "ts": "2026-06-23T20:13:28.194Z",
+      "organ": "ui-refine",
+      "type": "lesson",
+      "summary": "Brand violet --primary #8B5CF6 fails WCAG AA for small text (white-on-violet 4.32:1, ink-on-violet 4.35:1, need 4.5). Darkening helps white but hurts ink text -> it is a host design-token decision, do not silently change"
+    },
+    {
+      "id": "15aacb41",
+      "ts": "2026-06-23T20:35:56.713Z",
+      "organ": "ui-refine",
+      "type": "gate",
+      "summary": "Loop A on /game now GREEN: render PASS, perf 99/100 (prod preview), a11y 0 errors. Contrast fixed on-system: added --primary-strong #7C3AED for white-text violet surfaces; bestTextOn() picks ink/white monograms; darkened 'you' color #8B5CF6->#7C3AED. Bright violet kept as accent (ring/range overlay) [supersedes earlier a11y FAIL]"
+    },
+    {
+      "id": "12b722bc",
+      "ts": "2026-06-23T20:35:56.849Z",
+      "organ": "ui-refine",
+      "type": "lesson",
+      "summary": "axe color-contrast flags text that overflows its box or tiny text glyphs even at 12:1 (the 04:12 chip clipped a fixed-square; the text arrow). Fix the layout (auto-width) or swap the glyph for an SVG icon -- don't chase the ratio, find why axe can't read the bg"
+    }
+  ]
+}

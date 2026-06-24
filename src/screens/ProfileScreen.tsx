@@ -3,6 +3,7 @@ import { LogOut, type LucideIcon, Percent, Swords, Target, Trophy } from "lucide
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { MATCH_HISTORY, YOU } from "@/lib/mock";
+import { bestTextOn } from "@/lib/utils";
 
 const STATS: { icon: LucideIcon; label: string; value: string }[] = [
   { icon: Swords, label: "Games", value: "42" },
@@ -16,8 +17,8 @@ export function ProfileScreen() {
     <div className="flex flex-col gap-6">
       <Card className="flex flex-col items-center gap-4 p-6 sm:flex-row sm:items-center">
         <span
-          className="grid size-20 shrink-0 place-items-center rounded-full border-2 border-foreground font-mono text-2xl font-bold text-ink shadow-brutal"
-          style={{ backgroundColor: YOU.color }}
+          className="grid size-20 shrink-0 place-items-center rounded-full border-2 border-foreground font-mono text-2xl font-bold shadow-brutal"
+          style={{ backgroundColor: YOU.color, color: bestTextOn(YOU.color) }}
         >
           {YOU.monogram}
         </span>

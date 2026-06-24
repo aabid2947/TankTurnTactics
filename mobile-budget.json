@@ -1,0 +1,9 @@
+{
+  "baseUrl": "http://localhost:3000",
+  "routes": ["/"],
+  "minTapTargetPx": 44,
+  "maxOverflowPx": 2,
+  "reversePorts": [3000],
+  "cdpPort": 9222,
+  "navTimeoutMs": 30000
+}

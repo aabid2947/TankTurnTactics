@@ -4,7 +4,7 @@
 > move, rename, or delete a file/folder — or change what a file *does* — update its entry here in
 > the same change (see `CLAUDE.md`, rules 1 & 2). Organize code **by feature**.
 >
-> Last updated: 2026-06-18 · **branch `ui-demo`** (applies `design.md`; standalone mock UI, no
+> Last updated: 2026-06-24 · **branch `ui-demo`** (applies `design.md`; standalone mock UI, no
 > Convex wiring — the Convex-wired Stage 0 entry lives on `main`).
 
 ## Root — docs & config
@@ -19,14 +19,20 @@ TankTurnTactics/
 ├── repo_structure.md      THIS file — living index of the repo.
 ├── ANSWERS.md             Host's locked Q&A answers that produced the design (historical record).
 ├── README.md              Setup & run instructions.
-├── package.json           Scripts & dependencies.
+├── package.json           Scripts & dependencies (incl. audit:* gates from the UI-refinement kit).
 ├── index.html             Vite HTML entry; loads Space Grotesk + Space Mono (Google Fonts).
 ├── vite.config.ts         Vite config: React plugin, `@`→src alias, Vitest (jsdom).
 ├── tailwind.config.ts     Tailwind theme: Space Grotesk/Mono fonts, brand+game colors, brutal shadows.
 ├── postcss.config.js      PostCSS: tailwindcss + autoprefixer.
 ├── eslint.config.js       ESLint flat config (lints src/).
 ├── tsconfig*.json         TS project references (app + node).
-└── components.json        shadcn/ui config.
+├── components.json        shadcn/ui config.
+├── REFERENCE.md           UI-refine Loop B exemplar (visual bar = design.md + design-reference.jpeg).
+├── SIGNOFF.md             UI-refine human false-green checklist (visual + a11y + real-device).
+├── lighthouserc.json      Lighthouse CI perf budgets — targets http://localhost:5173/game.
+├── .pa11yci.json          pa11y-ci a11y config (WCAG2AA) — targets http://localhost:5173/game.
+├── 3d-budget.json         3D asset budgets (unused — board is pure DOM, no WebGL).
+└── mobile-budget.json     Mobile-audit budgets (UI-refinement kit).
 ```
 
 ## `convex/` — Convex backend (unchanged from `main`; not used by the demo)
@@ -57,10 +63,12 @@ src/
 │   │   └── AuthShell.tsx        Centered auth card on lavender backdrop + `Field` helper.
 │   └── game/
 │       ├── TankToken.tsx        Circular bordered tank token (monogram, hearts, leader/dead/haunted).
-│       ├── BoardGrid.tsx        Grid board: tanks, range/move overlays, heart spawn, AP cache.
+│       ├── BoardGrid.tsx        Grid board: tanks, range/move overlays, heart spawn, AP cache. `fill` prop maximizes the square (legend hidden) for focus mode.
 │       ├── HudChip.tsx          Mono data chip with icon (AP, range, hearts, timer…).
-│       ├── ActionQueuePanel.tsx Violet-headed action queue: AP meter, queue list, add/lock.
-│       └── ChatPanel.tsx        WhatsApp-style chat (Global / DM tabs, bubbles, composer).
+│       ├── ActionQueuePanel.tsx Violet-headed action queue: AP meter, queue list, AP-action grid + distinct gold "Propose a trade" (opens DM); optional drawer close.
+│       ├── ChatPanel.tsx        WhatsApp-style chat (Global / DM tabs, bubbles, composer); controllable tab + optional drawer close.
+│       ├── Drawer.tsx           Reusable non-modal edge panel (slide-in, Esc-to-close, focus return) for queue/chat on mobile + focus mode.
+│       └── useKiosk.ts          Focus-mode hook: native Fullscreen API + overlay fallback, scroll lock, auto-exit on Esc.
 └── screens/
     ├── DemoIndex.tsx            Catalog linking to every demo screen.
     ├── LoginScreen.tsx          Email + password sign-in.
@@ -68,7 +76,7 @@ src/
     ├── HomeScreen.tsx           Lobby: open games, join-by-code, stats.
     ├── CreateGameScreen.tsx     Config form (period, AP, intervals, board, players) + summary.
     ├── WaitingRoomScreen.tsx    Invite code + roster + start.
-    ├── GameScreen.tsx           In-game: HUD + board + action queue + chat (3-panel).
+    ├── GameScreen.tsx           In-game: HUD + board + queue + chat. Desktop 3-panel; mobile/focus mode = maximized board with queue/chat as edge drawers + a "Focus mode" (kiosk) toggle.
     ├── GameHistoryScreen.tsx    Match list + chess-style move log.
     ├── ResultsScreen.tsx        Podium + final standings.
     └── ProfileScreen.tsx        Player stats + recent matches.
@@ -79,6 +87,15 @@ src/
 ```
 .github/workflows/ci.yml      CI: lint → typecheck → test → build.
 .claude/settings.local.json   Claude Code local permissions (gitignored).
+```
+
+## `scripts/` · `.loop/` — UI-refinement kit (`/ui-refine`)
+
+```
+scripts/   ui-audit.mjs (render→Lighthouse→pa11y gate) · 3d-perf-audit.mjs · mobile-audit.mjs ·
+           loop-memory.mjs + loop-{body,hands,reflect,metabolism}.mjs (+ *-tests.mjs) loop engines.
+.loop/     memory.md (project UI standards/lessons, append-only) · state.json · loop-*.mjs engines.
+           npm scripts: audit:all · audit:render-check · audit:perf · audit:a11y · audit:mobile · loop:read.
 ```
 
 ## Notes

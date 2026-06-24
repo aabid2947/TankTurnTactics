@@ -6,6 +6,10 @@ dist
 dist-ssr
 *.local
 
+# UI-refinement audit output (Lighthouse / pa11y)
+.lighthouse
+.lighthouseci
+
 # Convex (generated code + local state)
 convex/_generated
 .convex

@@ -3,7 +3,7 @@ import { NavLink, Outlet } from "react-router-dom";
 import { Crosshair, Moon, Sun } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { YOU } from "@/lib/mock";
-import { cn } from "@/lib/utils";
+import { bestTextOn, cn } from "@/lib/utils";
 
 const NAV: { to: string; label: string; end?: boolean }[] = [
   { to: "/", label: "Home", end: true },
@@ -37,7 +37,7 @@ export function AppShell() {
       <header className="sticky top-0 z-20 border-b-2 border-foreground bg-background/95 backdrop-blur">
         <div className="mx-auto flex h-16 w-full max-w-7xl items-center gap-4 px-4">
           <NavLink to="/" className="flex items-center gap-2">
-            <span className="grid size-9 place-items-center rounded-full border-2 border-foreground bg-primary text-primary-foreground shadow-brutal-sm">
+            <span className="grid size-9 place-items-center rounded-full border-2 border-foreground bg-primary-strong text-primary-foreground shadow-brutal-sm">
               <Crosshair className="size-5" />
             </span>
             <span className="hidden font-display text-sm font-bold uppercase tracking-tight sm:block">Tank Turn Tactics</span>
@@ -66,8 +66,8 @@ export function AppShell() {
             <ThemeToggle />
             <NavLink
               to="/profile"
-              className="grid size-9 place-items-center rounded-full border-2 border-foreground font-mono text-xs font-bold text-ink shadow-brutal-sm"
-              style={{ backgroundColor: YOU.color }}
+              className="grid size-9 place-items-center rounded-full border-2 border-foreground font-mono text-xs font-bold shadow-brutal-sm"
+              style={{ backgroundColor: YOU.color, color: bestTextOn(YOU.color) }}
             >
               {YOU.monogram}
             </NavLink>

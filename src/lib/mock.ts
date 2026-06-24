@@ -4,7 +4,7 @@
  */
 
 export const PLAYER_COLORS = [
-  "#8B5CF6", "#F4D44E", "#9FD356", "#F4524D",
+  "#7C3AED", "#F4D44E", "#9FD356", "#F4524D",
   "#5BAEF0", "#F59E42", "#EC6FB0", "#3FBFA8",
 ] as const;
 

@@ -4,13 +4,15 @@ interface ProgressProps {
   value: number; // 0..100
   className?: string;
   barClassName?: string;
+  label?: string;
 }
 
-export function Progress({ value, className, barClassName }: ProgressProps) {
+export function Progress({ value, className, barClassName, label }: ProgressProps) {
   return (
     <div
       className={cn("h-4 w-full overflow-hidden rounded-full border-2 border-foreground bg-card", className)}
       role="progressbar"
+      aria-label={label}
       aria-valuenow={Math.round(value)}
       aria-valuemin={0}
       aria-valuemax={100}

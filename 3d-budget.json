@@ -1,0 +1,17 @@
+{
+  "perAsset": {
+    "maxFileBytes": 5242880,
+    "maxTriangles": 150000,
+    "maxDrawCalls": 50,
+    "maxTextureBytes": 4194304
+  },
+  "require": {
+    "geometryCompression": true,
+    "textureCompression": true
+  },
+  "fps": {
+    "minMedianFps": 50,
+    "maxLongFrames": 5
+  },
+  "_note": "Tune to your target. geometryCompression = Draco or meshopt; textureCompression = KTX2/Basis. The local FPS floor (audit:3d:fps) is a headless smoke-test only — real mid-tier mobile FPS, battery/thermal, and canvas a11y fallbacks are mandatory HUMAN checks in SIGNOFF.md."
+}

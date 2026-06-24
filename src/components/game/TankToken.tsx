@@ -1,6 +1,6 @@
 import { Crown, Ghost, Skull } from "lucide-react";
 import type { Tank } from "@/lib/mock";
-import { cn } from "@/lib/utils";
+import { bestTextOn, cn } from "@/lib/utils";
 
 interface TankTokenProps {
   tank: Tank;
@@ -19,7 +19,7 @@ export function TankToken({ tank, size = 44, selected, showHearts, showName, onC
     <button
       type="button"
       onClick={onClick}
-      style={{ width: size, height: size, backgroundColor: dead ? undefined : tank.color }}
+      style={{ width: size, height: size, backgroundColor: dead ? undefined : tank.color, color: dead ? undefined : bestTextOn(tank.color) }}
       className={cn(
         "relative grid shrink-0 place-items-center rounded-full border-2 border-foreground font-mono text-xs font-bold text-ink shadow-brutal-sm transition-transform",
         dead && "bg-muted text-muted-foreground",
