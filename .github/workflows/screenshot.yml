@@ -47,5 +47,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: screenshots
-          path: ${{ github.workspace }}/.screenshots/
+          path: .screenshots
           retention-days: 14
