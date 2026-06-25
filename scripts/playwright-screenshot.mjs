@@ -9,8 +9,9 @@ import { chromium } from "playwright";
 import { mkdirSync } from "node:fs";
 
 const BASE = process.env.PREVIEW_URL ?? "http://localhost:4173";
-const OUT = ".screenshots";
+const OUT = process.env.SCREENSHOTS_DIR ?? ".screenshots";
 mkdirSync(OUT, { recursive: true });
+console.log(`Saving screenshots to: ${OUT}`);
 
 const browser = await chromium.launch({
   args: [
