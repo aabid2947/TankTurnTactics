@@ -50,7 +50,7 @@ function CameraFit() {
   const { camera, size } = useThree();
   useEffect(() => {
     if (!(camera instanceof THREE.OrthographicCamera)) return;
-    camera.zoom = Math.min(size.width, size.height) / (BOARD_SIZE * 1.12);
+    camera.zoom = Math.min(size.width, size.height) / (BOARD_SIZE * 1.03);
     camera.updateProjectionMatrix();
   }, [camera, size.width, size.height]);
   return null;
