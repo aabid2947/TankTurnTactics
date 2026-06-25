@@ -1,0 +1,47 @@
+name: Screenshots
+
+on:
+  push:
+    branches: ['**']
+  workflow_dispatch:
+
+jobs:
+  screenshot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Install Playwright Chromium + system deps
+        run: npx playwright install chromium --with-deps
+
+      - name: Build
+        run: npm run build
+
+      - name: Start preview server
+        run: npm run preview &
+
+      - name: Wait for preview server
+        run: |
+          for i in $(seq 1 30); do
+            curl -s http://localhost:4173 > /dev/null && echo "server up" && break
+            sleep 1
+          done
+
+      - name: Capture screenshots
+        run: node scripts/playwright-screenshot.mjs
+        env:
+          PREVIEW_URL: http://localhost:4173
+
+      - name: Upload screenshots
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots
+          path: .screenshots/
+          retention-days: 14

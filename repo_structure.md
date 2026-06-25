@@ -85,14 +85,16 @@ src/
 ## `.github/` · `.claude/`
 
 ```
-.github/workflows/ci.yml      CI: lint → typecheck → test → build.
-.claude/settings.local.json   Claude Code local permissions (gitignored).
+.github/workflows/ci.yml           CI: lint → typecheck → test → build.
+.github/workflows/screenshot.yml   CI: build → Playwright (SwiftShader WebGL) → upload `screenshots` artifact.
+.claude/settings.local.json        Claude Code local permissions (gitignored).
 ```
 
 ## `scripts/` · `.loop/` — UI-refinement kit (`/ui-refine`)
 
 ```
 scripts/   ui-audit.mjs (render→Lighthouse→pa11y gate) · 3d-perf-audit.mjs · mobile-audit.mjs ·
+           playwright-screenshot.mjs (CI visual capture: SwiftShader WebGL, uploads `screenshots` artifact) ·
            loop-memory.mjs + loop-{body,hands,reflect,metabolism}.mjs (+ *-tests.mjs) loop engines.
 .loop/     memory.md (project UI standards/lessons, append-only) · state.json · loop-*.mjs engines.
            npm scripts: audit:all · audit:render-check · audit:perf · audit:a11y · audit:mobile · loop:read.
