@@ -1,17 +1,17 @@
 {
   "schemaVersion": 1,
   "project": "",
-  "updatedAt": "2026-06-25T10:32:58.465Z",
+  "updatedAt": "2026-06-25T11:30:27.693Z",
   "currentGoal": null,
   "next": null,
   "budget": null,
   "body": null,
   "latest": {
     "ui-refine": {
-      "id": "9e729b15",
-      "ts": "2026-06-25T09:36:42.864Z",
+      "id": "aeb3aa64",
+      "ts": "2026-06-25T11:30:27.693Z",
       "type": "gate",
-      "summary": "Loop A: render PASS; a11y PASS (0 errors); perf structural FAIL (Three.js TBT, pre-existing — see prior lesson); A-3D: N/A (procedural geometry); A-Mobile: na"
+      "summary": "Loop A: render PASS; perf structural FAIL (Three.js TBT, pre-existing); a11y not re-run this session; A-3D: procedural geometry N/A; A-Mobile: na. CI screenshot workflow now live on every push."
     },
     "reflect": {
       "id": "e6f7aad0",
@@ -223,6 +223,20 @@
       "organ": "reflect",
       "type": "lesson",
       "summary": "WHEN visual inspection of the board or 3D scene is needed during a ui-refine session -> push branch to GitHub, run Playwright in CI with --use-angle=swiftshader --enable-unsafe-swiftshader, upload artifact, pull with gh run download, Read the PNG — never run local Puppeteer or headless Chrome for WebGL pages (because kit CLAUDE.md Loop B explicit instruction; local headless cannot render WebGL without SwiftShader; local Puppeteer timed out and failed this session; CI runner has GPU emulation)"
+    },
+    {
+      "id": "4de03914",
+      "ts": "2026-06-25T11:30:15.538Z",
+      "organ": "ui-refine",
+      "type": "lesson",
+      "summary": "Orthographic camera (2026-06-25): perspective camera at [0,22,0.001] fov=55 produced visible trapezoidal distortion — far cells appeared smaller than near cells. Fix: Canvas orthographic + CameraFit component (useEffect on camera+size, zoom = min(w,h)/(BOARD_SIZE*1.12)) makes board fill ~89% of canvas with zero perspective distortion. Use orthographic for top-down board games; perspective is only appropriate when vertical relief matters."
+    },
+    {
+      "id": "aeb3aa64",
+      "ts": "2026-06-25T11:30:27.693Z",
+      "organ": "ui-refine",
+      "type": "gate",
+      "summary": "Loop A: render PASS; perf structural FAIL (Three.js TBT, pre-existing); a11y not re-run this session; A-3D: procedural geometry N/A; A-Mobile: na. CI screenshot workflow now live on every push."
     }
   ]
 }
