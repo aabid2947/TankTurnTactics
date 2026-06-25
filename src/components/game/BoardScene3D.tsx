@@ -45,6 +45,17 @@ function SceneSetup() {
   return null;
 }
 
+/** Keeps the orthographic camera zoomed so the board fills ~90% of the canvas. */
+function CameraFit() {
+  const { camera, size } = useThree();
+  useEffect(() => {
+    if (!(camera instanceof THREE.OrthographicCamera)) return;
+    camera.zoom = Math.min(size.width, size.height) / (BOARD_SIZE * 1.12);
+    camera.updateProjectionMatrix();
+  }, [camera, size.width, size.height]);
+  return null;
+}
+
 /** Tactical command-grid board texture.
  *  High-contrast checker, visible cell grid, bold quadrant dividers every 5 cells,
  *  ink border around the perimeter (replaces the removed 3D platform frame). */
@@ -424,9 +435,10 @@ export function BoardScene3D({ fill = false, className }: { fill?: boolean; clas
       {/* fill mode: square canvas centred in remaining height; non-fill: square to full width */}
       <div className={fill ? "min-h-0 flex-1 flex items-center justify-center" : undefined}>
         <div className={cn("overflow-hidden rounded-md border-2 border-foreground", fill ? "h-full aspect-square" : "aspect-square w-full")}>
-          {/* Camera locked top-down. OrbitControls kept but rotate/zoom disabled. */}
-          <Canvas shadows dpr={[1, 2]} camera={{ position: [0, 22, 0.001], fov: 55 }}>
+          {/* Orthographic top-down camera — no perspective distortion, board fills canvas. */}
+          <Canvas orthographic shadows dpr={[1, 2]} camera={{ position: [0, 22, 0.001], near: 0.1, far: 100 }}>
             <SceneSetup />
+            <CameraFit />
             <ambientLight intensity={1.0} color="#FFF8F0" />
             <directionalLight position={[4, 20, 4]} intensity={1.1} color="#FFFFFF" castShadow shadow-mapSize={[2048, 2048]} shadow-camera-left={-14} shadow-camera-right={14} shadow-camera-top={14} shadow-camera-bottom={-14} shadow-camera-near={1} shadow-camera-far={60} />
             <directionalLight position={[-4, 16, -4]} intensity={0.3} color="#E0E8FF" />
