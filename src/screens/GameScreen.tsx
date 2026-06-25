@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import {
   Coins,
   Crosshair,
@@ -12,7 +12,9 @@ import {
   Users,
 } from "lucide-react";
 import { ActionQueuePanel } from "@/components/game/ActionQueuePanel";
-import { BoardScene3D } from "@/components/game/BoardScene3D";
+const BoardScene3D = lazy(() =>
+  import("@/components/game/BoardScene3D").then((m) => ({ default: m.BoardScene3D }))
+);
 import { ChatPanel } from "@/components/game/ChatPanel";
 import { Drawer } from "@/components/game/Drawer";
 import { HudChip } from "@/components/game/HudChip";
@@ -102,7 +104,9 @@ export function GameScreen() {
 
           {/* Board as the maximized centerpiece; panels slide over its edges. */}
           <div className="relative min-h-0 flex-1 p-3">
-            <BoardScene3D fill />
+            <Suspense fallback={<div className="h-full w-full rounded-md border-2 border-foreground bg-sand animate-pulse" />}>
+              <BoardScene3D fill />
+            </Suspense>
 
             <Drawer
               open={queueOpen}
@@ -185,7 +189,9 @@ export function GameScreen() {
             <div className="hidden lg:block lg:h-[560px]">
               <ActionQueuePanel className="h-full" onProposeTrade={proposeTrade} />
             </div>
-            <BoardScene3D />
+            <Suspense fallback={<div className="aspect-square w-full rounded-md border-2 border-foreground bg-sand animate-pulse" />}>
+              <BoardScene3D />
+            </Suspense>
             <div className="hidden lg:block lg:h-[560px]">
               <ChatPanel className="h-full" tab={chatTab} onTabChange={setChatTab} />
             </div>

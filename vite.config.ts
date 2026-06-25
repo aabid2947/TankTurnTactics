@@ -10,6 +10,15 @@ export default defineConfig({
       "@": fileURLToPath(new URL("./src", import.meta.url)),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes("node_modules/three") || id.includes("@react-three")) return "three";
+        },
+      },
+    },
+  },
   test: {
     environment: "jsdom",
     globals: true,

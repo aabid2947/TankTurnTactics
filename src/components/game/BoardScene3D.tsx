@@ -34,136 +34,67 @@ const turretColor = (c: string) => new THREE.Color(c).multiplyScalar(0.82).getSt
 
 /* ─────────────────────────── 3D scene pieces ─────────────────────────── */
 
-// [worldX, worldZ, biomeIdx] — placed outside the grid (grid spans ±9.5 in x/z)
-const TREES: [number, number, number][] = [
-  [-13, -13, 0], [-17, -10, 0], [-12, -17, 0], [-16, -7, 0], // Grassland (far-left)
-  [ 13, -13, 1], [ 17, -10, 1], [ 12, -17, 1], [ 16, -7, 1], // Desert    (far-right)
-  [-13,  13, 2], [-17,  10, 2], [-12,  17, 2], [-16,  7, 2], // Tundra    (near-left)
-  [ 13,  13, 3], [ 17,  10, 3], [ 12,  17, 3], [ 16,  7, 3], // Forest    (near-right)
-];
+/** Matches the canvas background to the app's bone surface so the board feels embedded. */
+function SceneSetup() {
+  const { scene } = useThree();
+  useEffect(() => {
+    const prev = scene.background;
+    scene.background = new THREE.Color("#F5F2EA");
+    return () => { scene.background = prev; };
+  }, [scene]);
+  return null;
+}
 
-const BIOME_COLORS = [
-  { trunk: "#6B4423", canopy: "#4CAF50" }, // 0 Grassland — MC oak  (brown / leaf green)
-  { trunk: "#4A8F28", canopy: "#4A8F28" }, // 1 Desert    — MC cactus (solid green)
-  { trunk: "#C0B8A8", canopy: "#E8EEF8" }, // 2 Tundra    — MC birch (pale bark / snow leaves)
-  { trunk: "#2D1B0A", canopy: "#2E7D32" }, // 3 Forest    — MC dark oak (near-black / dark green)
-];
-
-/** Minecraft-style pixelated four-biome board:
- *  TL Grassland, TR Desert, BL Snowy Tundra, BR Forest.
- *  Each cell gets MC block pixel-noise; thin grid lines + bold biome dividers. */
+/** Tactical command-grid board texture.
+ *  High-contrast checker, visible cell grid, bold quadrant dividers every 5 cells,
+ *  ink border around the perimeter (replaces the removed 3D platform frame). */
 function makeBoardTexture() {
-  const px = 26; // texture pixels per board cell
+  const px = 30;
   const W = BOARD_SIZE * px;
   const c = document.createElement("canvas");
   c.width = c.height = W;
   const ctx = c.getContext("2d")!;
-  // [base, shade, highlight] per biome quadrant
-  const biomes = [
-    ["#5EA81A", "#4E9616", "#6AC028"], // 0 TL MC Grassland
-    ["#E8CC6A", "#D4B85A", "#F0D87A"], // 1 TR MC Desert/Sand
-    ["#EEF4F8", "#DDEAF2", "#FAFEFF"], // 2 BL MC Snowy Tundra
-    ["#3D7A1A", "#2E6012", "#4E9022"], // 3 BR MC Forest
-  ];
+
+  // Checker: clean paper vs warm ecru — clear contrast, no biome noise
   for (let i = 0; i < BOARD_SIZE; i++) {
     for (let j = 0; j < BOARD_SIZE; j++) {
-      const bi = (i >= BOARD_SIZE / 2 ? 1 : 0) + (j >= BOARD_SIZE / 2 ? 2 : 0);
-      const [base, shade] = biomes[bi];
-      const cellBase = (i + j) % 2 === 0 ? base : shade;
-      // Fill cell base
-      ctx.fillStyle = cellBase;
+      ctx.fillStyle = (i + j) % 2 === 0 ? "#FEFCF8" : "#E8E2D6";
       ctx.fillRect(i * px, j * px, px, px);
-      // Minecraft pixel-noise: 3×3 patches inside each cell
-      const [, shd, hi] = biomes[bi];
-      for (let py = 1; py < px - 1; py += 3) {
-        for (let qx = 1; qx < px - 1; qx += 3) {
-          const r = Math.random();
-          if (r < 0.18) ctx.fillStyle = shd;
-          else if (r < 0.28) ctx.fillStyle = hi;
-          else continue;
-          ctx.fillRect(i * px + qx, j * px + py, 3, 3);
-        }
-      }
     }
   }
-  // Thin block grid lines (MC look)
-  ctx.strokeStyle = "rgba(0,0,0,0.18)";
+
+  // Minor cell grid (every cell boundary)
+  ctx.strokeStyle = "rgba(20,20,20,0.18)";
   ctx.lineWidth = 1;
-  for (let k = 1; k < BOARD_SIZE; k++) {
+  for (let k = 0; k <= BOARD_SIZE; k++) {
     ctx.beginPath();
     ctx.moveTo(k * px, 0); ctx.lineTo(k * px, W);
     ctx.moveTo(0, k * px); ctx.lineTo(W, k * px);
     ctx.stroke();
   }
-  // Bold biome-zone dividers
-  ctx.strokeStyle = "rgba(0,0,0,0.45)";
-  ctx.lineWidth = 4;
-  ctx.beginPath();
-  ctx.moveTo(W / 2, 0); ctx.lineTo(W / 2, W);
-  ctx.moveTo(0, W / 2); ctx.lineTo(W, W / 2);
-  ctx.stroke();
-  const t = new THREE.CanvasTexture(c);
-  t.colorSpace = THREE.SRGBColorSpace;
-  return t;
-}
 
-/** Minecraft grass block top texture for the surrounding area — 4×4 pixel patches. */
-function makeGrassTexture() {
-  const W = 128;
-  const c = document.createElement("canvas");
-  c.width = c.height = W;
-  const ctx = c.getContext("2d")!;
-  ctx.fillStyle = "#5EA81A";
-  ctx.fillRect(0, 0, W, W);
-  // MC-style 4×4 pixel noise
-  for (let x = 0; x < W; x += 4) {
-    for (let y = 0; y < W; y += 4) {
-      const r = Math.random();
-      if (r < 0.22) ctx.fillStyle = "#4E9616";
-      else if (r < 0.32) ctx.fillStyle = "#6AC028";
-      else continue;
-      ctx.fillRect(x, y, 4, 4);
-    }
+  // Major quadrant dividers every 5 cells (tactical-map feel)
+  ctx.strokeStyle = "rgba(20,20,20,0.40)";
+  ctx.lineWidth = 1.5;
+  for (let k = 5; k < BOARD_SIZE; k += 5) {
+    ctx.beginPath();
+    ctx.moveTo(k * px, 0); ctx.lineTo(k * px, W);
+    ctx.moveTo(0, k * px); ctx.lineTo(W, k * px);
+    ctx.stroke();
   }
+
+  // Perimeter border — replaces the removed 3D platform box
+  ctx.strokeStyle = "rgba(20,20,20,0.72)";
+  ctx.lineWidth = 3;
+  ctx.strokeRect(1.5, 1.5, W - 3, W - 3);
+
   const t = new THREE.CanvasTexture(c);
   t.colorSpace = THREE.SRGBColorSpace;
-  t.wrapS = t.wrapT = THREE.RepeatWrapping;
-  t.repeat.set(10, 10);
   return t;
-}
-
-/** Classic Minecraft sky — flat blue with hazy horizon. */
-function SceneBg() {
-  const { scene } = useThree();
-  const tex = useMemo(() => {
-    const c = document.createElement("canvas");
-    c.width = 8;
-    c.height = 256;
-    const ctx = c.getContext("2d")!;
-    const g = ctx.createLinearGradient(0, 0, 0, 256);
-    g.addColorStop(0, "#87CEEB");
-    g.addColorStop(0.6, "#A8D8F0");
-    g.addColorStop(0.88, "#C8E8F8");
-    g.addColorStop(1, "#D8EEF0");
-    ctx.fillStyle = g;
-    ctx.fillRect(0, 0, 8, 256);
-    const t = new THREE.CanvasTexture(c);
-    t.colorSpace = THREE.SRGBColorSpace;
-    return t;
-  }, []);
-  useEffect(() => {
-    const prev = scene.background;
-    scene.background = tex;
-    return () => {
-      scene.background = prev;
-    };
-  }, [scene, tex]);
-  return null;
 }
 
 function BattlefieldGround({ onPick }: { onPick: (c: Cell) => void }) {
   const boardTex = useMemo(makeBoardTexture, []);
-  const grassTex = useMemo(makeGrassTexture, []);
   const handle = (e: ThreeEvent<MouseEvent>) => {
     e.stopPropagation();
     const x = Math.round(e.point.x + HALF);
@@ -171,75 +102,10 @@ function BattlefieldGround({ onPick }: { onPick: (c: Cell) => void }) {
     if (x >= 0 && x < BOARD_SIZE && y >= 0 && y < BOARD_SIZE) onPick({ x, y });
   };
   return (
-    <group>
-      {/* cartoon-grass surroundings */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.4, 0]} receiveShadow>
-        <planeGeometry args={[60, 60]} />
-        <meshStandardMaterial map={grassTex} roughness={0.85} />
-      </mesh>
-      {/* ink-black platform — neo-brutalist frame for the board */}
-      <mesh position={[0, -0.14, 0]} castShadow receiveShadow>
-        <boxGeometry args={[BOARD_SIZE + 0.6, 0.52, BOARD_SIZE + 0.6]} />
-        <meshStandardMaterial color="#141414" roughness={0.8} />
-      </mesh>
-      {/* playable biome grid surface */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, GROUND_Y, 0]} receiveShadow onClick={handle}>
-        <planeGeometry args={[BOARD_SIZE, BOARD_SIZE]} />
-        <meshStandardMaterial map={boardTex} roughness={0.72} />
-      </mesh>
-    </group>
-  );
-}
-
-/** Minecraft voxel-style props — all geometry is box-based (no curves). */
-function BattlefieldProps() {
-  return (
-    <group>
-      {TREES.map(([x, z, biome], i) => {
-        const { trunk, canopy } = BIOME_COLORS[biome];
-        const h = 1.6 + (i % 4) * 0.4;  // trunk height varies
-        const isDesert = biome === 1;     // desert = cactus shape
-        return (
-          <group key={i} position={[x, -0.4, z]}>
-            {isDesert ? (
-              // MC cactus: tall thin green box + two stubby arm boxes
-              <>
-                <mesh position={[0, h / 2, 0]} castShadow>
-                  <boxGeometry args={[0.44, h, 0.44]} />
-                  <meshStandardMaterial color={canopy} roughness={0.85} />
-                </mesh>
-                <mesh position={[-0.5, h * 0.55, 0]} castShadow>
-                  <boxGeometry args={[0.44, h * 0.35, 0.44]} />
-                  <meshStandardMaterial color={canopy} roughness={0.85} />
-                </mesh>
-                <mesh position={[0.5, h * 0.62, 0]} castShadow>
-                  <boxGeometry args={[0.44, h * 0.32, 0.44]} />
-                  <meshStandardMaterial color={canopy} roughness={0.85} />
-                </mesh>
-              </>
-            ) : (
-              // MC oak/dark-oak/birch: square log trunk + wide flat leaf cluster
-              <>
-                <mesh position={[0, h / 2, 0]} castShadow>
-                  <boxGeometry args={[0.44, h, 0.44]} />
-                  <meshStandardMaterial color={trunk} roughness={0.9} />
-                </mesh>
-                {/* Main leaf block — wide, slightly shorter than tall */}
-                <mesh position={[0, h + 0.72, 0]} castShadow>
-                  <boxGeometry args={[1.76, 0.88, 1.76]} />
-                  <meshStandardMaterial color={canopy} roughness={0.8} />
-                </mesh>
-                {/* Second tier — narrower on top (MC oak leaf shape) */}
-                <mesh position={[0, h + 1.44, 0]} castShadow>
-                  <boxGeometry args={[1.1, 0.72, 1.1]} />
-                  <meshStandardMaterial color={canopy} roughness={0.8} />
-                </mesh>
-              </>
-            )}
-          </group>
-        );
-      })}
-    </group>
+    <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, GROUND_Y, 0]} receiveShadow onClick={handle}>
+      <planeGeometry args={[BOARD_SIZE, BOARD_SIZE]} />
+      <meshStandardMaterial map={boardTex} roughness={0.55} />
+    </mesh>
   );
 }
 
@@ -280,6 +146,15 @@ function TankMesh({ tank, selected, aimAt, onSelect }: { tank: Tank; selected: b
           <meshBasicMaterial color="#7C3AED" transparent opacity={0.95} side={THREE.DoubleSide} />
         </mesh>
       )}
+      {/* Token base: colored fill disc + ink border ring — mirrors the DOM TankToken */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.002, 0]}>
+        <circleGeometry args={[0.44, 24]} />
+        <meshBasicMaterial color={dead ? "#888888" : tank.color} transparent opacity={dead ? 0.28 : 0.42} side={THREE.DoubleSide} depthWrite={false} />
+      </mesh>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.003, 0]}>
+        <ringGeometry args={[0.42, 0.48, 24]} />
+        <meshBasicMaterial color="#141414" transparent opacity={dead ? 0.40 : 0.68} side={THREE.DoubleSide} depthWrite={false} />
+      </mesh>
       <mesh position={[-0.32, 0.13, 0]} castShadow><boxGeometry args={[0.16, 0.22, 0.92]} /><meshStandardMaterial color="#1b1b1b" /></mesh>
       <mesh position={[0.32, 0.13, 0]} castShadow><boxGeometry args={[0.16, 0.22, 0.92]} /><meshStandardMaterial color="#1b1b1b" /></mesh>
       <mesh position={[0, 0.28, 0]} castShadow><boxGeometry args={[0.64, 0.24, 0.84]} /><meshStandardMaterial color={hull} metalness={0.1} roughness={0.7} /></mesh>
@@ -546,41 +421,42 @@ export function BoardScene3D({ fill = false, className }: { fill?: boolean; clas
         </button>
       </div>
 
-      <div className={cn("overflow-hidden rounded-md border-2 border-foreground", fill ? "min-h-0 flex-1" : "aspect-square w-full")}>
-        <Canvas shadows dpr={[1, 2]} camera={{ position: [0, 13, 13], fov: 40 }}>
-          <SceneBg />
-          <fog attach="fog" args={["#A8D8F0", 32, 75]} />
-          <hemisphereLight args={["#87CEEB", "#5EA81A", 0.95]} />
-          <ambientLight intensity={0.55} color="#FFF8E8" />
-          <directionalLight position={[12, 18, 8]} intensity={1.45} color="#FFE8A0" castShadow shadow-mapSize={[2048, 2048]} shadow-camera-left={-14} shadow-camera-right={14} shadow-camera-top={14} shadow-camera-bottom={-14} shadow-camera-near={1} shadow-camera-far={60} />
-          <directionalLight position={[-6, 7, -9]} intensity={0.3} color="#B0D8FF" />
+      {/* fill mode: square canvas centred in remaining height; non-fill: square to full width */}
+      <div className={fill ? "min-h-0 flex-1 flex items-center justify-center" : undefined}>
+        <div className={cn("overflow-hidden rounded-md border-2 border-foreground", fill ? "h-full aspect-square" : "aspect-square w-full")}>
+          {/* Camera locked top-down. OrbitControls kept but rotate/zoom disabled. */}
+          <Canvas shadows dpr={[1, 2]} camera={{ position: [0, 22, 0.001], fov: 55 }}>
+            <SceneSetup />
+            <ambientLight intensity={1.0} color="#FFF8F0" />
+            <directionalLight position={[4, 20, 4]} intensity={1.1} color="#FFFFFF" castShadow shadow-mapSize={[2048, 2048]} shadow-camera-left={-14} shadow-camera-right={14} shadow-camera-top={14} shadow-camera-bottom={-14} shadow-camera-near={1} shadow-camera-far={60} />
+            <directionalLight position={[-4, 16, -4]} intensity={0.3} color="#E0E8FF" />
 
-          <BattlefieldGround onPick={pickCell} />
-          <BattlefieldProps />
+            <BattlefieldGround onPick={pickCell} />
 
-          {mode === "shoot" && rangeKeys.map((c) => <Tile key={`r${c.x},${c.y}`} cell={c} color={isEnemy(c) ? "#F4524D" : "#8B5CF6"} opacity={isEnemy(c) ? 0.5 : 0.22} />)}
-          {mode === "move" && moveKeys.map((c) => <Tile key={`m${c.x},${c.y}`} cell={c} color="#9FD356" opacity={0.62} />)}
-          {plannedMoves.map((c) => <Tile key={`p${c.x},${c.y}`} cell={c} color="#8B5CF6" opacity={0.32} />)}
-          {plannedMoves.length > 0 && selected && phase === "idle" && (
-            <Line points={[{ x: selected.x, y: selected.y }, ...plannedMoves].map((c) => [c.x - HALF, GROUND_Y + 0.06, c.y - HALF] as [number, number, number])} color="#7C3AED" lineWidth={3} dashed dashScale={6} />
-          )}
-          {plannedMoves.length > 0 && selected && phase === "idle" && <GhostTank cell={plannedMoves[plannedMoves.length - 1]} color={selected.color} />}
-          {plannedShot && phase === "idle" && <Reticle3D cell={plannedShot} />}
+            {mode === "shoot" && rangeKeys.map((c) => <Tile key={`r${c.x},${c.y}`} cell={c} color={isEnemy(c) ? "#F4524D" : "#8B5CF6"} opacity={isEnemy(c) ? 0.5 : 0.22} />)}
+            {mode === "move" && moveKeys.map((c) => <Tile key={`m${c.x},${c.y}`} cell={c} color="#9FD356" opacity={0.62} />)}
+            {plannedMoves.map((c) => <Tile key={`p${c.x},${c.y}`} cell={c} color="#8B5CF6" opacity={0.32} />)}
+            {plannedMoves.length > 0 && selected && phase === "idle" && (
+              <Line points={[{ x: selected.x, y: selected.y }, ...plannedMoves].map((c) => [c.x - HALF, GROUND_Y + 0.06, c.y - HALF] as [number, number, number])} color="#7C3AED" lineWidth={3} dashed dashScale={6} />
+            )}
+            {plannedMoves.length > 0 && selected && phase === "idle" && <GhostTank cell={plannedMoves[plannedMoves.length - 1]} color={selected.color} />}
+            {plannedShot && phase === "idle" && <Reticle3D cell={plannedShot} />}
 
-          {tanks.filter((t) => t.x >= 0).map((t) => (
-            <TankMesh
-              key={t.id}
-              tank={t}
-              selected={t.id === selectedId}
-              aimAt={t.id === selectedId ? shooterAim : null}
-              onSelect={!mode && !busy ? () => { setSelectedId(t.id); setPlannedMoves([]); setPlannedShot(null); } : undefined}
-            />
-          ))}
+            {tanks.filter((t) => t.x >= 0).map((t) => (
+              <TankMesh
+                key={t.id}
+                tank={t}
+                selected={t.id === selectedId}
+                aimAt={t.id === selectedId ? shooterAim : null}
+                onSelect={!mode && !busy ? () => { setSelectedId(t.id); setPlannedMoves([]); setPlannedShot(null); } : undefined}
+              />
+            ))}
 
-          {phase === "firing" && shotFx && <ShotFx shooter={shotFx.shooter} target={shotFx.target} />}
+            {phase === "firing" && shotFx && <ShotFx shooter={shotFx.shooter} target={shotFx.target} />}
 
-          <OrbitControls target={[0, 0, 0]} enablePan={false} minDistance={9} maxDistance={26} minPolarAngle={0.15} maxPolarAngle={Math.PI / 2.25} />
-        </Canvas>
+            <OrbitControls target={[0, 0, 0]} enablePan={false} enableRotate={false} enableZoom={false} minDistance={9} maxDistance={26} minPolarAngle={0.15} maxPolarAngle={Math.PI / 2.25} />
+          </Canvas>
+        </div>
       </div>
 
       {!fill && (
@@ -589,7 +465,7 @@ export function BoardScene3D({ fill = false, className }: { fill?: boolean; clas
             ? "click cells to stack moves — X→Y→Z (each step costs more AP)"
             : mode === "shoot"
               ? "click a cell in range to target — turret aims, fires from the chain's end"
-              : "click a tank to select · stack Moves &/or Shoot · Resolve · drag to orbit"}
+              : "click a tank to select · stack Moves &/or Shoot · Resolve"}
         </p>
       )}
     </div>

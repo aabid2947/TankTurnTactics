@@ -1,17 +1,23 @@
 {
   "schemaVersion": 1,
   "project": "",
-  "updatedAt": "2026-06-24T16:31:00.953Z",
+  "updatedAt": "2026-06-25T10:32:58.465Z",
   "currentGoal": null,
   "next": null,
   "budget": null,
   "body": null,
   "latest": {
     "ui-refine": {
-      "id": "e88c9093",
-      "ts": "2026-06-24T16:31:00.953Z",
+      "id": "9e729b15",
+      "ts": "2026-06-25T09:36:42.864Z",
+      "type": "gate",
+      "summary": "Loop A: render PASS; a11y PASS (0 errors); perf structural FAIL (Three.js TBT, pre-existing — see prior lesson); A-3D: N/A (procedural geometry); A-Mobile: na"
+    },
+    "reflect": {
+      "id": "e6f7aad0",
+      "ts": "2026-06-25T10:32:58.465Z",
       "type": "lesson",
-      "summary": "3D battlefield terrain (Stage 3): replaced the placeholder cream checker with a dusty khaki WAR-TORN checker (CanvasTexture = checker + grime speckles + scorch radial-gradients + cracks), set the playable grid as a raised dark PLATFORM inside a larger tiling-dirt battlefield plane, scattered craters (dark disc + scorch ring) + rubble boxes OFF the grid, and swapped the flat lavender bg for a dusk gradient (scene.background via useThree) + warm low-angle key light (long shadows) + dim cool ambient + dust fog. Static geometry screenshots fine (unlike RAF-animated FX); cells stay readable because the checker contrast survives the grime."
+      "summary": "WHEN visual inspection of the board or 3D scene is needed during a ui-refine session -> push branch to GitHub, run Playwright in CI with --use-angle=swiftshader --enable-unsafe-swiftshader, upload artifact, pull with gh run download, Read the PNG — never run local Puppeteer or headless Chrome for WebGL pages (because kit CLAUDE.md Loop B explicit instruction; local headless cannot render WebGL without SwiftShader; local Puppeteer timed out and failed this session; CI runner has GPU emulation)"
     }
   },
   "log": [
@@ -175,6 +181,48 @@
       "organ": "ui-refine",
       "type": "lesson",
       "summary": "3D battlefield terrain (Stage 3): replaced the placeholder cream checker with a dusty khaki WAR-TORN checker (CanvasTexture = checker + grime speckles + scorch radial-gradients + cracks), set the playable grid as a raised dark PLATFORM inside a larger tiling-dirt battlefield plane, scattered craters (dark disc + scorch ring) + rubble boxes OFF the grid, and swapped the flat lavender bg for a dusk gradient (scene.background via useThree) + warm low-angle key light (long shadows) + dim cool ambient + dust fog. Static geometry screenshots fine (unlike RAF-animated FX); cells stay readable because the checker contrast survives the grime."
+    },
+    {
+      "id": "e744f9c0",
+      "ts": "2026-06-25T09:26:11.120Z",
+      "organ": "ui-refine",
+      "type": "gate",
+      "summary": "Loop A: a11y PASS; render PASS; perf FAIL (TBT structural — Three.js 1200ms eval on /game; 200ms budget designed for content sites, not WebGL; improved 684ms→464ms via code-split but WebGL init is fundamental; requires OffscreenCanvas to fix properly); A-3D: N/A (procedural geometry, no .glb/.gltf); A-Mobile: na"
+    },
+    {
+      "id": "5693598a",
+      "ts": "2026-06-25T09:26:29.742Z",
+      "organ": "ui-refine",
+      "type": "lesson",
+      "summary": "TBT budget (200ms in lighthouserc.json) was silently passing on stale dist/ builds that predated the 3D board. First real build with Three.js reveals structural ~800ms TBT. The correct gate for WebGL game pages is audit:3d (procedural geometry) + SIGNOFF.md human checks. The DOM-shell perf budget needs a separate investigation (OffscreenCanvas/Worker) if TBT must pass; it cannot be fixed without removing or worker-izing the canvas."
+    },
+    {
+      "id": "70651ab2",
+      "ts": "2026-06-25T09:26:42.113Z",
+      "organ": "ui-refine",
+      "type": "lesson",
+      "summary": "Board env removal (2026-06-25): stripped Minecraft biome terrain (4-biome texture, grass plane, 16 trees, sky gradient, fog) and replaced with clean neo-brutalist surface (bone/paper checker + 10% ink grid, ink platform frame, sand canvas bg). Camera locked top-down via position [0,22,0.001] fov 55 + OrbitControls enableRotate=false enableZoom=false (component kept). Code-split three/R3F into lazy chunk (925KB) via manualChunks + React.lazy on BoardScene3D; reduced TBT 684→464ms."
+    },
+    {
+      "id": "f0a30295",
+      "ts": "2026-06-25T09:36:30.310Z",
+      "organ": "ui-refine",
+      "type": "lesson",
+      "summary": "Board design v2 (2026-06-25): removed thick 3D platform box entirely; replaced with in-texture perimeter border (72% ink strokeRect). Tactical grid: #FEFCF8/#E8E2D6 checker (high contrast), 18% minor lines every cell, 40% major lines every 5 cells (quadrant dividers), roughness 0.55 for subtle sheen. Added token base discs to TankMesh: colored circle (42% opacity) + ink ring (68%) directly on the board surface — mirrors DOM TankToken circular-bordered style. Scene bg changed to bone #F5F2EA to match app surface. Cell px upped 26→30 for crispness."
+    },
+    {
+      "id": "9e729b15",
+      "ts": "2026-06-25T09:36:42.864Z",
+      "organ": "ui-refine",
+      "type": "gate",
+      "summary": "Loop A: render PASS; a11y PASS (0 errors); perf structural FAIL (Three.js TBT, pre-existing — see prior lesson); A-3D: N/A (procedural geometry); A-Mobile: na"
+    },
+    {
+      "id": "e6f7aad0",
+      "ts": "2026-06-25T10:32:58.465Z",
+      "organ": "reflect",
+      "type": "lesson",
+      "summary": "WHEN visual inspection of the board or 3D scene is needed during a ui-refine session -> push branch to GitHub, run Playwright in CI with --use-angle=swiftshader --enable-unsafe-swiftshader, upload artifact, pull with gh run download, Read the PNG — never run local Puppeteer or headless Chrome for WebGL pages (because kit CLAUDE.md Loop B explicit instruction; local headless cannot render WebGL without SwiftShader; local Puppeteer timed out and failed this session; CI runner has GPU emulation)"
     }
   ]
 }
